@@ -29,7 +29,7 @@ class AttackQuantityServiceTest {
         assertEquals(15, attackQuantitySM);
 
         Integer attackQuantityBO = subject.determineAttackQuantity(blorcs, blorcs, swordmaster);
-        assertEquals(15, attackQuantityBO);
+        assertEquals(17, attackQuantityBO);
     }
 
     @Test
@@ -52,6 +52,12 @@ class AttackQuantityServiceTest {
 
     @Test
     void determineSupportingAttacks() {
+        Unit blorcs = Unit.builder().name("Black Orcs").M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).Count(25).AS(4).width(10).build();
+        Integer BONotInB2B = 4;
+
+        Integer supportAttacks = subject.determineSupportingAttacks(blorcs, BONotInB2B);
+
+        assertEquals(11, supportAttacks);
     }
 
     @Test
