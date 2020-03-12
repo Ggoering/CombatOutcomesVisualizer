@@ -1,5 +1,4 @@
 package com.GG.T9AgeCombat.service;
-import com.GG.T9AgeCombat.models.CombatResultResponse;
 import com.GG.T9AgeCombat.models.Result;
 import com.GG.T9AgeCombat.models.Round;
 import com.GG.T9AgeCombat.models.Unit;
@@ -15,9 +14,9 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 public class CombatCalculationService {
-    BaseContactService baseContactService;
-    public CombatCalculationService(BaseContactService baseContactService) {
-        this.baseContactService = baseContactService;
+    AttackQuantityService attackQuantityService;
+    public CombatCalculationService(AttackQuantityService attackQuantityService) {
+        this.attackQuantityService = attackQuantityService;
     }
 
     Result combat(Unit primary, Unit secondary) {
@@ -33,13 +32,10 @@ public class CombatCalculationService {
             return rounds;
         }
 
-        Integer primaryActualWidth = baseContactService.determineActualWidth(primary);
-        Integer secondaryActualWidth = baseContactService.determineActualWidth(secondary);
-
         List<Unit> attackOrder = this.orderAttackers(primary, secondary);
 
         for (int i = 0; i < attackOrder.size(); i++) {
-            Integer woundsDealt = baseContactService.determineAttackQuantity(attackOrder.get(i), primaryActualWidth, secondaryActualWidth);
+            Integer woundsDealt = attackQuantityService.determineAttackQuantity(attackOrder.get(i), primary, secondary);
         }
 
 //        this.rollToHit(attacker, defender);
@@ -53,7 +49,7 @@ public class CombatCalculationService {
       list.add(secondary);
 
       if(primary.getMountA() != null) {
-          list.add(Unit.builder().A(primary.getMountA()).I(primary.getMountI()).S(primary.getMountS()).WS(primary.getMountWS()).name(Identification.PRIMARY_UNITS_MOUNT)).baseSize(primary.getBaseSize()).build());
+          list.add(Unit.builder().A(primary.getMountA()).I(primary.getMountI()).S(primary.getMountS()).WS(primary.getMountWS()).name("mount").baseSize(primary.getBaseSize()).build());
       }
       if(secondary.getMountA() != null) {
           list.add(Unit.builder().A(secondary.getMountA()).I(secondary.getMountI()).S(secondary.getMountS()).WS(secondary.getMountWS()).name("mount").baseSize(secondary.getBaseSize()).build());
