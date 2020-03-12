@@ -12,21 +12,19 @@ public class AttackQuantityService {
         Unit defender = attacker.getName().equals(primary.getName()) ? secondary : primary;
         Integer attackerActualWidth = this.determineActualWidth(attacker);
         Integer defenderActualWidth = this.determineActualWidth(defender);
-
         Integer modelsNotInB2B = this.determineModelsNotInBaseContact(attackerActualWidth, defender, defenderActualWidth);
-
         Integer supportingAttacks = this.determineSupportingAttacks(attacker, modelsNotInB2B);
-
         Integer frontRankAttacks = this.determineFrontRankAttacks(attacker, modelsNotInB2B);
 
         return supportingAttacks + frontRankAttacks;
     }
 
-    Integer determineModelsNotInBaseContact(Integer attackerActualWidth, Unit defender, Integer defenderActualWidth) {
-        if(attackerActualWidth - defenderActualWidth <= 0) {
+    Integer determineModelsNotInBaseContact(Integer attackerActualWidth, Unit attacker, Integer defenderActualWidth) {
+        Integer difference = defenderActualWidth - attackerActualWidth;
+        if(difference >= 0) {
                 return 0;
             }
-        return Math.round((attackerActualWidth - defenderActualWidth) / defender.getBaseSize()) / 2;
+        return Math.abs(Integer.valueOf(Integer.valueOf((int) Math.ceil(difference / attacker.getBaseSize())))) - 2;
     }
 
     Integer determineSupportingAttacks(Unit attacker, Integer modelsNotInB2B) {
@@ -44,7 +42,7 @@ public class AttackQuantityService {
     }
 
     Integer determineFrontRankAttacks(Unit attacker, Integer modelsNotInB2B) {
-        return attacker.getWidth() - modelsNotInB2B > attacker.getCount() ? (attacker.getWidth()-modelsNotInB2B)*attacker.getA() : attacker.getCount() * attacker.getA();
+        return attacker.getWidth() - modelsNotInB2B <= attacker.getCount() ? (attacker.getWidth()-modelsNotInB2B)*attacker.getA() : attacker.getCount() * attacker.getA();
     }
 
     Integer determineActualWidth(Unit unit) {
