@@ -22,7 +22,7 @@ public class ToHitService {
         List<Integer> resultList = this.rollAttacks(quantity);
         Integer toHitThreshold = this.determineToHitThreshold(attackerWS, defenderWS);
 
-        return (int)resultList.stream().filter(a -> a >= toHitThreshold).count();
+        return filterOutMissedAttacks(resultList, toHitThreshold);
     }
 
     Integer determineToHitThreshold(Integer attackerWS, Integer defenderWS) {
@@ -33,5 +33,9 @@ public class ToHitService {
         } else {
             return attackerWS - defenderWS < -3 ? 5: 4;
         }
+    }
+
+    Integer filterOutMissedAttacks(List<Integer> resultList, Integer toHitThreshold) {
+        return (int)resultList.stream().filter(a -> a >= toHitThreshold).count();
     }
 }
