@@ -28,17 +28,21 @@ public class AttackQuantityService {
     }
 
     Integer determineSupportingAttacks(Unit attacker, Integer modelsNotInB2B) {
-        if(attacker.getName().equals("mount")) {
+        Integer count = attacker.getCount();
+        Integer width = attacker.getWidth();
+        if(attacker.getName().equals("mount") || (count - width) <= 0) {
             return 0;
         }
 
         Integer supportingRanks = 1;
-        if (attacker.getWidth() >= 10) {
+        if (width >= 10) {
             supportingRanks++;
         }
-        Integer potentialSupports = attacker.getCount() - attacker.getWidth() - supportingRanks * modelsNotInB2B;
-        return potentialSupports >= supportingRanks * (attacker.getWidth() - modelsNotInB2B) ?
-                supportingRanks * (attacker.getWidth() - modelsNotInB2B) : potentialSupports;
+
+        Integer backRankSupports = determineBackRankSupports(modelsNotInB2B, supportingRanks, count, width);
+        Integer midRankSupports =  determineMidRankSupports(modelsNotInB2B, supportingRanks -1, backRankSupports, count, width);
+
+        return midRankSupports + backRankSupports;
     }
 
     Integer determineFrontRankAttacks(Unit attacker, Integer modelsNotInB2B) {
@@ -51,4 +55,23 @@ public class AttackQuantityService {
         return unitActualWidth;
     }
 
+    Integer determineBackRankSupports(Integer modelsNotInB2b, Integer supportingRanks, Integer count, Integer width) {
+        Integer defaultSupports = width - modelsNotInB2b;
+        Boolean backRankSupporting = Math.ceil(count / width) <= supportingRanks ? true : false;
+        if(backRankSupporting == false){
+            return defaultSupports;
+        }
+        Integer modelsInBackRank = count % width;
+
+        return defaultSupports <= modelsInBackRank ? defaultSupports : modelsInBackRank;
+    }
+
+    Integer determineMidRankSupports(Integer modelsNotInB2b, Integer supportingRanks, Integer backRankSupports, Integer count, Integer width) {
+        Integer midRankCount = (int)Math.floor((count - width - backRankSupports) / width);
+        if(midRankCount < 1) {
+            return 0;
+        }
+        Integer supportingRankCount = midRankCount >= supportingRanks ? supportingRanks : midRankCount;
+        return supportingRankCount * width - supportingRankCount * modelsNotInB2b;
+    }
 }
