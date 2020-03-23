@@ -56,7 +56,7 @@ public class AttackQuantityService {
     }
 
     Integer determineBackRankSupports(Integer modelsNotInB2b, Integer supportingRanks, Integer count, Integer width) {
-        Integer defaultSupports = width - modelsNotInB2b;
+        Integer defaultSupports = count > width ? width - modelsNotInB2b : 0;
         Boolean backRankSupporting = Math.ceil(count / width) <= supportingRanks ? true : false;
         if(backRankSupporting == false){
             return defaultSupports;

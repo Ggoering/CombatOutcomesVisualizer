@@ -60,6 +60,7 @@ class AttackQuantityServiceTest {
         Unit blorcs6 = Unit.builder().name("Black Orcs").M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).Count(3).AS(4).width(10).build();
         Unit blorcs7 = Unit.builder().name("Black Orcs").M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).Count(9).AS(4).width(5).build();
         Unit blorcs8 = Unit.builder().name("Black Orcs").M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).Count(55).AS(4).width(5).build();
+        Unit blorcs9 = Unit.builder().name("Black Orcs").M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).Count(0).AS(4).width(5).build();
         Integer BONotInB2B1 = 4;
         Integer BONotInB2B2 = 0;
 
@@ -71,6 +72,7 @@ class AttackQuantityServiceTest {
         Integer supportAttacks6 = subject.determineSupportingAttacks(blorcs6, BONotInB2B2);
         Integer supportAttacks7 = subject.determineSupportingAttacks(blorcs7, BONotInB2B2);
         Integer supportAttacks8 = subject.determineSupportingAttacks(blorcs8, BONotInB2B2);
+        Integer supportAttacks9 = subject.determineSupportingAttacks(blorcs9, BONotInB2B2);
 
         assertEquals(11, supportAttacks);
         assertEquals(1, supportAttacks2);
@@ -80,10 +82,65 @@ class AttackQuantityServiceTest {
         assertEquals(0, supportAttacks6);
         assertEquals(4, supportAttacks7);
         assertEquals(5, supportAttacks8);
+        assertEquals(0, supportAttacks9);
     }
 
     @Test
     void determineFrontRankAttacks() {
+        Unit blorcs = Unit.builder().name("Black Orcs").M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(2).Ld(8).baseSize(25).Count(10).AS(4).width(10).build();
+        Unit blorcs2 = Unit.builder().name("Black Orcs").M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).Count(11).AS(4).width(10).build();
+        Unit blorcs3 = Unit.builder().name("Black Orcs").M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(2).Ld(8).baseSize(25).Count(1).AS(4).width(5).build();
+        Unit blorcs4 = Unit.builder().name("Black Orcs").M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(7).Ld(8).baseSize(25).Count(0).AS(4).width(5).build();
+        Unit blorcs5 = Unit.builder().name("Black Orcs").M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(7).Ld(8).baseSize(25).Count(0).AS(4).width(5).build();
+
+        Integer BONotInB2B1 = 4;
+        Integer BONotInB2B2 = 0;
+
+        Integer attacks = subject.determineFrontRankAttacks(blorcs, BONotInB2B1);
+        Integer attacks2 = subject.determineFrontRankAttacks(blorcs2, BONotInB2B1);
+        Integer attacks3 = subject.determineFrontRankAttacks(blorcs3, BONotInB2B1);
+        Integer attacks4 = subject.determineFrontRankAttacks(blorcs4, BONotInB2B1);
+        Integer attacks5 = subject.determineFrontRankAttacks(blorcs5, BONotInB2B2);
+
+        assertEquals(12, attacks);
+        assertEquals(6, attacks2);
+        assertEquals(2, attacks3);
+        assertEquals(0, attacks4);
+        assertEquals(0, attacks5);
+    }
+
+    @Test
+    void determineBackRankAttacks() {
+        Integer attacks = subject.determineBackRankSupports(4,2, 25, 10);
+        Integer attacks2 = subject.determineBackRankSupports(4, 1, 25, 10);
+        Integer attacks3 = subject.determineBackRankSupports(4, 2, 30, 10);
+        Integer attacks4 = subject.determineBackRankSupports(0, 1, 29, 5);
+        Integer attacks5 = subject.determineBackRankSupports(0, 1, 5, 10);
+        Integer attacks6 = subject.determineBackRankSupports(0, 1, 7, 5);
+        Integer attacks7 = subject.determineBackRankSupports(4, 2, 22, 10);
+
+        assertEquals(5, attacks);
+        assertEquals(6, attacks2);
+        assertEquals(6, attacks3);
+        assertEquals(5, attacks4);
+        assertEquals(0, attacks5);
+        assertEquals(2, attacks6);
+        assertEquals(2, attacks7);
+    }
+
+    @Test
+    void determineMidRankAttacks() {
+        Integer attacks = subject.determineMidRankSupports(4, 1, 5, 25, 10);
+        Integer attacks2 = subject.determineMidRankSupports(4, 1, 2, 23, 10);
+        Integer attacks3 = subject.determineMidRankSupports(0, 1, 10, 30, 10);
+        Integer attacks4 = subject.determineMidRankSupports(0, 4, 10, 40, 10);
+        Integer attacks5 = subject.determineMidRankSupports(0, 1, 10, 40, 10);
+
+        assertEquals(6, attacks);
+        assertEquals(6, attacks2);
+        assertEquals(10, attacks3);
+        assertEquals(20, attacks4);
+        assertEquals(10, attacks5);
     }
 
     @Test
