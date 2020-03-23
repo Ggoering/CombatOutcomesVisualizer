@@ -15,8 +15,12 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class CombatCalculationService {
     AttackQuantityService attackQuantityService;
-    public CombatCalculationService(AttackQuantityService attackQuantityService) {
+    ToHitService toHitService;
+    public CombatCalculationService(
+            AttackQuantityService attackQuantityService,
+            ToHitService toHitService                        ) {
         this.attackQuantityService = attackQuantityService;
+        this.toHitService = toHitService;
     }
 
     Result combat(Unit primary, Unit secondary) {
@@ -35,10 +39,13 @@ public class CombatCalculationService {
         List<Unit> attackOrder = this.orderAttackers(primary, secondary);
 
         for (int i = 0; i < attackOrder.size(); i++) {
-            Integer woundsDealt = attackQuantityService.determineAttackQuantity(attackOrder.get(i), primary, secondary);
+            Unit attacker = attackOrder.get(i);
+            Unit defender = attackOrder.stream().filter(d -> !d.getName().equals("mount") && !d.getName().equals(attacker.getName())).findFirst()
+                    .get();
+            Integer attackQuantity = attackQuantityService.determineAttackQuantity(attacker, primary, secondary);
+            Integer successfulToHitRolls = toHitService.rollToHit(attacker, defender, attackQuantity);
         }
 
-//        this.rollToHit(attacker, defender);
         return Collections.emptyList();
     }
 
