@@ -37,10 +37,18 @@ public class Unit implements Comparable<Unit>{
     Integer mountI;
     Integer mountM;
     Integer width;
+    Integer selection;
+    Integer standardBearer;
+    Integer musician;
 
     public int compareTo(Unit compareUnits) {
         Integer compareInitiative = compareUnits.getI();
 
         return this.I - compareInitiative;
+    }
+
+    public void updateCount(Integer wounds) {
+        Integer newCount = wounds >= this.getCount() ? 0 : this.getCount() - wounds;
+        this.Count = newCount;
     }
 }

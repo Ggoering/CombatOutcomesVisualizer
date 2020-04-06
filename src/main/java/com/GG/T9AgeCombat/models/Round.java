@@ -10,9 +10,10 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @JsonInclude(NON_NULL)
 public class Round {
     Integer combatScoreDifferential;
-    Integer attackerWoundsDealt;
-    Integer defenderWoundsDealt;
+    Integer primaryWoundsDealt;
+    Integer secondaryWoundsDealt;
     Boolean flee;
     Boolean caught;
     String winner;
+    Boolean wipedOut;
 }
