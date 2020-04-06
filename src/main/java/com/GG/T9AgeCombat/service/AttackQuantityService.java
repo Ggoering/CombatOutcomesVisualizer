@@ -12,7 +12,7 @@ public class AttackQuantityService {
         Unit defender = attacker.getName().equals(primary.getName()) ? secondary : primary;
         Integer attackerActualWidth = this.determineActualWidth(attacker);
         Integer defenderActualWidth = this.determineActualWidth(defender);
-        Integer modelsNotInB2B = this.determineModelsNotInBaseContact(attackerActualWidth, defender, defenderActualWidth);
+        Integer modelsNotInB2B = this.determineModelsNotInBaseContact(attackerActualWidth, attacker, defenderActualWidth);
         Integer supportingAttacks = this.determineSupportingAttacks(attacker, modelsNotInB2B);
         Integer frontRankAttacks = this.determineFrontRankAttacks(attacker, modelsNotInB2B);
 

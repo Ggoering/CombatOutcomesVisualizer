@@ -16,11 +16,20 @@ import static java.util.stream.Collectors.toList;
 public class CombatCalculationService {
     AttackQuantityService attackQuantityService;
     ToHitService toHitService;
+    ToWoundService toWoundService;
+    ArmorSaveService armorSaveService;
+    CombatResolutionService combatResolutionService;
     public CombatCalculationService(
             AttackQuantityService attackQuantityService,
-            ToHitService toHitService                        ) {
+            ToHitService toHitService,
+            ToWoundService toWoundService,
+            ArmorSaveService armorSaveService,
+            CombatResolutionService combatResolutionService) {
         this.attackQuantityService = attackQuantityService;
         this.toHitService = toHitService;
+        this.toWoundService = toWoundService;
+        this.armorSaveService = armorSaveService;
+        this.combatResolutionService = combatResolutionService;
     }
 
     Result combat(Unit primary, Unit secondary) {
@@ -35,7 +44,8 @@ public class CombatCalculationService {
         if (brokenOrWipedOut == true) {
             return rounds;
         }
-
+        Integer primaryWoundsDealt = 0;
+        Integer secondaryWoundsDealt = 0;
         List<Unit> attackOrder = this.orderAttackers(primary, secondary);
 
         for (int i = 0; i < attackOrder.size(); i++) {
@@ -44,9 +54,31 @@ public class CombatCalculationService {
                     .get();
             Integer attackQuantity = attackQuantityService.determineAttackQuantity(attacker, primary, secondary);
             Integer successfulToHitRolls = toHitService.rollToHit(attacker, defender, attackQuantity);
+
+            if(successfulToHitRolls == 0) {
+                continue;
+            };
+            Integer successfulToWoundRolls = toWoundService.rollToWound(attacker, defender, successfulToHitRolls);
+
+            if(successfulToWoundRolls == 0) {
+                continue;
+            }
+            Integer failedArmorSaves = armorSaveService.rollArmorSaves(attacker, defender, successfulToWoundRolls);
+
+            defender.updateCount(failedArmorSaves);
+
+            if(primary.getSelection() == attacker.getSelection()) {
+                primaryWoundsDealt = failedArmorSaves + primaryWoundsDealt;
+            } else {
+                secondaryWoundsDealt += failedArmorSaves + secondaryWoundsDealt;
+            }
+
         }
 
-        return Collections.emptyList();
+        Integer firstRound = rounds.size() > 0 ? 0 : 1;
+        rounds.add(combatResolutionService.determineResult(primary, secondary, primaryWoundsDealt, secondaryWoundsDealt, firstRound));
+
+        return rounds;
     }
 
     List<Unit> orderAttackers(Unit primary, Unit secondary) {

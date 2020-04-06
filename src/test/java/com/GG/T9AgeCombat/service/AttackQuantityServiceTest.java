@@ -5,6 +5,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -135,12 +138,14 @@ class AttackQuantityServiceTest {
         Integer attacks3 = subject.determineMidRankSupports(0, 1, 10, 30, 10);
         Integer attacks4 = subject.determineMidRankSupports(0, 4, 10, 40, 10);
         Integer attacks5 = subject.determineMidRankSupports(0, 1, 10, 40, 10);
+        Integer attacks6 = subject.determineMidRankSupports(4, 2, 5, 25, 10);
 
         assertEquals(6, attacks);
         assertEquals(6, attacks2);
         assertEquals(10, attacks3);
         assertEquals(20, attacks4);
         assertEquals(10, attacks5);
+        assertEquals(6, attacks6);
     }
 
     @Test
