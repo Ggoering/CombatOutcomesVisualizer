@@ -28,29 +28,34 @@ class AttackQuantityServiceTest {
         Unit swordmaster = Unit.builder().name("Sword Master").M(5).OWS(6).DWS(6).S(5).T(3).I(6).W(1).A(2).Ld(8).baseSize(20).Count(30).AS(5).width(5).build();
         Unit blorcs = Unit.builder().name("Black Orcs").M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).Count(25).AS(4).width(10).build();
 
-        Integer attackQuantitySM = subject.determineAttackQuantity(swordmaster, swordmaster, blorcs);
+        Integer attackQuantitySM = subject.determineAttackQuantity(swordmaster, blorcs);
         assertEquals(15, attackQuantitySM);
 
-        Integer attackQuantityBO = subject.determineAttackQuantity(blorcs, blorcs, swordmaster);
+        Integer attackQuantityBO = subject.determineAttackQuantity(blorcs, swordmaster);
         assertEquals(17, attackQuantityBO);
     }
 
     @Test
     void determineModelsNotInBaseContact() {
         Unit swordmaster = Unit.builder().name("Sword Master").M(5).OWS(6).DWS(6).S(5).T(3).I(6).W(1).A(2).Ld(8).baseSize(20).Count(30).AS(5).width(5).build();
+        Unit swordmasterMedium = Unit.builder().name("Sword Master").M(5).OWS(6).DWS(6).S(5).T(3).I(6).W(1).A(2).Ld(8).baseSize(20).Count(30).AS(5).width(7).build();
         Unit swordmasterWide = Unit.builder().name("Sword Master").M(5).OWS(6).DWS(6).S(5).T(3).I(6).W(1).A(2).Ld(8).baseSize(20).Count(30).AS(5).width(10).build();
         Unit blorcs = Unit.builder().name("Black Orcs").M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).Count(25).AS(4).width(10).build();
 
-        Integer attackerActualWidth = subject.determineActualWidth(blorcs);
-        Integer defenderActualWidth = subject.determineActualWidth(swordmaster);
-        Integer defenderActualWidthWide = subject.determineActualWidth(swordmasterWide);
-        Integer BONotInB2B = subject.determineModelsNotInBaseContact(attackerActualWidth, blorcs, defenderActualWidth);
-        Integer BONotInB2BWideSM = subject.determineModelsNotInBaseContact(attackerActualWidth, swordmasterWide, defenderActualWidthWide);
-        Integer SMNotInB2B = subject.determineModelsNotInBaseContact(defenderActualWidth, blorcs, attackerActualWidth);
+        Integer blorcsActualWidth = subject.determineActualWidth(blorcs);
+        Integer SMActualWidth = subject.determineActualWidth(swordmaster);
+        Integer SMActualWidthWide = subject.determineActualWidth(swordmasterWide);
+        Integer SMActualWidthMed = subject.determineActualWidth(swordmasterMedium);
+
+        Integer BONotInB2B = subject.determineModelsNotInBaseContact(blorcsActualWidth, blorcs, SMActualWidth);
+        Integer BONotInB2BWideSM = subject.determineModelsNotInBaseContact(blorcsActualWidth, blorcs, SMActualWidthWide);
+        Integer SMNotInB2B = subject.determineModelsNotInBaseContact(SMActualWidth, swordmaster, blorcsActualWidth);
+        Integer SMMedNotInB2B = subject.determineModelsNotInBaseContact(SMActualWidthMed, swordmasterMedium, SMActualWidth);
 
         assertEquals(4, BONotInB2B);
         assertEquals(0, BONotInB2BWideSM);
         assertEquals(0, SMNotInB2B);
+        assertEquals(0, SMMedNotInB2B);
     }
 
     @Test
