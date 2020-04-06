@@ -7,9 +7,7 @@ import org.springframework.stereotype.Service;
 public class AttackQuantityService {
     public AttackQuantityService(){}
 
-    Integer determineAttackQuantity(Unit attacker, Unit primary, Unit secondary) {
-
-        Unit defender = attacker.getName().equals(primary.getName()) ? secondary : primary;
+    Integer determineAttackQuantity(Unit attacker, Unit defender) {
         Integer attackerActualWidth = this.determineActualWidth(attacker);
         Integer defenderActualWidth = this.determineActualWidth(defender);
         Integer modelsNotInB2B = this.determineModelsNotInBaseContact(attackerActualWidth, attacker, defenderActualWidth);

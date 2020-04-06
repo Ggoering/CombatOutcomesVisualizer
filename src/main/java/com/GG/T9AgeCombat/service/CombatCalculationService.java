@@ -52,7 +52,7 @@ public class CombatCalculationService {
             Unit attacker = attackOrder.get(i);
             Unit defender = attackOrder.stream().filter(d -> !d.getName().equals("mount") && !d.getName().equals(attacker.getName())).findFirst()
                     .get();
-            Integer attackQuantity = attackQuantityService.determineAttackQuantity(attacker, primary, secondary);
+            Integer attackQuantity = attackQuantityService.determineAttackQuantity(attacker, defender);
             Integer successfulToHitRolls = toHitService.rollToHit(attacker, defender, attackQuantity);
 
             if(successfulToHitRolls == 0) {
