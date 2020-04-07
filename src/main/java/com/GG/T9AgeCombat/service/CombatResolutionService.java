@@ -13,10 +13,10 @@ public class CombatResolutionService {
 
     Round determineResult(Unit primary, Unit secondary, Integer primaryWoundsDealt, Integer secondaryWoundsDealt, Integer firstRound) {
         if (primary.getCount() <= 0) {
-            return Round.builder().primaryWoundsDealt(primaryWoundsDealt).secondaryWoundsDealt(secondaryWoundsDealt).winner(secondary.getName()).wipedOut(true).build();
+            return Round.builder().primaryWoundsDealt(primaryWoundsDealt).secondaryWoundsDealt(secondaryWoundsDealt).winner(secondary.getName()).wipedOut(true).flee(false).build();
         }
         if (secondary.getCount() <= 0) {
-            return Round.builder().secondaryWoundsDealt(secondaryWoundsDealt).primaryWoundsDealt(primaryWoundsDealt).winner(primary.getName()).wipedOut(true).build();
+            return Round.builder().secondaryWoundsDealt(secondaryWoundsDealt).primaryWoundsDealt(primaryWoundsDealt).winner(primary.getName()).wipedOut(true).flee(false).build();
         }
 
         Integer primaryRankBonus = this.calculateRankBonus(primary);
