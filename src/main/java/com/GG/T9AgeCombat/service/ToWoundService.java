@@ -13,24 +13,20 @@ public class ToWoundService {
         this.diceRollingService = diceRollingService;
     }
 
-    List<Integer> rollToWound(Integer quantity) {
-        return diceRollingService.roll(quantity);
-    }
-
     Integer rollToWound(Unit attacker, Unit defender, Integer quantity) {
         Integer attackerS = attacker.getS();
-        Integer defenderS = defender.getS();
-        Integer toWoundThreshold = this.determineToWoundThreshold(attackerS, defenderS);
-        List<Integer> resultList = this.rollToWound(quantity);
+        Integer defenderT = defender.getT();
+        Integer toWoundThreshold = this.determineToWoundThreshold(attackerS, defenderT);
+        List<Integer> dice = diceRollingService.roll(quantity);
 
-        return filterOutFailedToWound(resultList, toWoundThreshold);
+        return filterOutFailedToWound(dice, toWoundThreshold);
     }
 
-    Integer determineToWoundThreshold(Integer attackerS, Integer defenderS) {
-            return 4 - (attackerS - defenderS);
+    Integer determineToWoundThreshold(Integer attackerS, Integer defenderT) {
+            return 4 - (attackerS - defenderT);
     }
 
     Integer filterOutFailedToWound(List<Integer> resultList, Integer toHitThreshold) {
-        return (int)resultList.stream().filter(a ->  a != 1 || a == 6 || a >= toHitThreshold ).count();
+        return (int)resultList.stream().filter(a ->  (a != 1 && a >= toHitThreshold) || a == 6).count();
     }
 }
