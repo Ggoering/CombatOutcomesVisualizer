@@ -19,7 +19,7 @@ public class ArmorSaveService {
         Integer finalAS = defenderAS + attackerAP;
         List<Integer> ASRolls = diceRollingService.roll(quantity);
 
-        Integer successfulSaves = (int)ASRolls.stream().filter(a -> a != 1 && a >= finalAS).count();
+        Integer successfulSaves = filterOutMissedSaves(ASRolls,finalAS);
         Integer woundsToApply = quantity - successfulSaves;
 
         return woundsToApply;
@@ -32,6 +32,7 @@ public class ArmorSaveService {
         return ap >= 0 ?  ap : 0;
     }
 
-
-
+    Integer filterOutMissedSaves(List<Integer> ASRolls, Integer armorSave) {
+        return (int)ASRolls.stream().filter(a -> a != 1 && a >= armorSave).count();
+    }
 }
