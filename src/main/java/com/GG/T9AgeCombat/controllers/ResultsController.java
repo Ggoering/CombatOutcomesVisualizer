@@ -1,9 +1,7 @@
 package com.GG.T9AgeCombat.controllers;
 
-import com.GG.T9AgeCombat.models.CombatResultResponse;
 import com.GG.T9AgeCombat.models.Result;
-import com.GG.T9AgeCombat.models.Unit;
-import com.GG.T9AgeCombat.service.CombatResultService;
+import com.GG.T9AgeCombat.service.CombatAggregationService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,16 +13,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/results")
 public class ResultsController {
-    private final CombatResultService combatResultService;
+    public final CombatAggregationService combatAggregationService;
 
-    public ResultsController(CombatResultService combatResultService
+    public ResultsController(CombatAggregationService combatAggregationService
     ) {
-        this.combatResultService = combatResultService;
+        this.combatAggregationService = combatAggregationService;
 
     }
 
     @PostMapping
-    public List<Result> getResult(@Valid @RequestBody Integer primaryId, Integer primaryCount, Integer primaryWidth, Integer secondaryId, Integer secondaryCount, Integer secondaryWidth) {
-        return combatResultService.getResult(primaryId, primaryCount, primaryWidth, secondaryId, secondaryCount, secondaryWidth);
+    public void getResult(@Valid @RequestBody Integer primaryId, Integer primaryCount, Integer primaryWidth, Integer secondaryId, Integer secondaryCount, Integer secondaryWidth) {
+         combatAggregationService.getDataAggregation();
     }
 }

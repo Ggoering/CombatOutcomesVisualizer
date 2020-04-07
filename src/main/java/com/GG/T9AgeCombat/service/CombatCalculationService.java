@@ -34,10 +34,11 @@ public class CombatCalculationService {
 
     Result combat(Unit primary, Unit secondary) {
 
-        List<Round> round = this.fight(primary, secondary, false, Collections.emptyList());
+        List<Round> rounds = this.fight(primary, secondary, false, new ArrayList<Round>());
+        String winner = rounds.get(rounds.size() -1).getWinner();
+        Integer endingRound = rounds.size() - 1;
 
-        Result result = Result.builder().build();
-        return result;
+        return Result.builder().roundResults(rounds).winner(winner).endingRound(endingRound).build();
     }
 
     List<Round> fight(Unit primary, Unit secondary, Boolean brokenOrWipedOut, List<Round> rounds) {
@@ -76,9 +77,11 @@ public class CombatCalculationService {
         }
 
         Integer firstRound = rounds.size() > 0 ? 0 : 1;
-        rounds.add(combatResolutionService.determineResult(primary, secondary, primaryWoundsDealt, secondaryWoundsDealt, firstRound));
+        Round round = combatResolutionService.determineResult(primary, secondary, primaryWoundsDealt, secondaryWoundsDealt, firstRound);
+        rounds.add(round);
+        brokenOrWipedOut = (round.getFlee() || round.getWipedOut());
 
-        return rounds;
+        return this.fight(primary, secondary, brokenOrWipedOut, rounds );
     }
 
     List<Unit> orderAttackers(Unit primary, Unit secondary) {
