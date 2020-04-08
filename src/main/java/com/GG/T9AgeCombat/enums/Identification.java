@@ -1,8 +1,9 @@
 package com.GG.T9AgeCombat.enums;
 
 public enum Identification {
-    PRIMARY_UNITS_MOUNT("primary_mount"),
-    SECONDARY_UNITS_MOUNT("secondary_mount");
+    MOUNT("mount"),
+    SWORD_MASTER("sword master"),
+    BLACK_ORC("black orc");
 
     private final String value;
 

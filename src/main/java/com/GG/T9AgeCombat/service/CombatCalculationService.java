@@ -35,8 +35,8 @@ public class CombatCalculationService {
     Result combat(Unit primary, Unit secondary) {
 
         List<Round> rounds = this.fight(primary, secondary, false, new ArrayList<Round>());
-        Integer endingRound = rounds.size() - 1;
-        String winner = rounds.get(endingRound).getWinner();
+        Integer endingRound = rounds.size()-1;
+        Identification winner = rounds.get(endingRound).getWinner();
 
         return Result.builder().roundResults(rounds).winner(winner).endingRound(endingRound).build();
     }
@@ -51,7 +51,7 @@ public class CombatCalculationService {
 
         for (int i = 0; i < attackOrder.size(); i++) {
             Unit attacker = attackOrder.get(i);
-            Unit defender = attackOrder.stream().filter(d -> !d.getName().equals("mount") && !d.getName().equals(attacker.getName())).findFirst()
+            Unit defender = attackOrder.stream().filter(d -> !d.getName().equals(Identification.MOUNT) && !d.getName().equals(attacker.getName())).findFirst()
                     .get();
             Integer attackQuantity = attackQuantityService.determineAttackQuantity(attacker, defender);
             Integer successfulToHitRolls = toHitService.rollToHit(attacker, defender, attackQuantity);
@@ -91,10 +91,10 @@ public class CombatCalculationService {
       list.add(secondary);
 
       if(primary.getMountA() != null) {
-          list.add(Unit.builder().A(primary.getMountA()).I(primary.getMountI()).S(primary.getMountS()).WS(primary.getMountWS()).name("mount").baseSize(primary.getBaseSize()).build());
+          list.add(Unit.builder().A(primary.getMountA()).I(primary.getMountI()).S(primary.getMountS()).WS(primary.getMountWS()).name(Identification.MOUNT).baseSize(primary.getBaseSize()).selection(1).build());
       }
       if(secondary.getMountA() != null) {
-          list.add(Unit.builder().A(secondary.getMountA()).I(secondary.getMountI()).S(secondary.getMountS()).WS(secondary.getMountWS()).name("mount").baseSize(secondary.getBaseSize()).build());
+          list.add(Unit.builder().A(secondary.getMountA()).I(secondary.getMountI()).S(secondary.getMountS()).WS(secondary.getMountWS()).name(Identification.MOUNT).baseSize(secondary.getBaseSize()).selection(2).build());
       }
        List<Unit> sortedCombatants = list.stream().sorted(Comparator.comparing(Unit::getI).reversed())
               .collect(toList());
