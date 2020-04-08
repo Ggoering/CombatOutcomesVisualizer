@@ -11,7 +11,7 @@ public class DiceRollingService {
     List<Integer> roll(Integer quantity) {
         List<Integer> resultList = new ArrayList<Integer>();
         int i = 0;
-        while (i <= quantity) {
+        while (i < quantity) {
             Integer result = (int)Math.ceil(Math.random() * 6);
             resultList.add(result);
             i++;
