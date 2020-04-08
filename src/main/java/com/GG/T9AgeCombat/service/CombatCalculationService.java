@@ -35,8 +35,8 @@ public class CombatCalculationService {
     Result combat(Unit primary, Unit secondary) {
 
         List<Round> rounds = this.fight(primary, secondary, false, new ArrayList<Round>());
-        String winner = rounds.get(rounds.size() -1).getWinner();
         Integer endingRound = rounds.size() - 1;
+        String winner = rounds.get(endingRound).getWinner();
 
         return Result.builder().roundResults(rounds).winner(winner).endingRound(endingRound).build();
     }
@@ -71,7 +71,7 @@ public class CombatCalculationService {
             if(primary.getSelection() == attacker.getSelection()) {
                 primaryWoundsDealt = failedArmorSaves + primaryWoundsDealt;
             } else {
-                secondaryWoundsDealt += failedArmorSaves + secondaryWoundsDealt;
+                secondaryWoundsDealt = failedArmorSaves + secondaryWoundsDealt;
             }
 
         }

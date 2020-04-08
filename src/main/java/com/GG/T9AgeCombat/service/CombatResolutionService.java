@@ -33,7 +33,7 @@ public class CombatResolutionService {
            differential = primarySum - secondarySum;
 
            if (differential == 0) {
-               return  Round.builder().secondaryWoundsDealt(secondaryWoundsDealt).primaryWoundsDealt(primaryWoundsDealt).flee(false).build();
+               return  Round.builder().secondaryWoundsDealt(secondaryWoundsDealt).primaryWoundsDealt(primaryWoundsDealt).flee(false).wipedOut(false).build();
            }
         }
 
@@ -48,7 +48,7 @@ public class CombatResolutionService {
 
                 caught =  fleeDistance > pursuitDistance ? false : true;
             }
-            return Round.builder().secondaryWoundsDealt(secondaryWoundsDealt).primaryWoundsDealt(primaryWoundsDealt).flee(flee).caught(caught).winner(primary.getName()).build();
+            return Round.builder().secondaryWoundsDealt(secondaryWoundsDealt).primaryWoundsDealt(primaryWoundsDealt).flee(flee).caught(caught).wipedOut(false).winner(primary.getName()).build();
         } else {
             Boolean steadfast = secondaryRankBonus < primaryRankBonus ? true : false;
             Boolean flee = this.breakTest(primary, Math.abs(differential), steadfast);
@@ -60,7 +60,7 @@ public class CombatResolutionService {
 
                 caught =  fleeDistance > pursuitDistance ? false : true;
             }
-            return Round.builder().secondaryWoundsDealt(secondaryWoundsDealt).primaryWoundsDealt(primaryWoundsDealt).flee(flee).caught(caught).winner(secondary.getName()).build();
+            return Round.builder().secondaryWoundsDealt(secondaryWoundsDealt).primaryWoundsDealt(primaryWoundsDealt).flee(flee).caught(caught).wipedOut(false).winner(secondary.getName()).build();
         }
 
     }
