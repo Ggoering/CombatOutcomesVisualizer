@@ -48,5 +48,12 @@ class DiceRollingServiceTest {
 
     @Test
     void rollWithSum() {
+        Integer testWith6 = subject.rollWithSum(6);
+        Integer rollBig = subject.rollWithSum(1000);
+
+        assertTrue(6 <= testWith6);
+        assertTrue(36 >= testWith6);
+        assertTrue(1000 <= rollBig);
+        assertTrue(6000 >= rollBig);
     }
 }

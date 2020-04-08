@@ -22,7 +22,7 @@ public class DiceRollingService {
     Integer rollWithSum(Integer quantity) {
         int total = 0;
         int i = 0;
-        while (i <= quantity) {
+        while (i < quantity) {
             Integer result = (int)Math.ceil(Math.random() * 6);
             total += (result);
             i++;
