@@ -46,6 +46,7 @@ public class CombatCalculationService {
             return rounds;
         }
         Integer currentRound = rounds.size();
+        
         Integer primaryWoundsDealt = 0;
         Integer secondaryWoundsDealt = 0;
         List<Unit> attackOrder = this.orderAttackers(primary, secondary);
