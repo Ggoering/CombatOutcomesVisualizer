@@ -6,9 +6,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -26,8 +23,8 @@ class AttackQuantityServiceTest {
 
     @Test
     void determineAttackQuantity() {
-        Unit swordmaster = Unit.builder().name(Identification.SWORD_MASTER).M(5).OWS(6).DWS(6).S(5).T(3).I(6).W(1).A(2).Ld(8).baseSize(20).Count(30).AS(5).width(5).build();
-        Unit blorcs = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).Count(25).AS(4).width(10).build();
+        Unit swordmaster = Unit.builder().name(Identification.SWORD_MASTER).M(5).OWS(6).DWS(6).S(5).T(3).I(6).W(1).A(2).Ld(8).baseSize(20).count(30).AS(5).width(5).build();
+        Unit blorcs = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).count(25).AS(4).width(10).build();
 
         Integer attackQuantitySM = subject.determineAttackQuantity(swordmaster, blorcs);
         assertEquals(15, attackQuantitySM);
@@ -38,10 +35,10 @@ class AttackQuantityServiceTest {
 
     @Test
     void determineModelsNotInBaseContact() {
-        Unit swordmaster = Unit.builder().name(Identification.SWORD_MASTER).M(5).OWS(6).DWS(6).S(5).T(3).I(6).W(1).A(2).Ld(8).baseSize(20).Count(30).AS(5).width(5).build();
-        Unit swordmasterMedium = Unit.builder().name(Identification.SWORD_MASTER).M(5).OWS(6).DWS(6).S(5).T(3).I(6).W(1).A(2).Ld(8).baseSize(20).Count(30).AS(5).width(7).build();
-        Unit swordmasterWide = Unit.builder().name(Identification.SWORD_MASTER).M(5).OWS(6).DWS(6).S(5).T(3).I(6).W(1).A(2).Ld(8).baseSize(20).Count(30).AS(5).width(10).build();
-        Unit blorcs = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).Count(25).AS(4).width(10).build();
+        Unit swordmaster = Unit.builder().name(Identification.SWORD_MASTER).M(5).OWS(6).DWS(6).S(5).T(3).I(6).W(1).A(2).Ld(8).baseSize(20).count(30).AS(5).width(5).build();
+        Unit swordmasterMedium = Unit.builder().name(Identification.SWORD_MASTER).M(5).OWS(6).DWS(6).S(5).T(3).I(6).W(1).A(2).Ld(8).baseSize(20).count(30).AS(5).width(7).build();
+        Unit swordmasterWide = Unit.builder().name(Identification.SWORD_MASTER).M(5).OWS(6).DWS(6).S(5).T(3).I(6).W(1).A(2).Ld(8).baseSize(20).count(30).AS(5).width(10).build();
+        Unit blorcs = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).count(25).AS(4).width(10).build();
 
         Integer blorcsActualWidth = subject.determineActualWidth(blorcs);
         Integer SMActualWidth = subject.determineActualWidth(swordmaster);
@@ -61,15 +58,15 @@ class AttackQuantityServiceTest {
 
     @Test
     void determineSupportingAttacks() {
-        Unit blorcs = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).Count(25).AS(4).width(10).build();
-        Unit blorcs2 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).Count(11).AS(4).width(10).build();
-        Unit blorcs3 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).Count(10).AS(4).width(10).build();
-        Unit blorcs4 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).Count(30).AS(4).width(10).build();
-        Unit blorcs5 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).Count(30).AS(4).width(10).build();
-        Unit blorcs6 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).Count(3).AS(4).width(10).build();
-        Unit blorcs7 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).Count(9).AS(4).width(5).build();
-        Unit blorcs8 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).Count(55).AS(4).width(5).build();
-        Unit blorcs9 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).Count(0).AS(4).width(5).build();
+        Unit blorcs = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).count(25).AS(4).width(10).build();
+        Unit blorcs2 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).count(11).AS(4).width(10).build();
+        Unit blorcs3 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).count(10).AS(4).width(10).build();
+        Unit blorcs4 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).count(30).AS(4).width(10).build();
+        Unit blorcs5 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).count(30).AS(4).width(10).build();
+        Unit blorcs6 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).count(3).AS(4).width(10).build();
+        Unit blorcs7 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).count(9).AS(4).width(5).build();
+        Unit blorcs8 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).count(55).AS(4).width(5).build();
+        Unit blorcs9 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).count(0).AS(4).width(5).build();
         Integer BONotInB2B1 = 4;
         Integer BONotInB2B2 = 0;
 
@@ -96,11 +93,11 @@ class AttackQuantityServiceTest {
 
     @Test
     void determineFrontRankAttacks() {
-        Unit blorcs = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(2).Ld(8).baseSize(25).Count(10).AS(4).width(10).build();
-        Unit blorcs2 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).Count(11).AS(4).width(10).build();
-        Unit blorcs3 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(2).Ld(8).baseSize(25).Count(1).AS(4).width(5).build();
-        Unit blorcs4 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(7).Ld(8).baseSize(25).Count(0).AS(4).width(5).build();
-        Unit blorcs5 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(7).Ld(8).baseSize(25).Count(0).AS(4).width(5).build();
+        Unit blorcs = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(2).Ld(8).baseSize(25).count(10).AS(4).width(10).build();
+        Unit blorcs2 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(1).Ld(8).baseSize(25).count(11).AS(4).width(10).build();
+        Unit blorcs3 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(2).Ld(8).baseSize(25).count(1).AS(4).width(5).build();
+        Unit blorcs4 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(7).Ld(8).baseSize(25).count(0).AS(4).width(5).build();
+        Unit blorcs5 = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(7).Ld(8).baseSize(25).count(0).AS(4).width(5).build();
 
         Integer BONotInB2B1 = 4;
         Integer BONotInB2B2 = 0;
