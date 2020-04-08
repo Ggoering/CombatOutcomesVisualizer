@@ -1,5 +1,6 @@
 package com.GG.T9AgeCombat.service;
 
+import com.GG.T9AgeCombat.enums.Identification;
 import com.GG.T9AgeCombat.models.CombatResultResponse;
 import com.GG.T9AgeCombat.models.Result;
 import com.GG.T9AgeCombat.models.Unit;
@@ -25,8 +26,8 @@ public class CombatAggregationService {
 
 
         for (int i = 0; i < 10000; i++) {
-            Unit swordmaster = Unit.builder().name("Sword Master").M(5).OWS(6).DWS(6).S(5).T(3).I(6).W(1).A(2).Ld(8).baseSize(20).Count(30).AS(5).width(5).selection(1).standardBearer(1).musician(1).build();
-            Unit blorcs = Unit.builder().name("Black Orcs").M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(2).Ld(8).baseSize(25).Count(25).AS(4).width(10).selection(2).standardBearer(1).musician(1).build();
+            Unit swordmaster = Unit.builder().name(Identification.SWORD_MASTER).M(5).OWS(6).DWS(6).S(5).T(3).I(6).W(1).A(2).Ld(8).baseSize(20).Count(30).AS(5).width(10).selection(1).standardBearer(1).musician(1).build();
+            Unit blorcs = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(5).T(4).I(2).W(1).A(2).Ld(8).baseSize(25).Count(25).AS(4).width(5).selection(2).standardBearer(1).musician(1).build();
             Result result = combatCalculationService.combat(swordmaster, blorcs);
 
             resultList.add(result);

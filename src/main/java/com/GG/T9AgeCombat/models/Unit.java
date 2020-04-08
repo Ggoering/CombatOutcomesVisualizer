@@ -1,5 +1,6 @@
 package com.GG.T9AgeCombat.models;
 
+import com.GG.T9AgeCombat.enums.Identification;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Value;
@@ -11,7 +12,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Value
 @JsonInclude(NON_NULL)
 public class Unit implements Comparable<Unit>{
-    String name;
+    Identification name;
     Integer M;
     @NonFinal
     Integer OWS;

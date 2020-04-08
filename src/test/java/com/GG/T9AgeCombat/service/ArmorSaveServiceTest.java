@@ -1,5 +1,6 @@
 package com.GG.T9AgeCombat.service;
 
+import com.GG.T9AgeCombat.enums.Identification;
 import com.GG.T9AgeCombat.models.Unit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,9 +20,9 @@ class ArmorSaveServiceTest {
 
     @Test
     void determineAP() {
-        Unit swordmaster = Unit.builder().name("Sword Master").M(5).OWS(6).DWS(6).S(5).T(3).I(6).W(1).A(2).Ld(8).baseSize(20).Count(30).AS(5).width(5).build();
-        Unit BT = Unit.builder().name("Sword Master").M(5).OWS(8).DWS(8).S(8).T(6).I(6).W(1).A(2).Ld(8).baseSize(20).Count(30).AS(5).width(5).build();
-        Unit skink = Unit.builder().name("Sword Master").M(5).OWS(2).DWS(2).S(2).T(3).I(6).W(1).A(1).Ld(5).baseSize(20).Count(30).AS(0).width(5).build();
+        Unit swordmaster = Unit.builder().name(Identification.SWORD_MASTER).M(5).OWS(6).DWS(6).S(5).T(3).I(6).W(1).A(2).Ld(8).baseSize(20).Count(30).AS(5).width(5).build();
+        Unit BT = Unit.builder().name(Identification.SWORD_MASTER).M(5).OWS(8).DWS(8).S(8).T(6).I(6).W(1).A(2).Ld(8).baseSize(20).Count(30).AS(5).width(5).build();
+        Unit skink = Unit.builder().name(Identification.SWORD_MASTER).M(5).OWS(2).DWS(2).S(2).T(3).I(6).W(1).A(1).Ld(5).baseSize(20).Count(30).AS(0).width(5).build();
 
         Integer smTest = subject.determineAP(swordmaster);
         Integer skinkTest = subject.determineAP(skink);
