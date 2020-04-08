@@ -46,10 +46,13 @@ public class CombatCalculationService {
             return rounds;
         }
         Integer currentRound = rounds.size();
-        
+
+        Unit primaryCopy = copyUnit(primary);
+        Unit secondaryCopy = copyUnit(secondary);
+
         Integer primaryWoundsDealt = 0;
         Integer secondaryWoundsDealt = 0;
-        List<Unit> attackOrder = this.orderAttackers(primary, secondary);
+        List<Unit> attackOrder = this.orderAttackers(primaryCopy, secondaryCopy);
 
         for (int i = 0; i < attackOrder.size(); i++) {
             Unit attacker = attackOrder.get(i);
@@ -78,11 +81,14 @@ public class CombatCalculationService {
 
         }
 
+
         Integer firstRound = rounds.size() > 0 ? 0 : 1;
         Round round = combatResolutionService.determineResult(primary, secondary, primaryWoundsDealt, secondaryWoundsDealt, firstRound);
         rounds.add(round);
         brokenOrWipedOut = (round.getFlee() || round.getWipedOut());
 
+        primary.updateCount(secondaryWoundsDealt);
+        secondary.updateCount(primaryWoundsDealt);
         return this.fight(primary, secondary, brokenOrWipedOut, rounds );
     }
 
@@ -101,6 +107,36 @@ public class CombatCalculationService {
        List<Unit> sortedCombatants = list.stream().sorted(Comparator.comparing(Unit::getI).reversed())
               .collect(toList());
         return sortedCombatants;
+    }
+
+    Unit copyUnit(Unit unit) {
+        return Unit.builder().count(unit.getCount()).
+        T(unit.getT()).
+        A(unit.getA()).
+        AS(unit.getAS()).
+        baseSize(unit.getBaseSize()).
+        DWS(unit.getDWS()).
+        I(unit.getI()).
+        Ld(unit.getLd()).
+        M(unit.getM()).
+        mountA(unit.getMountA()).
+        mountI(unit.getMountI()).
+        mountM(unit.getMountM()).
+        mountS(unit.getMountS()).
+        mountW(unit.getMountW()).
+        mountWS(unit.getMountWS()).
+        musician(unit.getMusician()).
+        OWS(unit.getOWS()).
+        S(unit.getS()).
+        selection(unit.getSelection()).
+        standardBearer(unit.getStandardBearer()).
+        W(unit.getW()).
+        width(unit.getWidth()).
+        WS(unit.getWS()).
+        equipmentList(unit.getEquipmentList()).
+        name(unit.getName()).
+        specialRulesList(unit.getSpecialRulesList()).
+                build();
     }
 
 }
