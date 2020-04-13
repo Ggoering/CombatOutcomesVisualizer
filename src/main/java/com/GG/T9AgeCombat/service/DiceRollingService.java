@@ -1,32 +1,35 @@
 package com.GG.T9AgeCombat.service;
+
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class DiceRollingService {
-    public DiceRollingService(){}
+    private static final int SIX_SIDED_DIE = 6;
+    private final Random randomInt = new Random();
 
     List<Integer> roll(Integer quantity) {
-        List<Integer> resultList = new ArrayList<Integer>();
-        int i = 0;
-        while (i < quantity) {
-            Integer result = (int)Math.ceil(Math.random() * 6);
-            resultList.add(result);
-            i++;
+        List<Integer> resultList = new ArrayList<>();
+
+        for (int i = 0; i < quantity; i++) {
+            // nextInt(range) == 0 to range, so we add 1
+            resultList.add(randomInt.nextInt(SIX_SIDED_DIE) + 1);
         }
+
         return resultList;
     }
 
-    Integer rollWithSum(Integer quantity) {
+    int rollWithSum(Integer quantity) {
         int total = 0;
-        int i = 0;
-        while (i < quantity) {
-            Integer result = (int)Math.ceil(Math.random() * 6);
-            total += (result);
-            i++;
+
+        for (int i = 0; i < quantity; i++) {
+            // nextInt(range) == 0 to range, so we add 1
+            total += randomInt.nextInt(SIX_SIDED_DIE) + 1;
         }
+
         return total;
     }
 }

@@ -12,24 +12,23 @@ import java.util.List;
 
 @Service
 public class CombatAggregationService {
+    public static final int MAXIMUM_ROUND_COUNT = 10000;
     @Autowired
     private final CombatCalculationService combatCalculationService;
-
 
     public CombatAggregationService(CombatCalculationService combatCalculationService) {
         this.combatCalculationService = combatCalculationService;
     }
+
     List<Result> getCombatResults(Integer primaryId, Integer primaryCount, Integer primaryWidth, Integer secondaryId, Integer secondaryCount, Integer secondaryWidth) {
+        List<Result> resultList = new ArrayList<>();
 
-        List<Result> resultList = new ArrayList<Result>();
-
-
-        for (int i = 0; i < 10000; i++) {
-            Unit swordmaster = Unit.builder().name(Identification.SWORD_MASTER).M(5).OWS(6).DWS(6).S(5).T(3).I(6).W(1).A(2).Ld(8).baseSize(20).count(30).AS(5).width(5).selection(1).standardBearer(1).musician(1).build();
-            List<SpecialRules> specialRulesList2 = new ArrayList<SpecialRules>();
-            specialRulesList2.add(SpecialRules.BORN_TO_FIGHT);
-            Unit blorcs = Unit.builder().name(Identification.BLACK_ORC).M(4).OWS(5).DWS(5).S(4).T(4).I(2).W(1).A(2).Ld(8).baseSize(25).count(25).AS(4).width(5).selection(2).standardBearer(1).musician(1).specialRulesList(specialRulesList2).build();
-            Result result = combatCalculationService.combat(swordmaster, blorcs);
+        for (int i = 0; i < MAXIMUM_ROUND_COUNT; i++) {
+            Unit swordmasters = Unit.builder().name(Identification.SWORD_MASTER).movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).baseSize(20).modelCount(30).armorSave(5).width(5).selection(1).standardBearer(1).musician(1).build();
+            List<SpecialRules> specialRulesList = new ArrayList<>();
+            specialRulesList.add(SpecialRules.BORN_TO_FIGHT);
+            Unit blackOrcs = Unit.builder().name(Identification.BLACK_ORC).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(2).leadership(8).baseSize(25).modelCount(25).armorSave(4).width(5).selection(2).standardBearer(1).musician(1).specialRulesList(specialRulesList).build();
+            Result result = combatCalculationService.combat(swordmasters, blackOrcs);
 
             resultList.add(result);
         }
@@ -40,13 +39,9 @@ public class CombatAggregationService {
     public void getDataAggregation() {
         List<Result> resultList = this.getCombatResults(1, 1, 1, 1, 1, 1);
 
-        long smCount = resultList.stream().filter(a -> a.getWinner().equals(Identification.SWORD_MASTER)).count();
-        long boCount = resultList.stream().filter(a -> a.getWinner().equals(Identification.BLACK_ORC)).count();
-        System.out.print(smCount + " Swordmasters");
-        System.out.print(boCount + " BO");
+        long swordmasterCount = resultList.stream().filter(a -> a.getWinner().equals(Identification.SWORD_MASTER)).count();
+        long blackOrcCount = resultList.stream().filter(a -> a.getWinner().equals(Identification.BLACK_ORC)).count();
+        System.out.print(swordmasterCount + " Swordmasters");
+        System.out.print(blackOrcCount + " Black Orcs");
     }
-
-
-
-
 }

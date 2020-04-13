@@ -8,25 +8,29 @@ import java.util.List;
 @Service
 
 public class ToWoundService {
+    public static final int TO_WOUND_AUTO_FAIL = 1;
+    public static final int TO_WOUND_AUTO_SUCCESS = 6;
+    public static final int TO_WOUND_DEFAULT_THRESHOLD = 4;
     DiceRollingService diceRollingService;
-    public ToWoundService(DiceRollingService diceRollingService){
+
+    public ToWoundService(DiceRollingService diceRollingService) {
         this.diceRollingService = diceRollingService;
     }
 
     Integer rollToWound(Unit attacker, Unit defender, Integer quantity) {
-        Integer attackerS = attacker.getS();
-        Integer defenderT = defender.getT();
-        Integer toWoundThreshold = this.determineToWoundThreshold(attackerS, defenderT);
+        Integer attackerStrength = attacker.getStrength();
+        Integer defenderToughness = defender.getToughness();
+        Integer toWoundThreshold = this.determineToWoundThreshold(attackerStrength, defenderToughness);
         List<Integer> dice = diceRollingService.roll(quantity);
 
-        return filterOutFailedToWound(dice, toWoundThreshold);
+        return removeFailedToWoundRolls(dice, toWoundThreshold);
     }
 
-    Integer determineToWoundThreshold(Integer attackerS, Integer defenderT) {
-            return 4 - (attackerS - defenderT);
+    Integer determineToWoundThreshold(Integer attackerStrength, Integer defenderToughness) {
+        return TO_WOUND_DEFAULT_THRESHOLD - (attackerStrength - defenderToughness);
     }
 
-    Integer filterOutFailedToWound(List<Integer> resultList, Integer toHitThreshold) {
-        return (int)resultList.stream().filter(a ->  (a != 1 && a >= toHitThreshold) || a == 6).count();
+    Integer removeFailedToWoundRolls(List<Integer> resultList, Integer toWoundThreshold) {
+        return (int) resultList.stream().filter(a -> (a != TO_WOUND_AUTO_FAIL && a >= toWoundThreshold) || a == TO_WOUND_AUTO_SUCCESS).count();
     }
 }

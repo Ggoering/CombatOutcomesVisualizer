@@ -66,13 +66,13 @@ class ToWoundServiceTest {
         list.add(6);
         list.add(6);
 
-        Integer filters1s1 = subject.filterOutFailedToWound(list, 2);
-        Integer filters1s2 = subject.filterOutFailedToWound(list, -2);
-        Integer filters2s = subject.filterOutFailedToWound(list, 3);
-        Integer filters3s = subject.filterOutFailedToWound(list, 4);
-        Integer filters4s = subject.filterOutFailedToWound(list, 5);
-        Integer filters5s1 = subject.filterOutFailedToWound(list, 6);
-        Integer filters5s2 = subject.filterOutFailedToWound(list, 10);
+        Integer filters1s1 = subject.removeFailedToWoundRolls(list, 2);
+        Integer filters1s2 = subject.removeFailedToWoundRolls(list, -2);
+        Integer filters2s = subject.removeFailedToWoundRolls(list, 3);
+        Integer filters3s = subject.removeFailedToWoundRolls(list, 4);
+        Integer filters4s = subject.removeFailedToWoundRolls(list, 5);
+        Integer filters5s1 = subject.removeFailedToWoundRolls(list, 6);
+        Integer filters5s2 = subject.removeFailedToWoundRolls(list, 10);
 
         assertEquals(filters1s1, 10);
         assertEquals(filters1s2, 10);

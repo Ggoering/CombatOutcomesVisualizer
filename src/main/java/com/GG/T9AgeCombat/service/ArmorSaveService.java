@@ -8,31 +8,33 @@ import java.util.List;
 @Service
 
 public class ArmorSaveService {
+    private static final int ARMOR_PENETRATION_MODIFIER = 3;
+    private static final int ARMOR_SAVE_AUTO_FAIL = 1;
     DiceRollingService diceRollingService;
+
     public ArmorSaveService(DiceRollingService diceRollingService) {
         this.diceRollingService = diceRollingService;
     }
 
     Integer rollArmorSaves(Unit attacker, Unit defender, Integer quantity) {
-        Integer attackerAP = this.determineAP(attacker);
-        Integer defenderAS = defender.getAS();
-        Integer finalAS = defenderAS + attackerAP;
-        List<Integer> ASRolls = diceRollingService.roll(quantity);
+        Integer attackerArmorPenetration = this.calculateArmorPenetration(attacker);
+        Integer defenderArmorSave = defender.getArmorSave();
+        Integer armorSaveThreshold = defenderArmorSave + attackerArmorPenetration;
+        List<Integer> armorSaveRolls = diceRollingService.roll(quantity);
 
-        Integer successfulSaves = filterOutMissedSaves(ASRolls,finalAS);
-        Integer woundsToApply = quantity - successfulSaves;
+        Integer successfulSaves = removeFailedArmorSaveRolls(armorSaveRolls, armorSaveThreshold);
 
-        return woundsToApply;
+        return quantity - successfulSaves;
     }
 
-    Integer determineAP(Unit attacker) {
-        Integer attackerS = attacker.getS();
-        Integer ap = attackerS - 3;
+    Integer calculateArmorPenetration(Unit attacker) {
+        Integer attackerStrength = attacker.getStrength();
+        int attackerArmorPenetration = attackerStrength - ARMOR_PENETRATION_MODIFIER;
 
-        return ap >= 0 ?  ap : 0;
+        return Math.max(attackerArmorPenetration, 0);
     }
 
-    Integer filterOutMissedSaves(List<Integer> ASRolls, Integer armorSave) {
-        return (int)ASRolls.stream().filter(a -> a != 1 && a >= armorSave).count();
+    Integer removeFailedArmorSaveRolls(List<Integer> armorSaveRolls, Integer armorSaveThreshold) {
+        return (int) armorSaveRolls.stream().filter(a -> a != ARMOR_SAVE_AUTO_FAIL && a >= armorSaveThreshold).count();
     }
 }

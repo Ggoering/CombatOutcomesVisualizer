@@ -20,13 +20,13 @@ class ArmorSaveServiceTest {
 
     @Test
     void determineAP() {
-        Unit swordmaster = Unit.builder().name(Identification.SWORD_MASTER).M(5).OWS(6).DWS(6).S(5).T(3).I(6).W(1).A(2).Ld(8).baseSize(20).count(30).AS(5).width(5).build();
-        Unit BT = Unit.builder().name(Identification.SWORD_MASTER).M(5).OWS(8).DWS(8).S(8).T(6).I(6).W(1).A(2).Ld(8).baseSize(20).count(30).AS(5).width(5).build();
-        Unit skink = Unit.builder().name(Identification.SWORD_MASTER).M(5).OWS(2).DWS(2).S(2).T(3).I(6).W(1).A(1).Ld(5).baseSize(20).count(30).AS(0).width(5).build();
+        Unit swordmaster = Unit.builder().name(Identification.SWORD_MASTER).movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).baseSize(20).modelCount(30).armorSave(5).width(5).build();
+        Unit BT = Unit.builder().name(Identification.SWORD_MASTER).movement(5).offensiveWeaponSkill(8).defensiveWeaponSkill(8).strength(8).toughness(6).initiative(6).wounds(1).attacks(2).leadership(8).baseSize(20).modelCount(30).armorSave(5).width(5).build();
+        Unit skink = Unit.builder().name(Identification.SWORD_MASTER).movement(5).offensiveWeaponSkill(2).defensiveWeaponSkill(2).strength(2).toughness(3).initiative(6).wounds(1).attacks(1).leadership(5).baseSize(20).modelCount(30).armorSave(0).width(5).build();
 
-        Integer smTest = subject.determineAP(swordmaster);
-        Integer skinkTest = subject.determineAP(skink);
-        Integer BTtest = subject.determineAP(BT);
+        Integer smTest = subject.calculateArmorPenetration(swordmaster);
+        Integer skinkTest = subject.calculateArmorPenetration(skink);
+        Integer BTtest = subject.calculateArmorPenetration(BT);
 
         assertEquals(smTest, 2);
         assertEquals(skinkTest, 0);
@@ -50,13 +50,13 @@ class ArmorSaveServiceTest {
         list.add(6);
         list.add(6);
 
-        Integer filters1s1 = subject.filterOutMissedSaves(list, 2);
-        Integer filters1s2 = subject.filterOutMissedSaves(list, -2);
-        Integer filters2s = subject.filterOutMissedSaves(list, 3);
-        Integer filters3s = subject.filterOutMissedSaves(list, 4);
-        Integer filters4s = subject.filterOutMissedSaves(list, 5);
-        Integer filters5s1 = subject.filterOutMissedSaves(list, 6);
-        Integer filters6s1 = subject.filterOutMissedSaves(list, 10);
+        Integer filters1s1 = subject.removeFailedArmorSaveRolls(list, 2);
+        Integer filters1s2 = subject.removeFailedArmorSaveRolls(list, -2);
+        Integer filters2s = subject.removeFailedArmorSaveRolls(list, 3);
+        Integer filters3s = subject.removeFailedArmorSaveRolls(list, 4);
+        Integer filters4s = subject.removeFailedArmorSaveRolls(list, 5);
+        Integer filters5s1 = subject.removeFailedArmorSaveRolls(list, 6);
+        Integer filters6s1 = subject.removeFailedArmorSaveRolls(list, 10);
 
         assertEquals(filters1s1, 10);
         assertEquals(filters1s2, 10);
