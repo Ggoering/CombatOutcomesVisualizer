@@ -1,6 +1,5 @@
 package com.GG.T9AgeCombat.service;
 
-import com.GG.T9AgeCombat.models.Unit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,10 +46,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         list.add(5);
         list.add(6);
 
-        Integer results1 = subject.filterOutMissedAttacks(list, 2);
-        Integer results2 = subject.filterOutMissedAttacks(list, 3);
-        Integer results3 = subject.filterOutMissedAttacks(list, 4);
-        Integer results4 = subject.filterOutMissedAttacks(list, 5);
+        Integer results1 = subject.removeFailedToHitRolls(list, 2);
+        Integer results2 = subject.removeFailedToHitRolls(list, 3);
+        Integer results3 = subject.removeFailedToHitRolls(list, 4);
+        Integer results4 = subject.removeFailedToHitRolls(list, 5);
 
         assertEquals(results1, 5);
         assertEquals(results2, 4);

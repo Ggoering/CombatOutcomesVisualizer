@@ -17,26 +17,26 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @JsonInclude(NON_NULL)
 public class Unit implements Comparable<Unit> {
     Identification name;
-    Integer M;
-    Integer OWS;
-    Integer DWS;
-    Integer S;
-    Integer T;
-    Integer I;
-    Integer W;
-    Integer A;
-    Integer Ld;
+    Integer movement;
+    Integer offensiveWeaponSkill;
+    Integer defensiveWeaponSkill;
+    Integer strength;
+    Integer toughness;
+    Integer initiative;
+    Integer wounds;
+    Integer attacks;
+    Integer leadership;
     Integer baseSize;
     @NonFinal
-    Integer count;
-    Integer AS;
-    Integer WS;
-    Integer mountWS;
-    Integer mountS;
-    Integer mountA;
-    Integer mountW;
-    Integer mountI;
-    Integer mountM;
+    Integer modelCount;
+    Integer armorSave;
+    Integer wardSave;
+    Integer mountWeaponSkill;
+    Integer mountStrength;
+    Integer mountAttacks;
+    Integer mountWounds;
+    Integer mountInitiative;
+    Integer mountMovement;
     Integer width;
     Integer selection;
     Integer standardBearer;
@@ -45,13 +45,10 @@ public class Unit implements Comparable<Unit> {
     List<Equipment> equipmentList;
 
     public int compareTo(Unit compareUnits) {
-        Integer compareInitiative = compareUnits.getI();
-
-        return this.I - compareInitiative;
+        return this.initiative - compareUnits.getInitiative();
     }
 
     public void updateCount(Integer wounds) {
-        Integer newCount = wounds >= this.getCount() ? 0 : this.getCount() - wounds;
-        this.count = newCount;
+        this.modelCount = wounds >= this.getModelCount() ? 0 : this.getModelCount() - wounds;
     }
 }

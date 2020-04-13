@@ -12,7 +12,6 @@ public enum SpecialRules {
     private final Integer value;
     private final Limitation limitation;
 
-
     SpecialRules(String name, Timing timing, Modification modification, Integer value, Limitation limitation) {
         this.name = name;
         this.timing = timing;
@@ -26,5 +25,7 @@ public enum SpecialRules {
         return name;
     }
 
-    public Integer getValue() {return value; }
+    public Integer getValue() {
+        return value;
+    }
 }
