@@ -143,19 +143,25 @@ public class CombatCalculationService {
 
     void checkLimitations(Unit unit, Integer currentRound) {
         Counter indexTracker = new Counter();
-        List<Integer> removalIndices = new ArrayList<Integer>();
+        List<Integer> removalIndices = new ArrayList<>();
 
-        unit.getSpecialRulesList().stream().forEach(a -> {
-            indexTracker.increaseCount();
-            boolean isValid = CheckLimitationPredicate.checkFirstRound(a.getLimitation(), currentRound);
-            if(!isValid) {removalIndices.add(indexTracker.getCount());}
-        });
+        if (unit.getSpecialRulesList() != null) {
+            unit.getSpecialRulesList().stream().forEach(a -> {
+                indexTracker.increaseCount();
+                boolean isValid = CheckLimitationPredicate.checkFirstRound(a.getLimitation(), currentRound);
+                if (!isValid) {
+                    removalIndices.add(indexTracker.getCount());
+                }
+            });
 
-        removalIndices.stream().forEach(i -> unit.getSpecialRulesList().remove(i));
+            removalIndices.stream().forEach(i -> unit.getSpecialRulesList().remove(i));
+        }
     }
 
     void applyStatMods(Unit unit) {
-        unit.getSpecialRulesList().stream().forEach(a ->  DetermineModificationPredicate.applyBonus(unit, a.getModification(), a.getValue()));
+        if (unit.getSpecialRulesList() != null) {
+            unit.getSpecialRulesList().stream().forEach(a -> DetermineModificationPredicate.applyBonus(unit, a.getModification(), a.getValue()));
+        }
     }
 
 }

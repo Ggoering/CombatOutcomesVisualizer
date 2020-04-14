@@ -73,7 +73,7 @@ public class CombatResolutionService {
     }
 
     Integer calculateRankBonus(Unit unit) {
-        return (int) Math.floor((double) unit.getModelCount() / (double) unit.getWidth());
+        return unit.getModelCount() / unit.getWidth();
     }
 
     Boolean breakTest(Unit unit, Integer differential, boolean steadfast) {
