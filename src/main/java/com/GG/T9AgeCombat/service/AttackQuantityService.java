@@ -23,7 +23,7 @@ public class AttackQuantityService {
             return 0;
         }
 
-        return Math.abs((int) Math.ceil((double) widthDifference / attacker.getBaseSize())) - 2;
+        return Math.abs(widthDifference / attacker.getBaseSize()) - 2;
     }
 
     Integer determineSupportingAttacks(Unit attacker, Integer modelsNotInB2B) {
@@ -55,7 +55,7 @@ public class AttackQuantityService {
 
     Integer determineBackRankSupports(Integer modelsNotInB2b, Integer supportingRanks, Integer count, Integer width) {
         int defaultSupports = count > width ? width - modelsNotInB2b : 0;
-        boolean backRankSupporting = Math.ceil((double) count / width) <= supportingRanks;
+        boolean backRankSupporting = ((count / width) <= supportingRanks);
 
         if (!backRankSupporting) {
             return defaultSupports;
@@ -66,7 +66,7 @@ public class AttackQuantityService {
     }
 
     Integer determineMidRankSupports(Integer modelsNotInB2b, Integer supportingRanks, Integer backRankSupports, Integer count, Integer width) {
-        int midRankCount = (int) Math.floor((double) (count - width - backRankSupports) / width);
+        int midRankCount = (count - width - backRankSupports) / width;
 
         if (midRankCount < 1) {
             return 0;
