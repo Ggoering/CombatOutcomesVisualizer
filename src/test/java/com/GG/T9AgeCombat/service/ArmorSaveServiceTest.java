@@ -8,14 +8,14 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ArmorSaveServiceTest {
     ArmorSaveService subject;
-    DiceRollingService diceRollingService;
+
     @BeforeEach
     void setUp() {
-        subject = new ArmorSaveService(diceRollingService);
+        subject = new ArmorSaveService(new DiceRollingService());
     }
 
     @Test
@@ -28,9 +28,9 @@ class ArmorSaveServiceTest {
         Integer skinkTest = subject.calculateArmorPenetration(skink);
         Integer BTtest = subject.calculateArmorPenetration(BT);
 
-        assertEquals(smTest, 2);
-        assertEquals(skinkTest, 0);
-        assertEquals(BTtest, 5);
+        assertEquals(2, smTest);
+        assertEquals(0, skinkTest);
+        assertEquals(5, BTtest);
 
     }
 
@@ -58,12 +58,12 @@ class ArmorSaveServiceTest {
         Integer filters5s1 = subject.removeFailedArmorSaveRolls(list, 6);
         Integer filters6s1 = subject.removeFailedArmorSaveRolls(list, 10);
 
-        assertEquals(filters1s1, 10);
-        assertEquals(filters1s2, 10);
-        assertEquals(filters2s, 8);
-        assertEquals(filters3s, 6);
-        assertEquals(filters4s, 4);
-        assertEquals(filters5s1, 2);
-        assertEquals(filters6s1, 0);
+        assertEquals(10, filters1s1);
+        assertEquals(10, filters1s2);
+        assertEquals(8, filters2s);
+        assertEquals(6, filters3s);
+        assertEquals(4, filters4s);
+        assertEquals(2, filters5s1);
+        assertEquals(0, filters6s1);
     }
 }

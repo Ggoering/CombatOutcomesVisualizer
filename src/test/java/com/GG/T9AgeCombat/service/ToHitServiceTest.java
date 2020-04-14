@@ -9,13 +9,12 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
- class ToHitServiceTest {
+class ToHitServiceTest {
     private ToHitService subject;
-    private DiceRollingService diceRollingService;
 
     @BeforeEach
     void setUp() {
-        subject = new ToHitService(diceRollingService);
+        subject = new ToHitService(new DiceRollingService());
     }
 
     @AfterEach
@@ -23,22 +22,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
     }
 
     @Test
-    void determineToHitThreshold(){
-        Integer toHitThreshold1 = subject.determineToHitThreshold(8,4);
-        Integer toHitThreshold2 = subject.determineToHitThreshold(5,4);
-        Integer toHitThreshold3 = subject.determineToHitThreshold(8,8);
-        Integer toHitThreshold4 = subject.determineToHitThreshold(2,5);
-        Integer toHitThreshold5 = subject.determineToHitThreshold(2,6);
+    void determineToHitThreshold() {
+        Integer toHitThreshold1 = subject.determineToHitThreshold(8, 4);
+        Integer toHitThreshold2 = subject.determineToHitThreshold(5, 4);
+        Integer toHitThreshold3 = subject.determineToHitThreshold(8, 8);
+        Integer toHitThreshold4 = subject.determineToHitThreshold(2, 5);
+        Integer toHitThreshold5 = subject.determineToHitThreshold(2, 6);
 
-        assertEquals(toHitThreshold1, 2);
-        assertEquals(toHitThreshold2, 3);
-        assertEquals(toHitThreshold3, 4);
-        assertEquals(toHitThreshold4, 4);
-        assertEquals(toHitThreshold5, 5);
+        assertEquals(2, toHitThreshold1);
+        assertEquals(3, toHitThreshold2);
+        assertEquals(4, toHitThreshold3);
+        assertEquals(4, toHitThreshold4);
+        assertEquals(5, toHitThreshold5);
     }
+
     @Test
-    void filterOutMissedAttacks(){
-        List<Integer> list = new ArrayList<Integer>();
+    void filterOutMissedAttacks() {
+        List<Integer> list = new ArrayList<>();
         list.add(1);
         list.add(2);
         list.add(3);
@@ -51,9 +51,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         Integer results3 = subject.removeFailedToHitRolls(list, 4);
         Integer results4 = subject.removeFailedToHitRolls(list, 5);
 
-        assertEquals(results1, 5);
-        assertEquals(results2, 4);
-        assertEquals(results3, 3);
-        assertEquals(results4, 2);
+        assertEquals(5, results1);
+        assertEquals(4, results2);
+        assertEquals(3, results3);
+        assertEquals(2, results4);
     }
 }

@@ -6,16 +6,15 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ToWoundServiceTest {
 
     private ToWoundService subject;
-    private DiceRollingService diceRollingService;
 
     @BeforeEach
     void setUp() {
-        subject = new ToWoundService(diceRollingService);
+        subject = new ToWoundService(new DiceRollingService());
     }
 
     @Test
@@ -34,25 +33,25 @@ class ToWoundServiceTest {
         Integer need2s2 = subject.determineToWoundThreshold(8, 2);
         Integer need2s3 = subject.determineToWoundThreshold(6, 4);
 
-        assertEquals(need6s1, 9);
-        assertEquals(need6s2, 8);
-        assertEquals(need6s3, 7);
-        assertEquals(need6s4, 6);
-        assertEquals(need5s1, 5);
-        assertEquals(need5s2, 5);
-        assertEquals(need4s1, 4);
-        assertEquals(need4s2, 4);
-        assertEquals(need3s1, 3);
-        assertEquals(need3s2, 3);
-        assertEquals(need2s1, 2);
-        assertEquals(need2s2, -2);
-        assertEquals(need2s3, 2);
+        assertEquals(9, need6s1);
+        assertEquals(8, need6s2);
+        assertEquals(7, need6s3);
+        assertEquals(6, need6s4);
+        assertEquals(5, need5s1);
+        assertEquals(5, need5s2);
+        assertEquals(4, need4s1);
+        assertEquals(4, need4s2);
+        assertEquals(3, need3s1);
+        assertEquals(3, need3s2);
+        assertEquals(2, need2s1);
+        assertEquals(-2, need2s2);
+        assertEquals(2, need2s3);
 
     }
 
     @Test
     void filterOutFailedToWound() {
-        List<Integer> list = new ArrayList<Integer>();
+        List<Integer> list = new ArrayList<>();
         list.add(1);
         list.add(1);
         list.add(2);
@@ -74,12 +73,12 @@ class ToWoundServiceTest {
         Integer filters5s1 = subject.removeFailedToWoundRolls(list, 6);
         Integer filters5s2 = subject.removeFailedToWoundRolls(list, 10);
 
-        assertEquals(filters1s1, 10);
-        assertEquals(filters1s2, 10);
-        assertEquals(filters2s, 8);
-        assertEquals(filters3s, 6);
-        assertEquals(filters4s, 4);
-        assertEquals(filters5s1, 2);
-        assertEquals(filters5s2, 2);
+        assertEquals(10, filters1s1);
+        assertEquals(10, filters1s2);
+        assertEquals(8, filters2s);
+        assertEquals(6, filters3s);
+        assertEquals(4, filters4s);
+        assertEquals(2, filters5s1);
+        assertEquals(2, filters5s2);
     }
 }

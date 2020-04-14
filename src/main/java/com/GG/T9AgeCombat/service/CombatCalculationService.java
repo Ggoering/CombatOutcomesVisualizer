@@ -1,7 +1,7 @@
 package com.GG.T9AgeCombat.service;
 
-import com.GG.T9AgeCombat.models.Counter;
 import com.GG.T9AgeCombat.enums.Identification;
+import com.GG.T9AgeCombat.enums.SpecialRule;
 import com.GG.T9AgeCombat.models.Result;
 import com.GG.T9AgeCombat.models.Round;
 import com.GG.T9AgeCombat.models.Unit;
@@ -24,7 +24,7 @@ public class CombatCalculationService {
     CombatResolutionService combatResolutionService;
 
     public CombatCalculationService(AttackQuantityService attackQuantityService, ToHitService toHitService, ToWoundService toWoundService,
-            ArmorSaveService armorSaveService, CombatResolutionService combatResolutionService) {
+                                    ArmorSaveService armorSaveService, CombatResolutionService combatResolutionService) {
         this.attackQuantityService = attackQuantityService;
         this.toHitService = toHitService;
         this.toWoundService = toWoundService;
@@ -33,7 +33,7 @@ public class CombatCalculationService {
     }
 
     Result combat(Unit primary, Unit secondary) {
-        List<Round> rounds = this.fight(primary, secondary, false, new ArrayList<>());
+        List<Round> rounds = fight(primary, secondary, false, new ArrayList<>());
         int endingRound = rounds.size() - 1;
         Identification winner = rounds.get(endingRound).getWinner();
 
@@ -45,123 +45,85 @@ public class CombatCalculationService {
             return rounds;
         }
 
-        Integer currentRound = rounds.size();
-        Unit primaryCopy = copyUnit(primary);
-        Unit secondaryCopy = copyUnit(secondary);
+        boolean isFirstRound = rounds.isEmpty();
+        int primaryUnitWoundsDealt = 0;
+        int secondaryUnitWoundsDealt = 0;
 
-        checkLimitations(primaryCopy, currentRound);
-        checkLimitations(secondaryCopy, currentRound);
+        applySpecialRules(primary, isFirstRound);
+        applySpecialRules(secondary, isFirstRound);
+        List<Unit> unitsByInitiative = orderUnitsByInitiative(primary, secondary);
 
-        applyStatMods(primaryCopy);
-        applyStatMods(secondaryCopy);
-
-        Integer primaryWoundsDealt = 0;
-        Integer secondaryWoundsDealt = 0;
-        List<Unit> attackOrder = this.orderAttackers(primaryCopy, secondaryCopy);
-
-        for (int i = 0; i < attackOrder.size(); i++) {
-            Unit attacker = attackOrder.get(i);
-            Unit defender = attackOrder.stream().filter(d -> !d.getName().equals(Identification.MOUNT) && !d.getName().equals(attacker.getName())).findFirst().orElse(null);
+        for (Unit attacker : unitsByInitiative) {
+            Unit defender = unitsByInitiative.stream().filter(d -> !d.getName().equals(Identification.MOUNT)
+                    && !d.getSelection().equals(attacker.getSelection())).findFirst().orElse(null);
 
             if (defender != null) {
-                Integer attackQuantity = attackQuantityService.determineAttackQuantity(attacker, defender);
-                Integer successfulToHitRolls = toHitService.rollToHit(attacker, defender, attackQuantity);
-                Integer successfulToWoundRolls = toWoundService.rollToWound(attacker, defender, successfulToHitRolls);
+                int numberOfAttacks = attackQuantityService.determineAttackQuantity(attacker, defender);
+                int numberOfHits = toHitService.rollToHit(attacker, defender, numberOfAttacks);
+                int numberOfWounds = toWoundService.rollToWound(attacker, defender, numberOfHits);
 
-                if (successfulToHitRolls == 0 || successfulToWoundRolls == 0) {
+                if (numberOfHits == 0 || numberOfWounds == 0) {
                     continue;
                 }
 
-                Integer failedArmorSaves = armorSaveService.rollArmorSaves(attacker, defender, successfulToWoundRolls);
-                defender.updateCount(failedArmorSaves);
+                int failedArmorSaves = armorSaveService.rollArmorSaves(attacker, defender, numberOfWounds);
+                defender.setPendingWounds(failedArmorSaves);
 
                 if (primary.getSelection().equals(attacker.getSelection())) {
-                    primaryWoundsDealt = failedArmorSaves + primaryWoundsDealt;
+                    primaryUnitWoundsDealt += failedArmorSaves;
                 } else {
-                    secondaryWoundsDealt = failedArmorSaves + secondaryWoundsDealt;
+                    secondaryUnitWoundsDealt += failedArmorSaves;
+                }
+
+                // If the attacker is the last in the list then apply wounds
+                // If the next unit has the same initiative as the attacker then do not apply wounds yet
+                if (unitsByInitiative.indexOf(attacker) + 1 == unitsByInitiative.size()
+                        || !attacker.getInitiative().equals(unitsByInitiative.get(unitsByInitiative.indexOf(attacker) + 1).getInitiative())) {
+                    for (Unit unit : unitsByInitiative) {
+                        unit.applyPendingWounds();
+                    }
                 }
             } else {
                 System.out.println("Null defender found when fighting.");
             }
         }
 
-        boolean isFirstRound = rounds.isEmpty();
-        Round round = combatResolutionService.determineResult(primary, secondary, primaryWoundsDealt, secondaryWoundsDealt, isFirstRound);
+        Round round = combatResolutionService.determineResult(primary, secondary, primaryUnitWoundsDealt, secondaryUnitWoundsDealt, isFirstRound);
         rounds.add(round);
         brokenOrWipedOut = (round.getFlee() || round.getWipedOut());
-        primary.updateCount(secondaryWoundsDealt);
-        secondary.updateCount(primaryWoundsDealt);
 
-        return this.fight(primary, secondary, brokenOrWipedOut, rounds);
+        return fight(primary, secondary, brokenOrWipedOut, rounds);
     }
 
-    List<Unit> orderAttackers(Unit primary, Unit secondary) {
+    List<Unit> orderUnitsByInitiative(Unit primary, Unit secondary) {
         List<Unit> unitList = new ArrayList<>();
         unitList.add(primary);
         unitList.add(secondary);
 
         if (primary.getMountAttacks() != null) {
-            unitList.add(Unit.builder().attacks(primary.getMountAttacks()).initiative(primary.getMountInitiative()).strength(primary.getMountStrength()).wardSave(primary.getMountWeaponSkill()).name(Identification.MOUNT).baseSize(primary.getBaseSize()).selection(1).build());
+            unitList.add(Unit.builder().attacks(primary.getMountAttacks()).initiative(primary.getMountInitiative())
+                    .strength(primary.getMountStrength()).offensiveWeaponSkill(primary.getMountWeaponSkill())
+                    .name(Identification.MOUNT).baseSize(primary.getBaseSize()).selection(1).width(primary.getWidth())
+                    .modelCount(primary.getModelCount()).build());
         }
 
         if (secondary.getMountAttacks() != null) {
-            unitList.add(Unit.builder().attacks(secondary.getMountAttacks()).initiative(secondary.getMountInitiative()).strength(secondary.getMountStrength()).wardSave(secondary.getMountWeaponSkill()).name(Identification.MOUNT).baseSize(secondary.getBaseSize()).selection(2).build());
+            unitList.add(Unit.builder().attacks(secondary.getMountAttacks()).initiative(secondary.getMountInitiative())
+                    .strength(secondary.getMountStrength()).offensiveWeaponSkill(secondary.getMountWeaponSkill())
+                    .name(Identification.MOUNT).baseSize(secondary.getBaseSize()).selection(2).width(secondary.getWidth())
+                    .modelCount(secondary.getModelCount()).build());
         }
 
         return unitList.stream().sorted(Comparator.comparing(Unit::getInitiative).reversed()).collect(toList());
     }
 
-    Unit copyUnit(Unit unit) {
-        return Unit.builder().modelCount(unit.getModelCount()).
-                toughness(unit.getToughness()).
-                attacks(unit.getAttacks()).
-                armorSave(unit.getArmorSave()).
-                baseSize(unit.getBaseSize()).
-                defensiveWeaponSkill(unit.getDefensiveWeaponSkill()).
-                initiative(unit.getInitiative()).
-                leadership(unit.getLeadership()).
-                movement(unit.getMovement()).
-                mountAttacks(unit.getMountAttacks()).
-                mountInitiative(unit.getMountInitiative()).
-                mountMovement(unit.getMountMovement()).
-                mountStrength(unit.getMountStrength()).
-                mountWounds(unit.getMountWounds()).
-                mountWeaponSkill(unit.getMountWeaponSkill()).
-                musician(unit.getMusician()).
-                offensiveWeaponSkill(unit.getOffensiveWeaponSkill()).
-                strength(unit.getStrength()).
-                selection(unit.getSelection()).
-                standardBearer(unit.getStandardBearer()).
-                wounds(unit.getWounds()).
-                width(unit.getWidth()).
-                wardSave(unit.getWardSave()).
-                equipmentList(unit.getEquipmentList()).
-                name(unit.getName()).
-                specialRulesList(unit.getSpecialRulesList()).
-                build();
-    }
-
-    void checkLimitations(Unit unit, Integer currentRound) {
-        Counter indexTracker = new Counter();
-        List<Integer> removalIndices = new ArrayList<>();
-
-        if (unit.getSpecialRulesList() != null) {
-            unit.getSpecialRulesList().stream().forEach(a -> {
-                indexTracker.increaseCount();
-                boolean isValid = CheckLimitationPredicate.checkFirstRound(a.getLimitation(), currentRound);
-                if (!isValid) {
-                    removalIndices.add(indexTracker.getCount());
+    void applySpecialRules(Unit unit, boolean isFirstRound) {
+        if (unit.getSpecialRuleList() != null) {
+            for (SpecialRule specialRule : unit.getSpecialRuleList()) {
+                if (CheckLimitationPredicate.validateSpecialRuleLimitation(specialRule.getLimitation(), isFirstRound)) {
+                    DetermineModificationPredicate.applyBonus(unit, specialRule.getModification(), specialRule.getValue());
                 }
-            });
-
-            removalIndices.stream().forEach(i -> unit.getSpecialRulesList().remove(i));
+            }
         }
     }
-
-    void applyStatMods(Unit unit) {
-        if (unit.getSpecialRulesList() != null) {
-            unit.getSpecialRulesList().stream().forEach(a -> DetermineModificationPredicate.applyBonus(unit, a.getModification(), a.getValue()));
-        }
-    }
-
 }

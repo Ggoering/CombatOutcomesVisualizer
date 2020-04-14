@@ -2,7 +2,7 @@ package com.GG.T9AgeCombat.models;
 
 import com.GG.T9AgeCombat.enums.Equipment;
 import com.GG.T9AgeCombat.enums.Identification;
-import com.GG.T9AgeCombat.enums.SpecialRules;
+import com.GG.T9AgeCombat.enums.SpecialRule;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Value;
@@ -25,11 +25,13 @@ public class Unit implements Comparable<Unit> {
     Integer toughness;
     Integer initiative;
     Integer wounds;
+    @NonFinal
+    int pendingWounds;
     Integer attacks;
     Integer leadership;
     Integer baseSize;
     @NonFinal
-    Integer modelCount;
+    int modelCount;
     Integer armorSave;
     Integer wardSave;
     Integer mountWeaponSkill;
@@ -41,21 +43,63 @@ public class Unit implements Comparable<Unit> {
     Integer width;
     Integer selection;
     Integer standardBearer;
-    Integer musician;
-    List<SpecialRules> specialRulesList;
+    boolean hasMusician;
+    List<SpecialRule> specialRuleList;
     List<Equipment> equipmentList;
 
-    public int compareTo(Unit compareUnits) {
-        return this.initiative - compareUnits.getInitiative();
+    public void setPendingWounds(int pendingWounds) {
+        this.pendingWounds += pendingWounds;
     }
 
-    public void updateCount(Integer wounds) {
-        this.modelCount = wounds >= this.getModelCount() ? 0 : this.getModelCount() - wounds;
-        Integer newCount = wounds >= this.getModelCount() ? 0 : this.getModelCount() - wounds;
-        this.modelCount = newCount;
+    public int compareTo(Unit compareUnits) {
+        return initiative - compareUnits.getInitiative();
+    }
 
-    } public void updateStrength(Integer strength) {
-        Integer newStrength = strength + this.strength;
-        this.strength = newStrength;
+    public void applyPendingWounds() {
+        modelCount = (pendingWounds < modelCount ? modelCount - pendingWounds : 0);
+        pendingWounds = 0;
+    }
+
+    public void updateStrength(Integer strength) {
+        this.strength += strength;
+    }
+
+    public int getRankBonus() {
+        return modelCount / width;
+    }
+
+    public int getActualWidth() {
+        return modelCount >= width ? width * baseSize : modelCount * baseSize;
+    }
+
+    public Unit createCopy() {
+        return Unit.builder()
+                .name(name)
+                .movement(movement)
+                .offensiveWeaponSkill(offensiveWeaponSkill)
+                .defensiveWeaponSkill(defensiveWeaponSkill)
+                .strength(strength)
+                .toughness(toughness)
+                .initiative(initiative)
+                .wounds(wounds)
+                .attacks(attacks)
+                .leadership(leadership)
+                .baseSize(baseSize)
+                .modelCount(modelCount)
+                .armorSave(armorSave)
+                .wardSave(wardSave)
+                .mountWeaponSkill(mountWeaponSkill)
+                .mountStrength(mountStrength)
+                .mountAttacks(mountAttacks)
+                .mountWounds(mountWounds)
+                .mountInitiative(mountInitiative)
+                .mountMovement(mountMovement)
+                .width(width)
+                .selection(selection)
+                .standardBearer(standardBearer)
+                .hasMusician(hasMusician)
+                .specialRuleList(specialRuleList)
+                .equipmentList(equipmentList)
+                .build();
     }
 }

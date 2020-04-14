@@ -6,11 +6,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DetermineModificationPredicate {
+    private DetermineModificationPredicate() {
+    }
+
     public static void applyBonus(Unit unit, Modification modification, Integer value) {
         switch (modification) {
-            case STRENGTH: {
+            case STRENGTH:
                 unit.updateStrength(value);
-            }
         }
     }
 

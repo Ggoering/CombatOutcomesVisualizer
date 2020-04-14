@@ -5,11 +5,15 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CheckLimitationPredicate {
-    public static boolean checkFirstRound(Limitation limitation, Integer currentRound) {
-        if(limitation == Limitation.FIRST_ROUND && currentRound == 1) {
-            return true;
-        } else {
-            return false;
+    private CheckLimitationPredicate() {
+    }
+
+    public static boolean validateSpecialRuleLimitation(Limitation limitation, boolean isFirstRound) {
+        switch (limitation) {
+            case FIRST_ROUND:
+                return isFirstRound;
+            default:
+                return false;
         }
     }
 }
