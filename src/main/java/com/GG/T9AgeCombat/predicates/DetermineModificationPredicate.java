@@ -1,7 +1,6 @@
 package com.GG.T9AgeCombat.predicates;
 
 import com.GG.T9AgeCombat.enums.Modification;
-import com.GG.T9AgeCombat.enums.SpecialRule;
 import com.GG.T9AgeCombat.models.Unit;
 import org.springframework.stereotype.Component;
 
