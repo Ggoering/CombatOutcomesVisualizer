@@ -1,9 +1,12 @@
 package com.GG.T9AgeCombat.service;
 
+import com.GG.T9AgeCombat.models.Counter;
 import com.GG.T9AgeCombat.enums.Identification;
 import com.GG.T9AgeCombat.models.Result;
 import com.GG.T9AgeCombat.models.Round;
 import com.GG.T9AgeCombat.models.Unit;
+import com.GG.T9AgeCombat.predicates.CheckLimitationPredicate;
+import com.GG.T9AgeCombat.predicates.DetermineModificationPredicate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -42,8 +45,15 @@ public class CombatCalculationService {
             return rounds;
         }
 
+        Integer currentRound = rounds.size();
         Unit primaryCopy = copyUnit(primary);
         Unit secondaryCopy = copyUnit(secondary);
+
+        checkLimitations(primaryCopy, currentRound);
+        checkLimitations(secondaryCopy, currentRound);
+
+        applyStatMods(primaryCopy);
+        applyStatMods(secondaryCopy);
 
         Integer primaryWoundsDealt = 0;
         Integer secondaryWoundsDealt = 0;
@@ -130,4 +140,22 @@ public class CombatCalculationService {
                 specialRulesList(unit.getSpecialRulesList()).
                 build();
     }
+
+    void checkLimitations(Unit unit, Integer currentRound) {
+        Counter indexTracker = new Counter();
+        List<Integer> removalIndices = new ArrayList<Integer>();
+
+        unit.getSpecialRulesList().stream().forEach(a -> {
+            indexTracker.increaseCount();
+            boolean isValid = CheckLimitationPredicate.checkFirstRound(a.getLimitation(), currentRound);
+            if(!isValid) {removalIndices.add(indexTracker.getCount());}
+        });
+
+        removalIndices.stream().forEach(i -> unit.getSpecialRulesList().remove(i));
+    }
+
+    void applyStatMods(Unit unit) {
+        unit.getSpecialRulesList().stream().forEach(a ->  DetermineModificationPredicate.applyBonus(unit, a.getModification(), a.getValue()));
+    }
+
 }

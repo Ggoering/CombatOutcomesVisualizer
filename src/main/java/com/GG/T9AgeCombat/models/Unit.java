@@ -20,6 +20,7 @@ public class Unit implements Comparable<Unit> {
     Integer movement;
     Integer offensiveWeaponSkill;
     Integer defensiveWeaponSkill;
+    @NonFinal
     Integer strength;
     Integer toughness;
     Integer initiative;
@@ -50,5 +51,11 @@ public class Unit implements Comparable<Unit> {
 
     public void updateCount(Integer wounds) {
         this.modelCount = wounds >= this.getModelCount() ? 0 : this.getModelCount() - wounds;
+        Integer newCount = wounds >= this.getModelCount() ? 0 : this.getModelCount() - wounds;
+        this.modelCount = newCount;
+
+    } public void updateStrength(Integer strength) {
+        Integer newStrength = strength + this.strength;
+        this.strength = newStrength;
     }
 }

@@ -28,4 +28,12 @@ public enum SpecialRules {
     public Integer getValue() {
         return value;
     }
+
+    public Limitation getLimitation() {
+        return limitation;
+    }
+
+    public Modification getModification() {
+        return modification;
+    }
 }
