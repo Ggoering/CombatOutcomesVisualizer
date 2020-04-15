@@ -1,6 +1,5 @@
 package com.GG.T9AgeCombat.service;
 
-import com.GG.T9AgeCombat.enums.Identification;
 import com.GG.T9AgeCombat.models.Unit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,8 +21,8 @@ class AttackQuantityServiceTest {
 
     @Test
     void determineAttackQuantity() {
-        Unit swordmaster = Unit.builder().name(Identification.SWORD_MASTER).movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).baseSize(20).modelCount(30).armorSave(5).width(5).build();
-        Unit blorcs = Unit.builder().name(Identification.BLACK_ORC).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).baseSize(25).modelCount(25).armorSave(4).width(10).build();
+        Unit swordmaster = Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).basesize(20).modelCount(30).armorSave(5).width(5).build();
+        Unit blorcs = Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(25).armorSave(4).width(10).build();
 
         Integer attackQuantitySM = subject.determineAttackQuantity(swordmaster, blorcs);
         assertEquals(15, attackQuantitySM);
@@ -34,10 +33,10 @@ class AttackQuantityServiceTest {
 
     @Test
     void determineModelsNotInBaseContact() {
-        Unit swordmaster = Unit.builder().name(Identification.SWORD_MASTER).movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).baseSize(20).modelCount(30).armorSave(5).width(5).build();
-        Unit swordmasterMedium = Unit.builder().name(Identification.SWORD_MASTER).movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).baseSize(20).modelCount(30).armorSave(5).width(7).build();
-        Unit swordmasterWide = Unit.builder().name(Identification.SWORD_MASTER).movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).baseSize(20).modelCount(30).armorSave(5).width(10).build();
-        Unit blorcs = Unit.builder().name(Identification.BLACK_ORC).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).baseSize(25).modelCount(25).armorSave(4).width(10).build();
+        Unit swordmaster = Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).basesize(20).modelCount(30).armorSave(5).width(5).build();
+        Unit swordmasterMedium = Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).basesize(20).modelCount(30).armorSave(5).width(7).build();
+        Unit swordmasterWide = Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).basesize(20).modelCount(30).armorSave(5).width(10).build();
+        Unit blorcs = Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(25).armorSave(4).width(10).build();
 
         Integer blorcsActualWidth = blorcs.getActualWidth();
         Integer SMActualWidth = swordmaster.getActualWidth();
@@ -57,15 +56,15 @@ class AttackQuantityServiceTest {
 
     @Test
     void determineSupportingAttacks() {
-        Unit blorcs = Unit.builder().name(Identification.BLACK_ORC).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).baseSize(25).modelCount(25).armorSave(4).width(10).build();
-        Unit blorcs2 = Unit.builder().name(Identification.BLACK_ORC).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).baseSize(25).modelCount(11).armorSave(4).width(10).build();
-        Unit blorcs3 = Unit.builder().name(Identification.BLACK_ORC).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).baseSize(25).modelCount(10).armorSave(4).width(10).build();
-        Unit blorcs4 = Unit.builder().name(Identification.BLACK_ORC).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).baseSize(25).modelCount(30).armorSave(4).width(10).build();
-        Unit blorcs5 = Unit.builder().name(Identification.BLACK_ORC).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).baseSize(25).modelCount(30).armorSave(4).width(10).build();
-        Unit blorcs6 = Unit.builder().name(Identification.BLACK_ORC).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).baseSize(25).modelCount(3).armorSave(4).width(10).build();
-        Unit blorcs7 = Unit.builder().name(Identification.BLACK_ORC).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).baseSize(25).modelCount(9).armorSave(4).width(5).build();
-        Unit blorcs8 = Unit.builder().name(Identification.BLACK_ORC).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).baseSize(25).modelCount(55).armorSave(4).width(5).build();
-        Unit blorcs9 = Unit.builder().name(Identification.BLACK_ORC).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).baseSize(25).modelCount(0).armorSave(4).width(5).build();
+        Unit blorcs = Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(25).armorSave(4).width(10).build();
+        Unit blorcs2 = Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(11).armorSave(4).width(10).build();
+        Unit blorcs3 = Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(10).armorSave(4).width(10).build();
+        Unit blorcs4 = Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(30).armorSave(4).width(10).build();
+        Unit blorcs5 = Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(30).armorSave(4).width(10).build();
+        Unit blorcs6 = Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(3).armorSave(4).width(10).build();
+        Unit blorcs7 = Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(9).armorSave(4).width(5).build();
+        Unit blorcs8 = Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(55).armorSave(4).width(5).build();
+        Unit blorcs9 = Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(0).armorSave(4).width(5).build();
         Integer BONotInB2B1 = 4;
         Integer BONotInB2B2 = 0;
 
@@ -92,11 +91,11 @@ class AttackQuantityServiceTest {
 
     @Test
     void determineFrontRankAttacks() {
-        Unit blorcs = Unit.builder().name(Identification.BLACK_ORC).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(2).leadership(8).baseSize(25).modelCount(10).armorSave(4).width(10).build();
-        Unit blorcs2 = Unit.builder().name(Identification.BLACK_ORC).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).baseSize(25).modelCount(11).armorSave(4).width(10).build();
-        Unit blorcs3 = Unit.builder().name(Identification.BLACK_ORC).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(2).leadership(8).baseSize(25).modelCount(1).armorSave(4).width(5).build();
-        Unit blorcs4 = Unit.builder().name(Identification.BLACK_ORC).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(7).leadership(8).baseSize(25).modelCount(0).armorSave(4).width(5).build();
-        Unit blorcs5 = Unit.builder().name(Identification.BLACK_ORC).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(7).leadership(8).baseSize(25).modelCount(0).armorSave(4).width(5).build();
+        Unit blorcs = Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(2).leadership(8).basesize(25).modelCount(10).armorSave(4).width(10).build();
+        Unit blorcs2 = Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(11).armorSave(4).width(10).build();
+        Unit blorcs3 = Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(2).leadership(8).basesize(25).modelCount(1).armorSave(4).width(5).build();
+        Unit blorcs4 = Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(7).leadership(8).basesize(25).modelCount(0).armorSave(4).width(5).build();
+        Unit blorcs5 = Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(7).leadership(8).basesize(25).modelCount(0).armorSave(4).width(5).build();
 
         Integer BONotInB2B1 = 4;
         Integer BONotInB2B2 = 0;

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-
 public class ArmorSaveService {
     private static final int ARMOR_PENETRATION_MODIFIER = 3;
     private static final int ARMOR_SAVE_AUTO_FAIL = 1;

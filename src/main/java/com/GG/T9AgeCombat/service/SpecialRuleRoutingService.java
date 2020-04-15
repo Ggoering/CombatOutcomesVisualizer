@@ -1,23 +1,21 @@
 package com.GG.T9AgeCombat.service;
 
-import com.GG.T9AgeCombat.enums.Limitation;
 import com.GG.T9AgeCombat.models.Unit;
 import com.GG.T9AgeCombat.predicates.CheckLimitationPredicate;
 import org.springframework.stereotype.Service;
 
+import static com.GG.T9AgeCombat.enums.LimitationEnum.*;
+
 
 @Service
 public class SpecialRuleRoutingService {
-    Boolean routeLimitationToPredicate(Limitation limitation, Unit unit, boolean isFirstRound) {
-        switch (limitation) {
-            case FIRST_ROUND:
-                return CheckLimitationPredicate.checkFirstRound((Boolean) isFirstRound);
-            case TEN_WIDE:
-                return CheckLimitationPredicate.checkHorde((Integer) unit.getWidth());
-            case NONE:
-                return true;
-            default:
-                return false;
+    Boolean routeLimitationToPredicate(String limitation, Unit unit, boolean isFirstRound) {
+        if (limitation.equals(FIRST_ROUND.toString())) {
+            return CheckLimitationPredicate.checkFirstRound(isFirstRound);
+        } else if (limitation.equals(TEN_WIDE.toString())) {
+            return CheckLimitationPredicate.checkHorde(unit.getWidth());
+        } else {
+            return limitation.equals(NONE.toString());
         }
     }
 }

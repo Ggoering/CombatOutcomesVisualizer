@@ -6,11 +6,12 @@ import org.springframework.stereotype.Component;
 public class CheckLimitationPredicate {
     private CheckLimitationPredicate() {
     }
+
     public static boolean checkFirstRound(Boolean isFirstRound) {
         return isFirstRound;
     }
 
     public static boolean checkHorde(Integer unitWidth) {
-         return unitWidth >= 10;
+        return unitWidth >= 10;
     }
 }

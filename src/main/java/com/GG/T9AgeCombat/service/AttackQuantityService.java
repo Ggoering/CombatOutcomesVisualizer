@@ -1,6 +1,5 @@
 package com.GG.T9AgeCombat.service;
 
-import com.GG.T9AgeCombat.enums.Identification;
 import com.GG.T9AgeCombat.models.Unit;
 import org.springframework.stereotype.Service;
 
@@ -21,13 +20,13 @@ public class AttackQuantityService {
             return 0;
         }
 
-        return Math.abs(widthDifference / attacker.getBaseSize()) - 2;
+        return Math.abs(widthDifference / attacker.getBasesize()) - 2;
     }
 
     Integer determineSupportingAttacks(Unit attacker, Integer modelsNotInB2B) {
         Integer modelCount = attacker.getModelCount();
         Integer unitWidth = attacker.getWidth();
-        if (attacker.getName().equals(Identification.MOUNT) || (modelCount - unitWidth) <= 0) {
+        if (attacker.isMount() || (modelCount - unitWidth) <= 0) {
             return 0;
         }
 
