@@ -1,10 +1,14 @@
 package com.GG.T9AgeCombat.enums;
 
-import static com.GG.T9AgeCombat.enums.Limitation.FIRST_ROUND;
-import static com.GG.T9AgeCombat.enums.Modification.STRENGTH;
+import static com.GG.T9AgeCombat.enums.Limitation.*;
+import static com.GG.T9AgeCombat.enums.Modification.*;
+import static com.GG.T9AgeCombat.enums.Timing.*;
 
 public enum SpecialRule {
-    BORN_TO_FIGHT("born to fight", Timing.ALL, STRENGTH, 1, FIRST_ROUND);
+    BORN_TO_FIGHT("born to fight", ALL, STRENGTH, 1, FIRST_ROUND),
+    LIGHTNING_REFLEXES("lightning reflexes", ROLL_TO_HIT, TO_HIT,1, NONE),
+    HORDE("horde", DETERMINE_ATTACK_QUANTITY, EXTRA_RANKS, 1, TEN_WIDE),
+    HATRED("hatred", ROLL_TO_HIT, RE_ROLL_TO_HIT, 6, FIRST_ROUND);
 
     private final String name;
     private final Timing timing;

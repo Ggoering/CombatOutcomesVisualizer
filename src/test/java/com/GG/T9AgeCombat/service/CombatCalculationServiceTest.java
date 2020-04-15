@@ -1,6 +1,7 @@
 package com.GG.T9AgeCombat.service;
 
 import com.GG.T9AgeCombat.enums.Identification;
+import com.GG.T9AgeCombat.enums.SpecialRule;
 import com.GG.T9AgeCombat.models.Round;
 import com.GG.T9AgeCombat.models.Unit;
 import org.junit.jupiter.api.DisplayName;
@@ -155,8 +156,41 @@ public class CombatCalculationServiceTest {
         assertThat(actualRound).isEqualTo(expectedResult);
     }
 
+    @Test
+    @DisplayName("Applies special rules")
+    void applySpecialRules() {
+        List<SpecialRule> SwordMasterSpecialRuleList = new ArrayList<>();
+        SwordMasterSpecialRuleList.add(SpecialRule.LIGHTNING_REFLEXES);
+        SwordMasterSpecialRuleList.add(SpecialRule.HORDE);
+
+        List<SpecialRule> BlackOrcSpecialRuleList = new ArrayList<>();
+        BlackOrcSpecialRuleList.add(SpecialRule.BORN_TO_FIGHT);
+        BlackOrcSpecialRuleList.add(SpecialRule.HORDE);
+        BlackOrcSpecialRuleList.add(SpecialRule.HATRED);
+
+
+        Unit unit1 = Unit.builder().name(Identification.SWORD_MASTER).movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(1).leadership(8).baseSize(25).modelCount(30).armorSave(5).width(10).selection(1).standardBearer(1).reRollToHitLessThan(0).toHitBonus(0).extraRanks(0).hasMusician(true).specialRuleList(SwordMasterSpecialRuleList).build();
+        Unit unit2 = Unit.builder().name(Identification.BLACK_ORC).movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(4).toughness(4).initiative(3).wounds(1).attacks(1).leadership(8).baseSize(25).modelCount(12).armorSave(5).width(5).selection(2).standardBearer(1).reRollToHitLessThan(0).toHitBonus(0).extraRanks(0).hasMusician(true).specialRuleList(BlackOrcSpecialRuleList).build();
+
+        Integer expectedResultLightningReflexesApplied = 1;
+        Integer expectedResultSwordMasterHordeApplied = 1;
+        Integer expectedResultBlackOrcHordeApplied = 0;
+        Integer expectedResultBornToFightApplied = 5;
+        Integer expectedResultHatredApplied = 6;
+
+        getCombatCalculationService().applySpecialRules(unit1, true);
+        getCombatCalculationService().applySpecialRules(unit2, true);
+
+        assertThat(unit1.getToHitBonus()).isEqualTo(expectedResultLightningReflexesApplied);
+        assertThat(unit1.getExtraRanks()).isEqualTo(expectedResultSwordMasterHordeApplied);
+
+        assertThat(unit2.getExtraRanks()).isEqualTo(expectedResultBlackOrcHordeApplied);
+        assertThat(unit2.getStrength()).isEqualTo(expectedResultBornToFightApplied);
+        assertThat(unit2.getReRollToHitLessThan()).isEqualTo(expectedResultHatredApplied);
+    }
+
     private CombatCalculationService getCombatCalculationService() {
         return new CombatCalculationService(new AttackQuantityService(), mockToHitService, mockToWoundService,
-                mockArmorSaveService, mockWardSaveService, new CombatResolutionService(mockDiceRollingService));
+                mockArmorSaveService, mockWardSaveService, new CombatResolutionService(mockDiceRollingService), new SpecialRuleRoutingService());
     }
 }

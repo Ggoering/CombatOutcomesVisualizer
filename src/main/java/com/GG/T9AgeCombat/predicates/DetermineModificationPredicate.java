@@ -9,10 +9,26 @@ public class DetermineModificationPredicate {
     private DetermineModificationPredicate() {
     }
 
-    public static void applyBonus(Unit unit, Modification modification, Integer value) {
+    public static void applyBonus(Unit unit, Modification modification, Object value) {
         switch (modification) {
-            case STRENGTH:
-                unit.updateStrength(value);
+            case STRENGTH: {
+                unit.updateStrength((Integer) value);
+                break;
+            }
+            case RE_ROLL_TO_HIT: {
+                unit.updateReRollToHit((Integer) value);
+                break;
+            }
+            case TO_HIT: {
+                unit.updateToHitBonus((Integer) value);
+                break;
+            }
+            case EXTRA_RANKS: {
+                unit.updateExtraRank((Integer) value);
+                break;
+            }
+            default:
+                break;
         }
     }
 

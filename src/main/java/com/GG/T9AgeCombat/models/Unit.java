@@ -44,6 +44,19 @@ public class Unit implements Comparable<Unit> {
     Integer selection;
     Integer standardBearer;
     boolean hasMusician;
+    Integer musician;
+    @NonFinal
+    Integer reRollToHitLessThan;
+    @NonFinal
+    Boolean hasReRollToWound;
+    @NonFinal
+    Boolean hasReRollArmorSave;
+    @NonFinal
+    Boolean hasReRollLeadership;
+    @NonFinal
+    Integer toHitBonus;
+    @NonFinal
+    Integer extraRanks;
     List<SpecialRule> specialRuleList;
     List<Equipment> equipmentList;
 
@@ -70,6 +83,17 @@ public class Unit implements Comparable<Unit> {
 
     public int getActualWidth() {
         return modelCount >= width ? width * baseSize : modelCount * baseSize;
+    }
+
+    public void updateReRollToHit(Integer reRollToHit) {
+        this.reRollToHitLessThan = reRollToHit;
+    }
+
+    public void updateToHitBonus(Integer toHitBonus) {
+        this.toHitBonus = this.toHitBonus + toHitBonus;
+    }
+    public void updateExtraRank(Integer extraRank) {
+        this.extraRanks = this.extraRanks + extraRank;
     }
 
     public Unit createCopy() {
