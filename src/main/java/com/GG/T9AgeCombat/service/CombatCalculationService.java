@@ -88,7 +88,7 @@ public class CombatCalculationService {
             }
         }
 
-        Round round = combatResolutionService.determineResult(primary, secondary, primaryUnitWoundsDealt, secondaryUnitWoundsDealt, isFirstRound);
+        Round round = combatResolutionService.calculateCombatResult(primary, secondary, primaryUnitWoundsDealt, secondaryUnitWoundsDealt, isFirstRound);
         rounds.add(round);
         brokenOrWipedOut = (round.getFlee() || round.getWipedOut());
 

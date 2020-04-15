@@ -108,6 +108,7 @@ public class CombatCalculationServiceTest {
         when(mockToWoundService.rollToWound(unit2CriticalWound, unit1Wounded, 0)).thenReturn(0);
 
         when(mockDiceRollingService.rollWithSum(2)).thenReturn(7);
+        when(mockDiceRollingService.rollWithSumTakeHighest(3, 2)).thenReturn(9);
 
         // Act
         List<Round> actualRound = getCombatCalculationService().fight(unit1, unit2, false, new ArrayList<>());

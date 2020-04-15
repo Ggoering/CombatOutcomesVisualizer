@@ -6,19 +6,26 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CombatResolutionService {
+    private static final int LEADERSHIP_TEST_AUTO_PASS = 2;
+    private static final int LEADERSHIP_TEST_DEFAULT_DIE_COUNT = 2;
+    private static final int FLEE_AND_PURSUIT_DEFAULT_DIE_COUNT = 2;
+    private static final int FLEE_AND_PURSUIT_MOUNT_DIE_COUNT = 3;
+    private static final int FLEE_AND_PURSUIT_MOUNT_TAKE_HIGHEST_COUNT = 2;
     DiceRollingService diceRollingService;
 
     public CombatResolutionService(DiceRollingService diceRollingService) {
         this.diceRollingService = diceRollingService;
     }
 
-    Round determineResult(Unit primary, Unit secondary, Integer primaryWoundsDealt, Integer secondaryWoundsDealt, boolean isFirstRound) {
+    Round calculateCombatResult(Unit primary, Unit secondary, Integer primaryWoundsDealt, Integer secondaryWoundsDealt, boolean isFirstRound) {
         if (primary.getModelCount() <= 0) {
-            return Round.builder().primaryWoundsDealt(primaryWoundsDealt).secondaryWoundsDealt(secondaryWoundsDealt).winner(secondary.getName()).wipedOut(true).flee(false).build();
+            return Round.builder().primaryWoundsDealt(primaryWoundsDealt).secondaryWoundsDealt(secondaryWoundsDealt)
+                    .winner(secondary.getName()).wipedOut(true).flee(false).build();
         }
 
         if (secondary.getModelCount() <= 0) {
-            return Round.builder().secondaryWoundsDealt(secondaryWoundsDealt).primaryWoundsDealt(primaryWoundsDealt).winner(primary.getName()).wipedOut(true).flee(false).build();
+            return Round.builder().secondaryWoundsDealt(secondaryWoundsDealt).primaryWoundsDealt(primaryWoundsDealt)
+                    .winner(primary.getName()).wipedOut(true).flee(false).build();
         }
 
         int primaryUnitRankBonus = primary.getRankBonus();
@@ -44,7 +51,8 @@ public class CombatResolutionService {
             combatResolutionDifference = primaryUnitCombatResolutionSum - secondaryUnitCombatResolutionSum;
 
             if (combatResolutionDifference == 0) {
-                return Round.builder().secondaryWoundsDealt(secondaryWoundsDealt).primaryWoundsDealt(primaryWoundsDealt).flee(false).wipedOut(false).build();
+                return Round.builder().secondaryWoundsDealt(secondaryWoundsDealt).primaryWoundsDealt(primaryWoundsDealt).flee(false)
+                        .wipedOut(false).build();
             }
         }
 
@@ -56,35 +64,40 @@ public class CombatResolutionService {
             isSteadfast = secondaryUnitRankBonus > primaryUnitRankBonus;
             flees = breakTest(secondary, combatResolutionDifference, isSteadfast);
 
-            return getRound(primary, primaryWoundsDealt, secondaryWoundsDealt, flees);
+            return createRound(primary, secondary, primaryWoundsDealt, secondaryWoundsDealt, flees);
         } else {
             isSteadfast = secondaryUnitRankBonus < primaryUnitRankBonus;
             flees = breakTest(primary, Math.abs(combatResolutionDifference), isSteadfast);
 
-            return getRound(secondary, primaryWoundsDealt, secondaryWoundsDealt, flees);
+            return createRound(secondary, primary, primaryWoundsDealt, secondaryWoundsDealt, flees);
         }
     }
 
-    private Round getRound(Unit primary, Integer primaryWoundsDealt, Integer secondaryWoundsDealt, boolean unitFlees) {
+    Round createRound(Unit winner, Unit loser, Integer primaryWoundsDealt, Integer secondaryWoundsDealt, boolean unitFlees) {
         boolean isCaught = false;
 
         if (unitFlees) {
-            int fleeDistance = diceRollingService.rollWithSum(2);
-            int pursuitDistance = diceRollingService.rollWithSum(2);
+            int fleeDistance = (loser.getMountMovement() != null ?
+                    diceRollingService.rollWithSumTakeHighest(FLEE_AND_PURSUIT_MOUNT_DIE_COUNT, FLEE_AND_PURSUIT_MOUNT_TAKE_HIGHEST_COUNT) :
+                    diceRollingService.rollWithSum(FLEE_AND_PURSUIT_DEFAULT_DIE_COUNT));
+            int pursuitDistance = (winner.getMountMovement() != null ?
+                    diceRollingService.rollWithSumTakeHighest(FLEE_AND_PURSUIT_MOUNT_DIE_COUNT, FLEE_AND_PURSUIT_MOUNT_TAKE_HIGHEST_COUNT) :
+                    diceRollingService.rollWithSum(FLEE_AND_PURSUIT_DEFAULT_DIE_COUNT));
             isCaught = fleeDistance > pursuitDistance;
         }
 
-        return Round.builder().secondaryWoundsDealt(secondaryWoundsDealt).primaryWoundsDealt(primaryWoundsDealt).flee(unitFlees).caught(isCaught).wipedOut(false).winner(primary.getName()).build();
+        return Round.builder().secondaryWoundsDealt(secondaryWoundsDealt).primaryWoundsDealt(primaryWoundsDealt).flee(unitFlees)
+                .caught(isCaught).wipedOut(false).winner(winner.getName()).build();
     }
 
     boolean breakTest(Unit unit, Integer differential, boolean steadfast) {
         Integer leadership = unit.getLeadership();
-        int leadershipCheck = diceRollingService.rollWithSum(2);
+        int leadershipCheck = diceRollingService.rollWithSum(LEADERSHIP_TEST_DEFAULT_DIE_COUNT);
 
         if (!steadfast) {
             leadership = leadership - differential;
         }
 
-        return leadershipCheck != 2 || leadershipCheck > leadership;
+        return leadershipCheck != LEADERSHIP_TEST_AUTO_PASS || leadershipCheck > leadership;
     }
 }
