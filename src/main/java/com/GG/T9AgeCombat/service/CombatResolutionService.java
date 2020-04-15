@@ -21,62 +21,63 @@ public class CombatResolutionService {
             return Round.builder().secondaryWoundsDealt(secondaryWoundsDealt).primaryWoundsDealt(primaryWoundsDealt).winner(primary.getName()).wipedOut(true).flee(false).build();
         }
 
-        Integer primaryRankBonus = this.calculateRankBonus(primary);
-        Integer secondaryRankBonus = this.calculateRankBonus(secondary);
-
-        Integer primarySum = primaryRankBonus + primaryWoundsDealt + primary.getStandardBearer();
-        Integer secondarySum = secondaryRankBonus + secondaryWoundsDealt + secondary.getStandardBearer();
+        int primaryUnitRankBonus = primary.getRankBonus();
+        int secondaryUnitRankBonus = secondary.getRankBonus();
+        int primaryUnitCombatResolutionSum = primaryUnitRankBonus + primaryWoundsDealt + primary.getStandardBearer();
+        int secondaryUnitCombatResolutionSum = secondaryUnitRankBonus + secondaryWoundsDealt + secondary.getStandardBearer();
 
         if (isFirstRound) {
-            primarySum++;
+            primaryUnitCombatResolutionSum++;
         }
 
-        int differential = primarySum - secondarySum;
+        int combatResolutionDifference = primaryUnitCombatResolutionSum - secondaryUnitCombatResolutionSum;
 
-        if (differential == 0) {
-            primarySum = primarySum + primary.getMusician();
-            secondarySum = secondarySum + secondary.getMusician();
+        if (combatResolutionDifference == 0) {
+            if (primary.isHasMusician()) {
+                primaryUnitCombatResolutionSum++;
+            }
 
-            differential = primarySum - secondarySum;
+            if (secondary.isHasMusician()) {
+                secondaryUnitCombatResolutionSum++;
+            }
 
-            if (differential == 0) {
+            combatResolutionDifference = primaryUnitCombatResolutionSum - secondaryUnitCombatResolutionSum;
+
+            if (combatResolutionDifference == 0) {
                 return Round.builder().secondaryWoundsDealt(secondaryWoundsDealt).primaryWoundsDealt(primaryWoundsDealt).flee(false).wipedOut(false).build();
             }
         }
 
-        boolean steadfast;
-        boolean flee;
+        boolean isSteadfast;
+        boolean flees;
 
-        if (differential > 0) {
-            steadfast = secondaryRankBonus > primaryRankBonus;
-            flee = this.breakTest(secondary, differential, steadfast);
+        // Primary unit won combat
+        if (combatResolutionDifference > 0) {
+            isSteadfast = secondaryUnitRankBonus > primaryUnitRankBonus;
+            flees = breakTest(secondary, combatResolutionDifference, isSteadfast);
 
-            return getRound(primary, primaryWoundsDealt, secondaryWoundsDealt, flee);
+            return getRound(primary, primaryWoundsDealt, secondaryWoundsDealt, flees);
         } else {
-            steadfast = secondaryRankBonus < primaryRankBonus;
-            flee = this.breakTest(primary, Math.abs(differential), steadfast);
+            isSteadfast = secondaryUnitRankBonus < primaryUnitRankBonus;
+            flees = breakTest(primary, Math.abs(combatResolutionDifference), isSteadfast);
 
-            return getRound(secondary, primaryWoundsDealt, secondaryWoundsDealt, flee);
+            return getRound(secondary, primaryWoundsDealt, secondaryWoundsDealt, flees);
         }
     }
 
-    private Round getRound(Unit primary, Integer primaryWoundsDealt, Integer secondaryWoundsDealt, boolean flee) {
-        boolean caught = false;
+    private Round getRound(Unit primary, Integer primaryWoundsDealt, Integer secondaryWoundsDealt, boolean unitFlees) {
+        boolean isCaught = false;
 
-        if (flee) {
+        if (unitFlees) {
             int fleeDistance = diceRollingService.rollWithSum(2);
             int pursuitDistance = diceRollingService.rollWithSum(2);
-            caught = fleeDistance > pursuitDistance;
+            isCaught = fleeDistance > pursuitDistance;
         }
 
-        return Round.builder().secondaryWoundsDealt(secondaryWoundsDealt).primaryWoundsDealt(primaryWoundsDealt).flee(flee).caught(caught).wipedOut(false).winner(primary.getName()).build();
+        return Round.builder().secondaryWoundsDealt(secondaryWoundsDealt).primaryWoundsDealt(primaryWoundsDealt).flee(unitFlees).caught(isCaught).wipedOut(false).winner(primary.getName()).build();
     }
 
-    Integer calculateRankBonus(Unit unit) {
-        return unit.getModelCount() / unit.getWidth();
-    }
-
-    Boolean breakTest(Unit unit, Integer differential, boolean steadfast) {
+    boolean breakTest(Unit unit, Integer differential, boolean steadfast) {
         Integer leadership = unit.getLeadership();
         int leadershipCheck = diceRollingService.rollWithSum(2);
 
@@ -84,6 +85,6 @@ public class CombatResolutionService {
             leadership = leadership - differential;
         }
 
-        return leadershipCheck > leadership;
+        return leadershipCheck != 2 || leadershipCheck > leadership;
     }
 }

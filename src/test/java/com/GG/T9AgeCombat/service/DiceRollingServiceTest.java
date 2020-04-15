@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DiceRollingServiceTest {
     DiceRollingService subject;
@@ -42,14 +42,14 @@ class DiceRollingServiceTest {
         assertTrue(1 <= fours.size());
         assertTrue(1 <= fives.size());
         assertTrue(1 <= sixes.size());
-        assertTrue(0 == lessThanOne.size());
-        assertTrue(0 == greaterThan6.size());
+        assertEquals(0, lessThanOne.size());
+        assertEquals(0, greaterThan6.size());
     }
 
     @Test
     void rollWithSum() {
-        Integer testWith6 = subject.rollWithSum(6);
-        Integer rollBig = subject.rollWithSum(1000);
+        int testWith6 = subject.rollWithSum(6);
+        int rollBig = subject.rollWithSum(1000);
 
         assertTrue(6 <= testWith6);
         assertTrue(36 >= testWith6);

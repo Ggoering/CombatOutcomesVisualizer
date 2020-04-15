@@ -7,11 +7,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class AttackQuantityService {
     Integer determineAttackQuantity(Unit attacker, Unit defender) {
-        Integer attackerActualWidth = this.determineActualWidth(attacker);
-        Integer defenderActualWidth = this.determineActualWidth(defender);
-        Integer modelsNotInB2B = this.determineModelsNotInBaseContact(attackerActualWidth, attacker, defenderActualWidth);
-        Integer supportingAttacks = this.determineSupportingAttacks(attacker, modelsNotInB2B);
-        Integer frontRankAttacks = this.determineFrontRankAttacks(attacker, modelsNotInB2B);
+        Integer modelsNotInB2B = determineModelsNotInBaseContact(attacker.getActualWidth(), attacker, defender.getActualWidth());
+        Integer supportingAttacks = determineSupportingAttacks(attacker, modelsNotInB2B);
+        Integer frontRankAttacks = determineFrontRankAttacks(attacker, modelsNotInB2B);
 
         return supportingAttacks + frontRankAttacks;
     }
@@ -47,10 +45,6 @@ public class AttackQuantityService {
 
     Integer determineFrontRankAttacks(Unit attacker, Integer modelsNotInB2B) {
         return attacker.getWidth() - modelsNotInB2B <= attacker.getModelCount() ? (attacker.getWidth() - modelsNotInB2B) * attacker.getAttacks() : attacker.getModelCount() * attacker.getAttacks();
-    }
-
-    Integer determineActualWidth(Unit unit) {
-        return unit.getModelCount() >= unit.getWidth() ? unit.getWidth() * unit.getBaseSize() : unit.getModelCount() * unit.getBaseSize();
     }
 
     Integer determineBackRankSupports(Integer modelsNotInB2b, Integer supportingRanks, Integer count, Integer width) {

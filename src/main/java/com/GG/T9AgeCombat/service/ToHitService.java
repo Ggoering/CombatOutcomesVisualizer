@@ -25,8 +25,8 @@ public class ToHitService {
     Integer rollToHit(Unit attacker, Unit defender, Integer quantity) {
         Integer attackerWS = attacker.getOffensiveWeaponSkill();
         Integer defenderWS = defender.getDefensiveWeaponSkill();
-        List<Integer> resultList = this.rollAttacks(quantity);
-        Integer toHitThreshold = this.determineToHitThreshold(attackerWS, defenderWS);
+        List<Integer> resultList = rollAttacks(quantity);
+        Integer toHitThreshold = determineToHitThreshold(attackerWS, defenderWS);
 
         return removeFailedToHitRolls(resultList, toHitThreshold);
     }

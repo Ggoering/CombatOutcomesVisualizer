@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 class AttackQuantityServiceTest {
     private AttackQuantityService subject;
 
@@ -40,10 +39,10 @@ class AttackQuantityServiceTest {
         Unit swordmasterWide = Unit.builder().name(Identification.SWORD_MASTER).movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).baseSize(20).modelCount(30).armorSave(5).width(10).build();
         Unit blorcs = Unit.builder().name(Identification.BLACK_ORC).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).baseSize(25).modelCount(25).armorSave(4).width(10).build();
 
-        Integer blorcsActualWidth = subject.determineActualWidth(blorcs);
-        Integer SMActualWidth = subject.determineActualWidth(swordmaster);
-        Integer SMActualWidthWide = subject.determineActualWidth(swordmasterWide);
-        Integer SMActualWidthMed = subject.determineActualWidth(swordmasterMedium);
+        Integer blorcsActualWidth = blorcs.getActualWidth();
+        Integer SMActualWidth = swordmaster.getActualWidth();
+        Integer SMActualWidthWide = swordmasterWide.getActualWidth();
+        Integer SMActualWidthMed = swordmasterMedium.getActualWidth();
 
         Integer BONotInB2B = subject.determineModelsNotInBaseContact(blorcsActualWidth, blorcs, SMActualWidth);
         Integer BONotInB2BWideSM = subject.determineModelsNotInBaseContact(blorcsActualWidth, blorcs, SMActualWidthWide);
@@ -117,7 +116,7 @@ class AttackQuantityServiceTest {
 
     @Test
     void determineBackRankAttacks() {
-        Integer attacks = subject.determineBackRankSupports(4,2, 25, 10);
+        Integer attacks = subject.determineBackRankSupports(4, 2, 25, 10);
         Integer attacks2 = subject.determineBackRankSupports(4, 1, 25, 10);
         Integer attacks3 = subject.determineBackRankSupports(4, 2, 30, 10);
         Integer attacks4 = subject.determineBackRankSupports(0, 1, 29, 5);
