@@ -14,9 +14,11 @@ public class CombatAggregationServiceTest {
         ToHitService toHitService = new ToHitService(diceRollingService);
         ToWoundService toWoundService = new ToWoundService(diceRollingService);
         ArmorSaveService armorSaveService = new ArmorSaveService(diceRollingService);
+        WardSaveService wardSaveService = new WardSaveService(diceRollingService);
         AttackQuantityService attackQuantityService = new AttackQuantityService();
         CombatResolutionService combatResolutionService = new CombatResolutionService(diceRollingService);
-        CombatCalculationService combatCalculationService = new CombatCalculationService(attackQuantityService, toHitService, toWoundService, armorSaveService, combatResolutionService);
+        CombatCalculationService combatCalculationService = new CombatCalculationService(attackQuantityService, toHitService, toWoundService,
+                armorSaveService, wardSaveService, combatResolutionService);
         subject = new CombatAggregationService(combatCalculationService);
     }
 
