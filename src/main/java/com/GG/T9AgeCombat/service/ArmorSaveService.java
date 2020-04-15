@@ -16,25 +16,18 @@ public class ArmorSaveService {
         this.diceRollingService = diceRollingService;
     }
 
-    Integer rollArmorSaves(Unit attacker, Unit defender, Integer quantity) {
-        Integer attackerArmorPenetration = this.calculateArmorPenetration(attacker);
-        Integer defenderArmorSave = defender.getArmorSave();
-        Integer armorSaveThreshold = defenderArmorSave + attackerArmorPenetration;
+    int rollArmorSaves(Unit attacker, Unit defender, int quantity) {
+        int armorSaveThreshold = defender.getArmorSave() + calculateArmorPenetration(attacker);
         List<Integer> armorSaveRolls = diceRollingService.roll(quantity);
 
-        Integer successfulSaves = removeFailedArmorSaveRolls(armorSaveRolls, armorSaveThreshold);
-
-        return quantity - successfulSaves;
+        return quantity - removeFailedArmorSaveRolls(armorSaveRolls, armorSaveThreshold);
     }
 
     Integer calculateArmorPenetration(Unit attacker) {
-        Integer attackerStrength = attacker.getStrength();
-        int attackerArmorPenetration = attackerStrength - ARMOR_PENETRATION_MODIFIER;
-
-        return Math.max(attackerArmorPenetration, 0);
+        return Math.max(attacker.getStrength() - ARMOR_PENETRATION_MODIFIER, 0);
     }
 
-    Integer removeFailedArmorSaveRolls(List<Integer> armorSaveRolls, Integer armorSaveThreshold) {
-        return (int) armorSaveRolls.stream().filter(a -> a != ARMOR_SAVE_AUTO_FAIL && a >= armorSaveThreshold).count();
+    Integer removeFailedArmorSaveRolls(List<Integer> armorSaveRolls, int armorSaveThreshold) {
+        return (int) armorSaveRolls.stream().filter(armorSave -> armorSave != ARMOR_SAVE_AUTO_FAIL && armorSave >= armorSaveThreshold).count();
     }
 }

@@ -25,6 +25,8 @@ public class CombatCalculationServiceTest {
     private ToWoundService mockToWoundService;
     @Mock
     private ArmorSaveService mockArmorSaveService;
+    @Mock
+    private WardSaveService mockWardSaveService;
 
     @Test
     @DisplayName("Units Have Same Initiative")
@@ -116,8 +118,44 @@ public class CombatCalculationServiceTest {
         assertThat(actualRound).isEqualTo(expectedResult);
     }
 
+    @Test
+    @DisplayName("Validate Ward Saves")
+    void validateWardSaves() {
+        // Arrange
+        List<Round> expectedResult = new ArrayList<>();
+        Round expectedRound = Round.builder().combatScoreDifferential(null).primaryWoundsDealt(0).secondaryWoundsDealt(1)
+                .flee(true).caught(false).winner(Identification.BLACK_ORC).wipedOut(false).build();
+        expectedResult.add(expectedRound);
+        Unit unit1 = Unit.builder().name(Identification.SWORD_MASTER).movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5)
+                .toughness(3).initiative(6).wounds(1).attacks(1).leadership(8).baseSize(25).modelCount(5).armorSave(5).width(5).selection(1)
+                .standardBearer(1).wardSave(4).build();
+        Unit unit2 = Unit.builder().name(Identification.BLACK_ORC).movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5)
+                .toughness(3).initiative(6).wounds(1).attacks(1).leadership(8).baseSize(25).modelCount(2).armorSave(5).width(5).selection(2)
+                .standardBearer(1).hasMusician(true).wardSave(6).build();
+
+        // Attacker is unit1
+        when(mockToHitService.rollToHit(unit1, unit2, 4)).thenReturn(4);
+        when(mockToWoundService.rollToWound(unit1, unit2, 4)).thenReturn(4);
+        when(mockArmorSaveService.rollArmorSaves(unit1, unit2, 4)).thenReturn(4);
+        when(mockWardSaveService.rollWardSaves(unit1, 2)).thenReturn(1);
+
+        // Attacker is unit2
+        when(mockToHitService.rollToHit(unit2, unit1, 2)).thenReturn(2);
+        when(mockToWoundService.rollToWound(unit2, unit1, 2)).thenReturn(2);
+        when(mockArmorSaveService.rollArmorSaves(unit2, unit1, 2)).thenReturn(2);
+        when(mockWardSaveService.rollWardSaves(unit2, 4)).thenReturn(0);
+
+        when(mockDiceRollingService.rollWithSum(2)).thenReturn(12);
+
+        // Act
+        List<Round> actualRound = getCombatCalculationService().fight(unit1, unit2, false, new ArrayList<>());
+
+        // Assert
+        assertThat(actualRound).isEqualTo(expectedResult);
+    }
+
     private CombatCalculationService getCombatCalculationService() {
         return new CombatCalculationService(new AttackQuantityService(), mockToHitService, mockToWoundService,
-                mockArmorSaveService, new CombatResolutionService(mockDiceRollingService));
+                mockArmorSaveService, mockWardSaveService, new CombatResolutionService(mockDiceRollingService));
     }
 }

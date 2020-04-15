@@ -21,14 +21,16 @@ public class CombatCalculationService {
     ToHitService toHitService;
     ToWoundService toWoundService;
     ArmorSaveService armorSaveService;
+    WardSaveService wardSaveService;
     CombatResolutionService combatResolutionService;
 
     public CombatCalculationService(AttackQuantityService attackQuantityService, ToHitService toHitService, ToWoundService toWoundService,
-                                    ArmorSaveService armorSaveService, CombatResolutionService combatResolutionService) {
+                                    ArmorSaveService armorSaveService, WardSaveService wardSaveService, CombatResolutionService combatResolutionService) {
         this.attackQuantityService = attackQuantityService;
         this.toHitService = toHitService;
         this.toWoundService = toWoundService;
         this.armorSaveService = armorSaveService;
+        this.wardSaveService = wardSaveService;
         this.combatResolutionService = combatResolutionService;
     }
 
@@ -66,13 +68,18 @@ public class CombatCalculationService {
                     continue;
                 }
 
-                int failedArmorSaves = armorSaveService.rollArmorSaves(attacker, defender, numberOfWounds);
-                defender.setPendingWounds(failedArmorSaves);
+                int failedSaves = armorSaveService.rollArmorSaves(attacker, defender, numberOfWounds);
+
+                if (defender.getWardSave() != null) {
+                    failedSaves = wardSaveService.rollWardSaves(defender, failedSaves);
+                }
+
+                defender.setPendingWounds(failedSaves);
 
                 if (primary.getSelection().equals(attacker.getSelection())) {
-                    primaryUnitWoundsDealt += failedArmorSaves;
+                    primaryUnitWoundsDealt += failedSaves;
                 } else {
-                    secondaryUnitWoundsDealt += failedArmorSaves;
+                    secondaryUnitWoundsDealt += failedSaves;
                 }
 
                 // If the attacker is the last in the list then apply wounds
