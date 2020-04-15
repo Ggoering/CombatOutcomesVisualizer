@@ -16,9 +16,10 @@ public class CombatAggregationServiceTest {
         ArmorSaveService armorSaveService = new ArmorSaveService(diceRollingService);
         WardSaveService wardSaveService = new WardSaveService(diceRollingService);
         AttackQuantityService attackQuantityService = new AttackQuantityService();
+        SpecialRuleRoutingService specialRuleRoutingService = new SpecialRuleRoutingService();
         CombatResolutionService combatResolutionService = new CombatResolutionService(diceRollingService);
         CombatCalculationService combatCalculationService = new CombatCalculationService(attackQuantityService, toHitService, toWoundService,
-                armorSaveService, wardSaveService, combatResolutionService);
+                armorSaveService, wardSaveService, combatResolutionService, specialRuleRoutingService);
         subject = new CombatAggregationService(combatCalculationService);
     }
 

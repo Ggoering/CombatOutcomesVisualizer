@@ -1,9 +1,10 @@
 package com.GG.T9AgeCombat.enums;
 
 public enum Timing {
-    TO_WOUND("to wound"),
-    TO_HIT("to hit"),
-    ARMOR_SAVE("armor save"),
+    DETERMINE_ATTACK_QUANTITY("attack quantity"),
+    ROLL_TO_WOUND("to wound"),
+    ROLL_TO_HIT("to hit"),
+    ROLL_ARMOR_SAVE("armor save"),
     ALL("all");
 
     private final String value;
@@ -14,6 +15,7 @@ public enum Timing {
 
     @Override
     public String toString() {
+
         return value;
     }
 }

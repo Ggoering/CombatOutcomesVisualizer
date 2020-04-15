@@ -5,7 +5,6 @@ import com.GG.T9AgeCombat.enums.SpecialRule;
 import com.GG.T9AgeCombat.models.Result;
 import com.GG.T9AgeCombat.models.Round;
 import com.GG.T9AgeCombat.models.Unit;
-import com.GG.T9AgeCombat.predicates.CheckLimitationPredicate;
 import com.GG.T9AgeCombat.predicates.DetermineModificationPredicate;
 import org.springframework.stereotype.Service;
 
@@ -23,15 +22,18 @@ public class CombatCalculationService {
     ArmorSaveService armorSaveService;
     WardSaveService wardSaveService;
     CombatResolutionService combatResolutionService;
+    SpecialRuleRoutingService specialRuleRoutingService;
 
     public CombatCalculationService(AttackQuantityService attackQuantityService, ToHitService toHitService, ToWoundService toWoundService,
-                                    ArmorSaveService armorSaveService, WardSaveService wardSaveService, CombatResolutionService combatResolutionService) {
+                                    ArmorSaveService armorSaveService, WardSaveService wardSaveService, CombatResolutionService combatResolutionService,
+                                    SpecialRuleRoutingService specialRuleRoutingService) {
         this.attackQuantityService = attackQuantityService;
         this.toHitService = toHitService;
         this.toWoundService = toWoundService;
         this.armorSaveService = armorSaveService;
         this.wardSaveService = wardSaveService;
         this.combatResolutionService = combatResolutionService;
+        this.specialRuleRoutingService = specialRuleRoutingService;
     }
 
     Result combat(Unit primary, Unit secondary) {
@@ -127,10 +129,12 @@ public class CombatCalculationService {
     void applySpecialRules(Unit unit, boolean isFirstRound) {
         if (unit.getSpecialRuleList() != null) {
             for (SpecialRule specialRule : unit.getSpecialRuleList()) {
-                if (CheckLimitationPredicate.validateSpecialRuleLimitation(specialRule.getLimitation(), isFirstRound)) {
+                if (specialRuleRoutingService.routeLimitationToPredicate(specialRule.getLimitation(), unit, isFirstRound)) {
                     DetermineModificationPredicate.applyBonus(unit, specialRule.getModification(), specialRule.getValue());
                 }
             }
         }
     }
+
+
 }
