@@ -28,7 +28,7 @@ public class ToHitService {
         List<Integer> resultList = rollAttacks(quantity);
         Integer toHitThreshold = determineToHitThreshold(attackerWS, defenderWS);
 
-        return removeFailedToHitRolls(resultList, toHitThreshold);
+        return diceRollingService.getFinalWithReRolls(resultList, toHitThreshold, attacker.getReRollToHitLessThan(), attacker.getReRollToHitGreaterThan());
     }
 
     Integer determineToHitThreshold(Integer attackerWS, Integer defenderWS) {
@@ -39,9 +39,5 @@ public class ToHitService {
         } else {
             return attackerWS - defenderWS < TO_HIT_DEFENDER_SKILL_THRESHOLD ? TO_HIT_DEFAULT_THRESHOLD + TO_HIT_MINIMAL_SKILL_DIFFERENCE : TO_HIT_DEFAULT_THRESHOLD;
         }
-    }
-
-    Integer removeFailedToHitRolls(List<Integer> resultList, Integer toHitThreshold) {
-        return (int) resultList.stream().filter(a -> a >= toHitThreshold).count();
     }
 }

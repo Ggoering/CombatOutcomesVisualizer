@@ -5,9 +5,6 @@ import com.GG.T9AgeCombat.models.Unit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ArmorSaveServiceTest {
@@ -32,38 +29,5 @@ class ArmorSaveServiceTest {
         assertEquals(0, skinkTest);
         assertEquals(5, BTtest);
 
-    }
-
-    @Test
-    void filterOutMissedSaves() {
-        List<Integer> list = new ArrayList<Integer>();
-        list.add(1);
-        list.add(1);
-        list.add(2);
-        list.add(2);
-        list.add(3);
-        list.add(3);
-        list.add(4);
-        list.add(4);
-        list.add(5);
-        list.add(5);
-        list.add(6);
-        list.add(6);
-
-        Integer filters1s1 = subject.removeFailedArmorSaveRolls(list, 2);
-        Integer filters1s2 = subject.removeFailedArmorSaveRolls(list, -2);
-        Integer filters2s = subject.removeFailedArmorSaveRolls(list, 3);
-        Integer filters3s = subject.removeFailedArmorSaveRolls(list, 4);
-        Integer filters4s = subject.removeFailedArmorSaveRolls(list, 5);
-        Integer filters5s1 = subject.removeFailedArmorSaveRolls(list, 6);
-        Integer filters6s1 = subject.removeFailedArmorSaveRolls(list, 10);
-
-        assertEquals(10, filters1s1);
-        assertEquals(10, filters1s2);
-        assertEquals(8, filters2s);
-        assertEquals(6, filters3s);
-        assertEquals(4, filters4s);
-        assertEquals(2, filters5s1);
-        assertEquals(0, filters6s1);
     }
 }
