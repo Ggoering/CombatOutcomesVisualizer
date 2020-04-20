@@ -16,6 +16,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Value
 @JsonInclude(NON_NULL)
 public class Unit implements Comparable<Unit> {
+    public static final Integer DEFAULT_REROLL_LESS_THAN = 0;
+    public static final Integer DEFAULT_REROLL_GREATER_THAN = 99;
     Identification name;
     Integer movement;
     Integer offensiveWeaponSkill;
@@ -48,7 +50,15 @@ public class Unit implements Comparable<Unit> {
     @NonFinal
     Integer reRollToHitLessThan;
     @NonFinal
-    Boolean hasReRollToWound;
+    Integer reRollToHitGreaterThan;
+    @NonFinal
+    Integer reRollToWoundLessThan;
+    @NonFinal
+    Integer reRollToWoundGreaterThan;
+    @NonFinal
+    Integer reRollArmorSaveLessThan;
+    @NonFinal
+    Integer reRollArmorSaveGreaterThan;
     @NonFinal
     Boolean hasReRollArmorSave;
     @NonFinal
@@ -94,6 +104,30 @@ public class Unit implements Comparable<Unit> {
     }
     public void updateExtraRank(Integer extraRank) {
         this.extraRanks = this.extraRanks + extraRank;
+    }
+
+    public Integer getReRollToHitLessThan() {
+        return this.reRollToHitLessThan == null ? DEFAULT_REROLL_LESS_THAN : this.reRollToHitLessThan;
+    }
+
+    public Integer getReRollToHitGreaterThan() {
+        return this.reRollToHitGreaterThan == null ? DEFAULT_REROLL_GREATER_THAN : this.reRollToHitGreaterThan;
+    }
+
+    public Integer getReRollToWoundLessThan() {
+        return this.reRollToWoundLessThan == null ? DEFAULT_REROLL_LESS_THAN : this.reRollToWoundLessThan;
+    }
+
+    public Integer getReRollToWoundGreaterThan() {
+        return this.reRollToWoundGreaterThan == null ? DEFAULT_REROLL_GREATER_THAN : this.reRollToWoundGreaterThan;
+    }
+
+    public Integer getReRollArmorSaveLessThan() {
+        return this.reRollArmorSaveLessThan == null ? DEFAULT_REROLL_LESS_THAN : reRollArmorSaveLessThan;
+    }
+
+    public Integer getReRollArmorSaveGreaterThan() {
+        return this.reRollArmorSaveGreaterThan == null ? DEFAULT_REROLL_GREATER_THAN : reRollArmorSaveGreaterThan;
     }
 
     public Unit createCopy() {

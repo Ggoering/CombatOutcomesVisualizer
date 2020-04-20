@@ -35,25 +35,4 @@ class ToHitServiceTest {
         assertEquals(4, toHitThreshold4);
         assertEquals(5, toHitThreshold5);
     }
-
-    @Test
-    void filterOutMissedAttacks() {
-        List<Integer> list = new ArrayList<>();
-        list.add(1);
-        list.add(2);
-        list.add(3);
-        list.add(4);
-        list.add(5);
-        list.add(6);
-
-        Integer results1 = subject.removeFailedToHitRolls(list, 2);
-        Integer results2 = subject.removeFailedToHitRolls(list, 3);
-        Integer results3 = subject.removeFailedToHitRolls(list, 4);
-        Integer results4 = subject.removeFailedToHitRolls(list, 5);
-
-        assertEquals(5, results1);
-        assertEquals(4, results2);
-        assertEquals(3, results3);
-        assertEquals(2, results4);
-    }
 }

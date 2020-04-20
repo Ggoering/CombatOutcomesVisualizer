@@ -10,6 +10,7 @@ import java.util.List;
 public class ArmorSaveService {
     private static final int ARMOR_PENETRATION_MODIFIER = 3;
     private static final int ARMOR_SAVE_AUTO_FAIL = 1;
+    private static final int BEST_ARMOR_SAVE = 2;
     DiceRollingService diceRollingService;
 
     public ArmorSaveService(DiceRollingService diceRollingService) {
@@ -17,17 +18,21 @@ public class ArmorSaveService {
     }
 
     int rollArmorSaves(Unit attacker, Unit defender, int quantity) {
-        int armorSaveThreshold = defender.getArmorSave() + calculateArmorPenetration(attacker);
         List<Integer> armorSaveRolls = diceRollingService.roll(quantity);
+        Integer defenderArmorSave = defender.getArmorSave();
+        Integer armorPenetration = calculateArmorPenetration(attacker);
 
-        return quantity - removeFailedArmorSaveRolls(armorSaveRolls, armorSaveThreshold);
+        int armorSaveThreshold = determineArmorSaveThreshold(defenderArmorSave, armorPenetration);
+        return quantity - diceRollingService.getFinalWithReRolls(armorSaveRolls, armorSaveThreshold, defender.getReRollArmorSaveLessThan(), defender.getReRollArmorSaveGreaterThan());
     }
 
     Integer calculateArmorPenetration(Unit attacker) {
         return Math.max(attacker.getStrength() - ARMOR_PENETRATION_MODIFIER, 0);
     }
 
-    Integer removeFailedArmorSaveRolls(List<Integer> armorSaveRolls, int armorSaveThreshold) {
-        return (int) armorSaveRolls.stream().filter(armorSave -> armorSave != ARMOR_SAVE_AUTO_FAIL && armorSave >= armorSaveThreshold).count();
+    Integer determineArmorSaveThreshold(Integer armorSave, Integer armorPenetration) {
+        Integer preliminaryArmorSaveThreshold = armorSave + armorPenetration;
+
+        return preliminaryArmorSaveThreshold <= ARMOR_SAVE_AUTO_FAIL ? BEST_ARMOR_SAVE : preliminaryArmorSaveThreshold;
     }
 }

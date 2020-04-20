@@ -8,7 +8,7 @@ import java.util.List;
 @Service
 
 public class ToWoundService {
-    public static final int TO_WOUND_AUTO_FAIL = 1;
+    public static final int MINIMUM_TO_WOUND_SUCCESS = 2;
     public static final int TO_WOUND_AUTO_SUCCESS = 6;
     public static final int TO_WOUND_DEFAULT_THRESHOLD = 4;
     DiceRollingService diceRollingService;
@@ -23,14 +23,15 @@ public class ToWoundService {
         Integer toWoundThreshold = this.determineToWoundThreshold(attackerStrength, defenderToughness);
         List<Integer> dice = diceRollingService.roll(quantity);
 
-        return removeFailedToWoundRolls(dice, toWoundThreshold);
+
+        return diceRollingService.getFinalWithReRolls(dice, toWoundThreshold, attacker.getReRollToWoundLessThan(), attacker.getReRollToWoundGreaterThan());
     }
 
     Integer determineToWoundThreshold(Integer attackerStrength, Integer defenderToughness) {
-        return TO_WOUND_DEFAULT_THRESHOLD - (attackerStrength - defenderToughness);
-    }
+        Integer preliminaryToWoundThreshold = TO_WOUND_DEFAULT_THRESHOLD - (attackerStrength - defenderToughness);
 
-    Integer removeFailedToWoundRolls(List<Integer> resultList, Integer toWoundThreshold) {
-        return (int) resultList.stream().filter(a -> (a != TO_WOUND_AUTO_FAIL && a >= toWoundThreshold) || a == TO_WOUND_AUTO_SUCCESS).count();
+        return  preliminaryToWoundThreshold < MINIMUM_TO_WOUND_SUCCESS ?
+                MINIMUM_TO_WOUND_SUCCESS : preliminaryToWoundThreshold > TO_WOUND_AUTO_SUCCESS ?
+                TO_WOUND_AUTO_SUCCESS : preliminaryToWoundThreshold;
     }
 }
