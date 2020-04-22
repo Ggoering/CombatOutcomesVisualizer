@@ -85,7 +85,9 @@ public class CombatCalculationService {
                 if (unitsByInitiative.indexOf(attacker) + 1 == unitsByInitiative.size()
                         || attacker.getInitiative() != unitsByInitiative.get(unitsByInitiative.indexOf(attacker) + 1).getInitiative()) {
                     for (Unit unit : unitsByInitiative) {
-                        unit.applyPendingWounds();
+                        if (!unit.isMount()) {
+                            unit.applyPendingWounds();
+                        }
                     }
                 }
             } else {

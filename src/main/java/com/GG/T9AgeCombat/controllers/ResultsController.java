@@ -15,7 +15,6 @@ public class ResultsController {
 
     public ResultsController(CombatAggregationService combatAggregationService) {
         this.combatAggregationService = combatAggregationService;
-        combatAggregationService.getDataAggregation();
     }
 
     @PostMapping

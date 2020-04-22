@@ -16,13 +16,13 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Builder
 @Entity
 @JsonInclude(NON_NULL)
-public class Unit implements Comparable<Unit> {
-    public static final Integer DEFAULT_REROLL_LESS_THAN = 0;
-    public static final Integer DEFAULT_REROLL_GREATER_THAN = 99;
-    Identification name;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class Unit {
+    public static final int SINGLE_WOUND_MODEL = 1;
+    public static final Integer DEFAULT_REROLL_LESS_THAN = 0;
+    public static final Integer DEFAULT_REROLL_GREATER_THAN = 99;
+
     @Id
     long id;
     String name;
@@ -33,7 +33,7 @@ public class Unit {
     Integer strength;
     Integer toughness;
     int initiative;
-    Integer wounds;
+    int wounds;
     Integer attacks;
     Integer leadership;
     Integer armorSave;
@@ -88,23 +88,32 @@ public class Unit {
     int pendingWounds;
     @Transient
     @NonFinal
+    int woundTracker;
+    @Transient
+    @NonFinal
     @Builder.Default
     Integer reRollToHitLessThan = DEFAULT_REROLL_LESS_THAN;
+    @Transient
     @NonFinal
     @Builder.Default
     Integer reRollToHitGreaterThan = DEFAULT_REROLL_GREATER_THAN;
+    @Transient
     @NonFinal
     @Builder.Default
     Integer reRollToWoundLessThan = DEFAULT_REROLL_LESS_THAN;
+    @Transient
     @NonFinal
     @Builder.Default
     Integer reRollToWoundGreaterThan = DEFAULT_REROLL_GREATER_THAN;
+    @Transient
     @NonFinal
     @Builder.Default
     Integer reRollArmorSaveLessThan = DEFAULT_REROLL_LESS_THAN;
+    @Transient
     @NonFinal
     @Builder.Default
     Integer reRollArmorSaveGreaterThan = DEFAULT_REROLL_GREATER_THAN;
+    @Transient
     @NonFinal
     Boolean hasReRollLeadership;
     @Transient
@@ -127,8 +136,36 @@ public class Unit {
     }
 
     public void applyPendingWounds() {
-        modelCount = (pendingWounds < modelCount ? modelCount - pendingWounds : 0);
+        if (wounds == SINGLE_WOUND_MODEL) {
+            modelCount = (pendingWounds < modelCount ? modelCount - pendingWounds : 0);
+        } else { // Unit has multiple wounds
+            // Have wounds from previous combat
+            if (woundTracker > 0) {
+                // Check to see if there are enough pending wounds to kill the wounded model
+                if (woundTracker + pendingWounds >= wounds) {
+                    // Subtract from the pending wounds the minimum number to kill the wounded model
+                    pendingWounds -= wounds - woundTracker;
+                    modelCount--;
+                    adjustModelCountFromPendingWounds();
+                } else {
+                    woundTracker += pendingWounds;
+                }
+            } else {
+                adjustModelCountFromPendingWounds();
+            }
+        }
+
         pendingWounds = 0;
+    }
+
+    private void adjustModelCountFromPendingWounds() {
+        woundTracker = pendingWounds % wounds;
+        int modelsKilled = (pendingWounds - woundTracker) / wounds;
+        modelCount = (modelsKilled > modelCount ? 0 : modelCount - modelsKilled);
+
+        if (modelCount == 0) {
+            woundTracker = 0;
+        }
     }
 
     public void updateStrength(Integer strength) {
