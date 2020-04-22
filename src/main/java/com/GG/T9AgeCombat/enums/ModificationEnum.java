@@ -1,21 +1,20 @@
 package com.GG.T9AgeCombat.enums;
 
-public enum Modification {
+public enum ModificationEnum {
     STRENGTH("strength"),
     TO_HIT("to hit"),
     EXTRA_RANKS("extra ranks"),
     RE_ROLL_TO_HIT("re-roll to hit");
 
+    private final String value;
 
-    private final String characteristic;
-
-    Modification(String characteristic) {
-        this.characteristic = characteristic;
+    ModificationEnum(String value) {
+        this.value = value;
     }
 
     @Override
     public String toString() {
 
-        return characteristic;
+        return value;
     }
 }

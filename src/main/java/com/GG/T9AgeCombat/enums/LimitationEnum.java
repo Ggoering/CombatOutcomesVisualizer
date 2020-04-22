@@ -1,13 +1,13 @@
 package com.GG.T9AgeCombat.enums;
 
-public enum Limitation {
+public enum LimitationEnum {
     NONE("none"),
     TEN_WIDE("ten wide"),
     FIRST_ROUND("first round");
 
     private final String value;
 
-    Limitation(String value) {
+    LimitationEnum(String value) {
         this.value = value;
     }
 

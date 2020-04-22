@@ -1,6 +1,6 @@
 package com.GG.T9AgeCombat.enums;
 
-public enum Equipment {
+public enum EquipmentEnum {
     GREAT_WEAPON("great weapon"),
     EXTRA_HAND_WEAPON("extra hand weapon"),
     HEAVY_ARMOR("heavy armor"),
@@ -9,7 +9,7 @@ public enum Equipment {
 
     private final String value;
 
-    Equipment(String value) {
+    EquipmentEnum(String value) {
         this.value = value;
     }
 
