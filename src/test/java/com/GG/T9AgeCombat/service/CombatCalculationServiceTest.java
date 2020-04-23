@@ -2,9 +2,9 @@ package com.GG.T9AgeCombat.service;
 
 import com.GG.T9AgeCombat.enums.LimitationEnum;
 import com.GG.T9AgeCombat.enums.ModificationEnum;
+import com.GG.T9AgeCombat.enums.SpecialRuleEnum;
 import com.GG.T9AgeCombat.enums.TimingEnum;
 import com.GG.T9AgeCombat.models.*;
-import com.GG.T9AgeCombat.enums.SpecialRuleEnum;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

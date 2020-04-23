@@ -9,7 +9,7 @@ import static com.GG.T9AgeCombat.enums.LimitationEnum.*;
 
 @Service
 public class SpecialRuleRoutingService {
-    Boolean routeLimitationToPredicate(String limitation, Unit unit, boolean isFirstRound) {
+    boolean routeLimitationToPredicate(String limitation, Unit unit, boolean isFirstRound) {
         if (limitation.equals(FIRST_ROUND.toString())) {
             return CheckLimitationPredicate.checkFirstRound(isFirstRound);
         } else if (limitation.equals(TEN_WIDE.toString())) {
