@@ -16,6 +16,10 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Builder
 @Entity
 @JsonInclude(NON_NULL)
+public class Unit implements Comparable<Unit> {
+    public static final Integer DEFAULT_REROLL_LESS_THAN = 0;
+    public static final Integer DEFAULT_REROLL_GREATER_THAN = 99;
+    Identification name;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class Unit {
@@ -84,14 +88,23 @@ public class Unit {
     int pendingWounds;
     @Transient
     @NonFinal
-    Integer reRollToHitLessThan;
-    @Transient
+    @Builder.Default
+    Integer reRollToHitLessThan = DEFAULT_REROLL_LESS_THAN;
     @NonFinal
-    Boolean hasReRollToWound;
-    @Transient
+    @Builder.Default
+    Integer reRollToHitGreaterThan = DEFAULT_REROLL_GREATER_THAN;
     @NonFinal
-    Boolean hasReRollArmorSave;
-    @Transient
+    @Builder.Default
+    Integer reRollToWoundLessThan = DEFAULT_REROLL_LESS_THAN;
+    @NonFinal
+    @Builder.Default
+    Integer reRollToWoundGreaterThan = DEFAULT_REROLL_GREATER_THAN;
+    @NonFinal
+    @Builder.Default
+    Integer reRollArmorSaveLessThan = DEFAULT_REROLL_LESS_THAN;
+    @NonFinal
+    @Builder.Default
+    Integer reRollArmorSaveGreaterThan = DEFAULT_REROLL_GREATER_THAN;
     @NonFinal
     Boolean hasReRollLeadership;
     @Transient
