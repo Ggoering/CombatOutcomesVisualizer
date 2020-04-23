@@ -1,6 +1,5 @@
 package com.GG.T9AgeCombat.models;
 
-import com.GG.T9AgeCombat.enums.Identification;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Value;
@@ -16,6 +15,6 @@ public class Round {
     Integer secondaryWoundsDealt;
     Boolean flee;
     Boolean caught;
-    Identification winner;
+    String winner;
     Boolean wipedOut;
 }
