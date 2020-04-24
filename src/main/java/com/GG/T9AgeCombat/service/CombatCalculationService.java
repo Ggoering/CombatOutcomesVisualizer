@@ -2,6 +2,8 @@ package com.GG.T9AgeCombat.service;
 
 import com.GG.T9AgeCombat.models.*;
 import com.GG.T9AgeCombat.predicates.DetermineModificationPredicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -12,13 +14,14 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 public class CombatCalculationService {
-    AttackQuantityService attackQuantityService;
-    ToHitService toHitService;
-    ToWoundService toWoundService;
-    ArmorSaveService armorSaveService;
-    WardSaveService wardSaveService;
-    CombatResolutionService combatResolutionService;
-    SpecialRuleRoutingService specialRuleRoutingService;
+    private final AttackQuantityService attackQuantityService;
+    private final ToHitService toHitService;
+    private final ToWoundService toWoundService;
+    private final ArmorSaveService armorSaveService;
+    private final WardSaveService wardSaveService;
+    private final CombatResolutionService combatResolutionService;
+    private final SpecialRuleRoutingService specialRuleRoutingService;
+    private static final Logger logger = LoggerFactory.getLogger(CombatCalculationService.class);
 
     public CombatCalculationService(AttackQuantityService attackQuantityService, ToHitService toHitService, ToWoundService toWoundService,
                                     ArmorSaveService armorSaveService, WardSaveService wardSaveService, CombatResolutionService combatResolutionService,
@@ -91,7 +94,7 @@ public class CombatCalculationService {
                     }
                 }
             } else {
-                System.out.println("Null defender found when fighting.");
+                logger.error("Null defender found when fighting.");
             }
         }
 
