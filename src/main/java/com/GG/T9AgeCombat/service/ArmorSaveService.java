@@ -7,7 +7,7 @@ import java.util.List;
 
 @Service
 public class ArmorSaveService {
-    private static final int ARMOR_PENETRATION_MODIFIER = 3;
+    private static final int ARMOR_SAVE_DEFAULT_THRESHOLD = 7;
     private static final int ARMOR_SAVE_AUTO_FAIL = 1;
     private static final int BEST_ARMOR_SAVE = 2;
     DiceRollingService diceRollingService;
@@ -17,20 +17,22 @@ public class ArmorSaveService {
     }
 
     int rollArmorSaves(Unit attacker, Unit defender, int quantity) {
-        List<Integer> armorSaveRolls = diceRollingService.roll(quantity);
-        Integer defenderArmorSave = defender.getArmorSave();
-        Integer armorPenetration = calculateArmorPenetration(attacker);
+        int armorSaveThreshold = calculateArmorSaveThreshold(defender.getArmor(), attacker.getArmorPenetration());
 
-        int armorSaveThreshold = determineArmorSaveThreshold(defenderArmorSave, armorPenetration);
-        return quantity - diceRollingService.getFinalWithReRolls(armorSaveRolls, armorSaveThreshold, defender.getReRollArmorSaveLessThan(), defender.getReRollArmorSaveGreaterThan());
+        // Only roll armor saves if there is a chance to save
+        if (armorSaveThreshold < ARMOR_SAVE_DEFAULT_THRESHOLD) {
+            List<Integer> armorSaveRolls = diceRollingService.roll(quantity);
+            return quantity - diceRollingService.getFinalWithReRolls(armorSaveRolls, armorSaveThreshold,
+                    defender.getReRollArmorSaveLessThan(), defender.getReRollArmorSaveGreaterThan());
+        }
+
+        return quantity;
     }
 
-    Integer calculateArmorPenetration(Unit attacker) {
-        return Math.max(attacker.getStrength() - ARMOR_PENETRATION_MODIFIER, 0);
-    }
-
-    Integer determineArmorSaveThreshold(Integer armorSave, Integer armorPenetration) {
-        Integer armorSaveThreshold = armorSave + armorPenetration;
+    int calculateArmorSaveThreshold(int armor, int armorPenetration) {
+        // Page 20
+        // 7 - (Armour of the defender) + (Armour Penetration of the attack)
+        int armorSaveThreshold = ARMOR_SAVE_DEFAULT_THRESHOLD - armor + armorPenetration;
 
         return armorSaveThreshold <= ARMOR_SAVE_AUTO_FAIL ? BEST_ARMOR_SAVE : armorSaveThreshold;
     }

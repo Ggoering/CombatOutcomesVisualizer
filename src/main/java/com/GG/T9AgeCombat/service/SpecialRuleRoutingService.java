@@ -13,7 +13,7 @@ public class SpecialRuleRoutingService {
         if (limitation.equals(FIRST_ROUND.toString())) {
             return CheckLimitationPredicate.checkFirstRound(isFirstRound);
         } else if (limitation.equals(TEN_WIDE.toString())) {
-            return CheckLimitationPredicate.checkHorde(unit.getWidth());
+            return CheckLimitationPredicate.checkHorde(unit.getModelsPerRank());
         } else {
             return limitation.equals(NONE.toString());
         }

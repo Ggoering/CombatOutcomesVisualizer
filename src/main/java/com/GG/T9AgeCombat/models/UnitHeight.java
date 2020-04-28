@@ -14,8 +14,8 @@ import javax.persistence.Table;
 @Entity
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-@Table(name = "timing", schema = "public", catalog = "T9AgeCombat")
-public class Timing {
+@Table(name = "unit_height", schema = "public", catalog = "T9AgeCombat")
+public class UnitHeight {
     @Id
     long id;
     String value;

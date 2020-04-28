@@ -22,7 +22,7 @@ public class UnitType {
     long id;
     String type;
     @OneToMany(mappedBy = "unitTypeByUnitTypeId")
-    Collection<Mount> mountsById;
+    Collection<CharacterMount> mountsById;
     @OneToMany(mappedBy = "unitTypeByUnitTypeId")
     Collection<Unit> unitsById;
 }

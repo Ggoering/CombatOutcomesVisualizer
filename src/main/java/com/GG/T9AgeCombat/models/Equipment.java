@@ -13,6 +13,7 @@ import java.util.Collection;
 @Entity
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
+@Table(name = "equipment", schema = "public", catalog = "T9AgeCombat")
 public class Equipment {
     @Id
     long id;

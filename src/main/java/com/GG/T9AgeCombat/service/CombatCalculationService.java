@@ -107,17 +107,17 @@ public class CombatCalculationService {
         unitList.add(primary);
         unitList.add(secondary);
 
-        if (primary.getMountAttacks() != null) {
+        if (primary.isMounted()) {
             unitList.add(Unit.builder().attacks(primary.getMountAttacks()).initiative(primary.getMountInitiative())
-                    .strength(primary.getMountStrength()).offensiveWeaponSkill(primary.getMountWeaponSkill())
-                    .isMount(true).basesize(primary.getBasesize()).selection(1).width(primary.getWidth())
+                    .strength(primary.getMountStrength()).offensiveWeaponSkill(primary.getMountOffensiveWeaponSkill())
+                    .isMount(true).basesize(primary.getBasesize()).selection(1).modelsPerRank(primary.getModelsPerRank())
                     .modelCount(primary.getModelCount()).build());
         }
 
-        if (secondary.getMountAttacks() != null) {
+        if (secondary.isMounted()) {
             unitList.add(Unit.builder().attacks(secondary.getMountAttacks()).initiative(secondary.getMountInitiative())
-                    .strength(secondary.getMountStrength()).offensiveWeaponSkill(secondary.getMountWeaponSkill())
-                    .isMount(true).basesize(secondary.getBasesize()).selection(2).width(secondary.getWidth())
+                    .strength(secondary.getMountStrength()).offensiveWeaponSkill(secondary.getMountOffensiveWeaponSkill())
+                    .isMount(true).basesize(secondary.getBasesize()).selection(2).modelsPerRank(secondary.getModelsPerRank())
                     .modelCount(secondary.getModelCount()).build());
         }
 
