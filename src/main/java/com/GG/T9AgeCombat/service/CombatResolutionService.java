@@ -77,10 +77,10 @@ public class CombatResolutionService {
         boolean isCaught = false;
 
         if (unitFlees) {
-            int fleeDistance = (loser.getMountMovement() != null ?
+            int fleeDistance = (loser.getMovement() != 0 ?
                     diceRollingService.rollWithSumTakeHighest(FLEE_AND_PURSUIT_MOUNT_DIE_COUNT, FLEE_AND_PURSUIT_MOUNT_TAKE_HIGHEST_COUNT) :
                     diceRollingService.rollWithSum(FLEE_AND_PURSUIT_DEFAULT_DIE_COUNT));
-            int pursuitDistance = (winner.getMountMovement() != null ?
+            int pursuitDistance = (winner.getMovement() != 0 ?
                     diceRollingService.rollWithSumTakeHighest(FLEE_AND_PURSUIT_MOUNT_DIE_COUNT, FLEE_AND_PURSUIT_MOUNT_TAKE_HIGHEST_COUNT) :
                     diceRollingService.rollWithSum(FLEE_AND_PURSUIT_DEFAULT_DIE_COUNT));
             isCaught = fleeDistance > pursuitDistance;
@@ -91,7 +91,7 @@ public class CombatResolutionService {
     }
 
     boolean breakTest(Unit unit, Integer differential, boolean steadfast) {
-        Integer leadership = unit.getLeadership();
+        int leadership = unit.getLeadership();
         int leadershipCheck = diceRollingService.rollWithSum(LEADERSHIP_TEST_DEFAULT_DIE_COUNT);
 
         if (!steadfast) {

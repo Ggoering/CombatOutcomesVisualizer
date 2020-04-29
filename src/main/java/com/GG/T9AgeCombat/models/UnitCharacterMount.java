@@ -12,14 +12,14 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-@Table(name = "unit_mount", schema = "public", catalog = "T9AgeCombat")
-public class UnitMount {
+@Table(name = "unit_character_mount", schema = "public", catalog = "T9AgeCombat")
+public class UnitCharacterMount {
     @Id
     long id;
     @ManyToOne
     @JoinColumn(name = "unit_id", referencedColumnName = "id", nullable = false)
     Unit unitByUnitId;
     @ManyToOne
-    @JoinColumn(name = "mount_id", referencedColumnName = "id", nullable = false)
-    Mount mountByMountId;
+    @JoinColumn(name = "character_mount_id", referencedColumnName = "id", nullable = false)
+    CharacterMount characterMountByCharacterMountId;
 }

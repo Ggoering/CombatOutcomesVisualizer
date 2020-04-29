@@ -39,8 +39,8 @@ public class CombatCalculationServiceTest {
         Round expectedRound = Round.builder().combatScoreDifferential(null).primaryWoundsDealt(4).secondaryWoundsDealt(2)
                 .flee(false).caught(null).winner("Swordmaster").wipedOut(true).build();
         expectedResult.add(expectedRound);
-        Unit unit1 = Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(5).armorSave(5).width(5).selection(1).standardBearer(1).hasMusician(true).build();
-        Unit unit2 = Unit.builder().name("Black Orc").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(2).armorSave(5).width(5).selection(2).standardBearer(1).hasMusician(true).build();
+        Unit unit1 = Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(5).armor(5).modelsPerRank(5).selection(1).standardBearer(1).hasMusician(true).build();
+        Unit unit2 = Unit.builder().name("Black Orc").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(2).armor(5).modelsPerRank(5).selection(2).standardBearer(1).hasMusician(true).build();
 
         // Attacker is unit1
         when(mockToHitService.rollToHit(unit1, unit2, 4)).thenReturn(4);
@@ -68,30 +68,30 @@ public class CombatCalculationServiceTest {
                 .flee(true).caught(false).winner("Swordmaster").wipedOut(false).build();
         expectedResult.add(expectedRound);
         Unit unit1 = Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6)
-                .strength(5).toughness(3).initiative(4).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(5).armorSave(5)
-                .width(5).selection(1).standardBearer(1).hasMusician(true)
-                .mountAttacks(1).mountInitiative(6).mountMovement(9).mountStrength(5).mountWeaponSkill(5).mountWounds(1).build();
+                .strength(5).toughness(3).initiative(4).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(5).armor(5)
+                .modelsPerRank(5).selection(1).standardBearer(1).hasMusician(true).isMounted(true)
+                .mountAttacks(1).mountInitiative(6).mountStrength(5).mountOffensiveWeaponSkill(5).build();
         Unit unit1Mount = Unit.builder().isMount(true).offensiveWeaponSkill(5).strength(5).initiative(6)
-                .attacks(1).basesize(25).modelCount(5).width(5).selection(1).build();
+                .attacks(1).basesize(25).modelCount(5).modelsPerRank(5).selection(1).build();
         Unit unit1Wounded = Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6)
-                .strength(5).toughness(3).initiative(4).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(4).armorSave(5)
-                .width(5).selection(1).standardBearer(1).hasMusician(true)
-                .mountAttacks(1).mountInitiative(6).mountMovement(9).mountStrength(5).mountWeaponSkill(5).mountWounds(1).build();
+                .strength(5).toughness(3).initiative(4).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(4).armor(5)
+                .modelsPerRank(5).selection(1).standardBearer(1).hasMusician(true).isMounted(true)
+                .mountAttacks(1).mountInitiative(6).mountStrength(5).mountOffensiveWeaponSkill(5).build();
 
         Unit unit2 = Unit.builder().name("Black Orc").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).
-                strength(5).toughness(3).initiative(3).wounds(1).attacks(1).leadership(3).basesize(25).modelCount(3).armorSave(5)
-                .width(5).selection(2).standardBearer(1).hasMusician(true)
-                .mountAttacks(1).mountInitiative(6).mountMovement(9).mountStrength(5).mountWeaponSkill(4).mountWounds(1).build();
+                strength(5).toughness(3).initiative(3).wounds(1).attacks(1).leadership(3).basesize(25).modelCount(3).armor(5)
+                .modelsPerRank(5).selection(2).standardBearer(1).hasMusician(true).isMounted(true)
+                .mountAttacks(1).mountInitiative(6).mountStrength(5).mountOffensiveWeaponSkill(4).build();
         Unit unit2Mount = Unit.builder().isMount(true).offensiveWeaponSkill(4).strength(5).initiative(6)
-                .attacks(1).basesize(25).modelCount(3).width(5).selection(2).build();
+                .attacks(1).basesize(25).modelCount(3).modelsPerRank(5).selection(2).build();
         Unit unit2Wounded = Unit.builder().name("Black Orc").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).
-                strength(5).toughness(3).initiative(3).wounds(1).attacks(1).leadership(3).basesize(25).modelCount(2).armorSave(5)
-                .width(5).selection(2).standardBearer(1).hasMusician(true)
-                .mountAttacks(1).mountInitiative(6).mountMovement(9).mountStrength(5).mountWeaponSkill(4).mountWounds(1).build();
+                strength(5).toughness(3).initiative(3).wounds(1).attacks(1).leadership(3).basesize(25).modelCount(2).armor(5)
+                .modelsPerRank(5).selection(2).standardBearer(1).hasMusician(true).isMounted(true)
+                .mountAttacks(1).mountInitiative(6).mountStrength(5).mountOffensiveWeaponSkill(4).build();
         Unit unit2CriticalWound = Unit.builder().name("Black Orc").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).
-                strength(5).toughness(3).initiative(3).wounds(1).attacks(1).leadership(3).basesize(25).modelCount(1).armorSave(5)
-                .width(5).selection(2).standardBearer(1).hasMusician(true)
-                .mountAttacks(1).mountInitiative(6).mountMovement(9).mountStrength(5).mountWeaponSkill(4).mountWounds(1).build();
+                strength(5).toughness(3).initiative(3).wounds(1).attacks(1).leadership(3).basesize(25).modelCount(1).armor(5)
+                .modelsPerRank(5).selection(2).standardBearer(1).hasMusician(true).isMounted(true)
+                .mountAttacks(1).mountInitiative(6).mountStrength(5).mountOffensiveWeaponSkill(4).build();
 
         // Unit1 mount
         when(mockToHitService.rollToHit(unit1Mount, unit2, 5)).thenReturn(1);
@@ -131,10 +131,10 @@ public class CombatCalculationServiceTest {
                 .flee(true).caught(false).winner("Black Orc").wipedOut(false).build();
         expectedResult.add(expectedRound);
         Unit unit1 = Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5)
-                .toughness(3).initiative(6).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(5).armorSave(5).width(5).selection(1)
+                .toughness(3).initiative(6).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(5).armor(5).modelsPerRank(5).selection(1)
                 .standardBearer(1).wardSave(4).build();
         Unit unit2 = Unit.builder().name("Black Orc").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5)
-                .toughness(3).initiative(6).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(2).armorSave(5).width(5).selection(2)
+                .toughness(3).initiative(6).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(2).armor(5).modelsPerRank(5).selection(2)
                 .standardBearer(1).hasMusician(true).wardSave(6).build();
 
         // Attacker is unit1
@@ -202,8 +202,8 @@ public class CombatCalculationServiceTest {
         unitSpecialRulesBlackOrc.add(blackOrcHorde);
         unitSpecialRulesBlackOrc.add(blackOrcHatred);
 
-        Unit unit1 = Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(30).armorSave(5).width(10).selection(1).standardBearer(1).reRollToHitLessThan(0).toHitBonus(0).extraRanks(0).hasMusician(true).unitSpecialRulesById(swordMasterSpecialRuleList).build();
-        Unit unit2 = Unit.builder().name("Black Orc").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(4).toughness(4).initiative(3).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(12).armorSave(5).width(5).selection(2).standardBearer(1).reRollToHitLessThan(0).toHitBonus(0).extraRanks(0).hasMusician(true).unitSpecialRulesById(unitSpecialRulesBlackOrc).build();
+        Unit unit1 = Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(30).armor(5).modelsPerRank(10).selection(1).standardBearer(1).reRollToHitLessThan(0).toHitBonus(0).extraRanks(0).hasMusician(true).unitSpecialRulesById(swordMasterSpecialRuleList).build();
+        Unit unit2 = Unit.builder().name("Black Orc").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(4).toughness(4).initiative(3).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(12).armor(5).modelsPerRank(5).selection(2).standardBearer(1).reRollToHitLessThan(0).toHitBonus(0).extraRanks(0).hasMusician(true).unitSpecialRulesById(unitSpecialRulesBlackOrc).build();
 
         Integer expectedResultLightningReflexesApplied = 1;
         Integer expectedResultSwordMasterHordeApplied = 1;

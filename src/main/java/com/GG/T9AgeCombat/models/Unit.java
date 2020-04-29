@@ -18,6 +18,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @JsonInclude(NON_NULL)
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
+@Table(name = "unit", schema = "public", catalog = "T9AgeCombat")
 public class Unit {
     public static final int SINGLE_WOUND_MODEL = 1;
     public static final Integer DEFAULT_REROLL_LESS_THAN = 0;
@@ -26,63 +27,63 @@ public class Unit {
     @Id
     long id;
     String name;
-    Integer movement;
-    Integer offensiveWeaponSkill;
-    Integer defensiveWeaponSkill;
-    @NonFinal
-    Integer strength;
-    Integer toughness;
-    int initiative;
+    int movement;
+    int leadership;
     int wounds;
-    Integer attacks;
-    Integer leadership;
-    Integer armorSave;
-    Integer wardSave;
+    int defensiveWeaponSkill;
+    int toughness;
+    int armor;
+    int initiative;
+    int offensiveWeaponSkill;
+    int attacks;
+    @NonFinal
+    int strength;
+    int armorPenetration;
+    int mountInitiative;
+    int mountOffensiveWeaponSkill;
+    int mountAttacks;
+    @NonFinal
+    int mountStrength;
+    int mountArmorPenetration;
     int basesize;
     Boolean canHaveMusician;
     Boolean canHaveStandard;
-    Integer equipmentPointLimit;
+    @NonFinal
+    boolean isMounted;
+    int equipmentPointLimit;
     @ManyToOne
     @JoinColumn(name = "faction_id", referencedColumnName = "id", nullable = false)
     Faction factionByFactionId;
     @ManyToOne
     @JoinColumn(name = "unit_type_id", referencedColumnName = "id", nullable = false)
     UnitType unitTypeByUnitTypeId;
+    @ManyToOne
+    @JoinColumn(name = "unit_height_id", referencedColumnName = "id", nullable = false)
+    UnitHeight unitHeightByUnitHeightId;
     @OneToMany(mappedBy = "unitByUnitId")
     Collection<UnitEquipment> unitEquipmentsById;
     @OneToMany(mappedBy = "unitByUnitId")
-    Collection<UnitMount> unitMountsById;
+    Collection<UnitCharacterMount> unitCharacterMountsById;
     @OneToMany(mappedBy = "unitByUnitId", fetch = FetchType.EAGER)
     Collection<UnitSpecialRule> unitSpecialRulesById;
 
     @Transient
-    Integer mountWeaponSkill;
-    @Transient
-    Integer mountStrength;
-    @Transient
-    Integer mountAttacks;
-    @Transient
-    Integer mountWounds;
-    @Transient
-    Integer mountInitiative;
-    @Transient
-    Integer mountMovement;
+    Integer wardSave;
     @Transient
     Integer standardBearer;
     @Transient
     boolean hasMusician;
     @Transient
-    @NonFinal
-    Integer selection;
+    boolean isMount;
     @Transient
     @NonFinal
-    boolean isMount;
+    Integer selection;
     @Transient
     @NonFinal
     int modelCount;
     @Transient
     @NonFinal
-    int width;
+    int modelsPerRank;
     @Transient
     @NonFinal
     int pendingWounds;
@@ -124,11 +125,11 @@ public class Unit {
     Integer extraRanks;
 
     public int getRankBonus() {
-        return modelCount / width;
+        return modelCount / modelsPerRank;
     }
 
-    public int getActualWidth() {
-        return modelCount >= width ? width * basesize : modelCount * basesize;
+    public int getWidth() {
+        return modelCount >= modelsPerRank ? modelsPerRank * basesize : modelCount * basesize;
     }
 
     public void setPendingWounds(int pendingWounds) {
