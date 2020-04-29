@@ -1,8 +1,13 @@
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+
 plugins {
 	id 'org.springframework.boot' version '2.2.5.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 	id 'java'
 	id 'idea'
+	id "org.flywaydb.flyway" version "6.4.0"
 }
 
 group = 'com.GG'
@@ -16,6 +21,7 @@ repositories {
 dependencies {
 	compileOnly 'org.projectlombok:lombok:1.18.12'
 	annotationProcessor 'org.projectlombok:lombok:1.18.12'
+	implementation "org.flywaydb:flyway-core:6.4.0"
 
 	testCompileOnly 'org.projectlombok:lombok:1.18.12'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
@@ -30,4 +36,16 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+}
+
+task generateMigration {
+	doLast {
+		if (!project.hasProperty('mName')) {
+			println('****** You need to specify a name: gradle generateMigration -PmName=foo_bar_baz *****')
+			return 1
+		}
+
+		def migrationId = DateTimeFormatter.ofPattern('yyyyMMddkkmmssSSS').format(ZonedDateTime.now(ZoneOffset.UTC))
+		new File("src/main/resources/db/migration/V${migrationId}__${mName}.sql").write('')
+	}
 }
