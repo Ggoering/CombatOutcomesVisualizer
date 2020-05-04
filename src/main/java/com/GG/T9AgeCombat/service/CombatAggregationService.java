@@ -3,6 +3,8 @@ package com.GG.T9AgeCombat.service;
 import com.GG.T9AgeCombat.models.Result;
 import com.GG.T9AgeCombat.models.Unit;
 import com.GG.T9AgeCombat.service.repository.UnitService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +16,8 @@ public class CombatAggregationService {
     public static final int MAXIMUM_ROUND_COUNT = 10000;
     @Autowired
     private final CombatCalculationService combatCalculationService;
-    private UnitService unitService;
+    private final UnitService unitService;
+    private static final Logger logger = LoggerFactory.getLogger(CombatAggregationService.class);
 
     public CombatAggregationService(CombatCalculationService combatCalculationService, UnitService unitService) {
         this.combatCalculationService = combatCalculationService;
@@ -44,7 +47,7 @@ public class CombatAggregationService {
 
         long swordmasterCount = resultList.stream().filter(a -> a.getWinner().equals("Swordmaster")).count();
         long blackOrcCount = resultList.stream().filter(a -> a.getWinner().equals("Black Orc")).count();
-        System.out.print(swordmasterCount + " Swordmaster");
-        System.out.print(blackOrcCount + " Black Orc");
+        logger.info("{} Swordmaster", swordmasterCount);
+        logger.info( "{} Black Orc", blackOrcCount);
     }
 }

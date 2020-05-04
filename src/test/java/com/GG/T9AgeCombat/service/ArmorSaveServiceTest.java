@@ -1,10 +1,10 @@
 package com.GG.T9AgeCombat.service;
 
-import com.GG.T9AgeCombat.models.Unit;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ArmorSaveServiceTest {
     ArmorSaveService subject;
@@ -15,18 +15,28 @@ class ArmorSaveServiceTest {
     }
 
     @Test
-    void determineAP() {
-        Unit swordmaster = Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).basesize(20).modelCount(30).armorSave(5).width(5).build();
-        Unit BT = Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(8).defensiveWeaponSkill(8).strength(8).toughness(6).initiative(6).wounds(1).attacks(2).leadership(8).basesize(20).modelCount(30).armorSave(5).width(5).build();
-        Unit skink = Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(2).defensiveWeaponSkill(2).strength(2).toughness(3).initiative(6).wounds(1).attacks(1).leadership(5).basesize(20).modelCount(30).armorSave(0).width(5).build();
+    @DisplayName("Calculate Armor Save Threshold")
+    void calculateArmorSaveThreshold() {
+        int armorSaveThreshold1 = subject.calculateArmorSaveThreshold(0, 0);
+        int armorSaveThreshold2 = subject.calculateArmorSaveThreshold(2, 0);
+        int armorSaveThreshold3 = subject.calculateArmorSaveThreshold(4, 0);
+        int armorSaveThreshold4 = subject.calculateArmorSaveThreshold(6, 0);
+        int armorSaveThreshold5 = subject.calculateArmorSaveThreshold(0, 1);
+        int armorSaveThreshold6 = subject.calculateArmorSaveThreshold(3, 1);
+        int armorSaveThreshold7 = subject.calculateArmorSaveThreshold(5, 2);
+        int armorSaveThreshold8 = subject.calculateArmorSaveThreshold(5, 4);
+        int armorSaveThreshold9 = subject.calculateArmorSaveThreshold(2, 5);
+        int armorSaveThreshold10 = subject.calculateArmorSaveThreshold(4, 6);
 
-        Integer smTest = subject.calculateArmorPenetration(swordmaster);
-        Integer skinkTest = subject.calculateArmorPenetration(skink);
-        Integer BTtest = subject.calculateArmorPenetration(BT);
-
-        assertEquals(2, smTest);
-        assertEquals(0, skinkTest);
-        assertEquals(5, BTtest);
-
+        assertThat(armorSaveThreshold1).isEqualTo(7);
+        assertThat(armorSaveThreshold2).isEqualTo(5);
+        assertThat(armorSaveThreshold3).isEqualTo(3);
+        assertThat(armorSaveThreshold4).isEqualTo(2);
+        assertThat(armorSaveThreshold5).isEqualTo(8);
+        assertThat(armorSaveThreshold6).isEqualTo(5);
+        assertThat(armorSaveThreshold7).isEqualTo(4);
+        assertThat(armorSaveThreshold8).isEqualTo(6);
+        assertThat(armorSaveThreshold9).isEqualTo(10);
+        assertThat(armorSaveThreshold10).isEqualTo(9);
     }
 }

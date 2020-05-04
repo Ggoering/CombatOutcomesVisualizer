@@ -1,9 +1,6 @@
 package com.GG.T9AgeCombat.service;
 
-import com.GG.T9AgeCombat.enums.LimitationEnum;
-import com.GG.T9AgeCombat.enums.ModificationEnum;
-import com.GG.T9AgeCombat.enums.SpecialRuleEnum;
-import com.GG.T9AgeCombat.enums.TimingEnum;
+import com.GG.T9AgeCombat.enums.*;
 import com.GG.T9AgeCombat.models.*;
 import com.GG.T9AgeCombat.service.repository.UnitService;
 import org.junit.jupiter.api.AfterEach;
@@ -61,10 +58,12 @@ public class CombatAggregationServiceTest {
         Collection<UnitSpecialRule> unitSpecialRules = new ArrayList<>();
         unitSpecialRules.add(unitSpecialRule);
 
+        UnitHeight unitHeight = UnitHeight.builder().value(UnitHeightEnum.STANDARD.toString()).build();
+
         when(mockUnitService.retrieveUnit(1)).thenReturn(
-                Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).basesize(20).modelCount(30).armorSave(5).width(5).selection(1).standardBearer(1).hasMusician(true).build());
+                Unit.builder().name("Swordmaster").unitHeightByUnitHeightId(unitHeight).movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).basesize(20).modelCount(30).armor(5).modelsPerRank(5).selection(1).standardBearer(1).hasMusician(true).build());
         when(mockUnitService.retrieveUnit(2)).thenReturn(
-                Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(2).leadership(8).basesize(25).modelCount(25).armorSave(4).width(5).selection(2).standardBearer(1).hasMusician(true).unitSpecialRulesById(unitSpecialRules).build());
+                Unit.builder().name("Black Orc").unitHeightByUnitHeightId(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(2).leadership(8).basesize(25).modelCount(25).armor(4).modelsPerRank(5).selection(2).standardBearer(1).hasMusician(true).unitSpecialRulesById(unitSpecialRules).build());
 
         subject.getDataAggregation();
     }
