@@ -1,20 +1,14 @@
 package com.GG.T9AgeCombat.enums;
 
 public enum SpecialRuleEnum {
-    BORN_TO_FIGHT("born to fight"),
-    LIGHTNING_REFLEXES("lightning reflexes"),
-    HORDE("horde"),
-    HATRED("hatred");
-
-    private final String value;
-
-    SpecialRuleEnum(String value) {
-        this.value = value;
-    }
-
-    @Override
-    public String toString() {
-
-        return value;
-    }
+    BORN_TO_FIGHT,
+    LIGHTNING_REFLEXES,
+    HORDE,
+    HATRED,
+    SWORD_SWORN,
+    GREAT_WEAPON,
+    LIGHTNING_REFLEXES_GREAT_WEAPON,
+    STRIKES_LAST,
+    HEAVY_ARMOR,
+    PLATE_ARMOR;
 }

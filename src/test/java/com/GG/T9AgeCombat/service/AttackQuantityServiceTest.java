@@ -2,7 +2,6 @@ package com.GG.T9AgeCombat.service;
 
 import com.GG.T9AgeCombat.enums.UnitHeightEnum;
 import com.GG.T9AgeCombat.models.Unit;
-import com.GG.T9AgeCombat.models.UnitHeight;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,9 +24,9 @@ class AttackQuantityServiceTest {
 
     @Test
     void determineAttackQuantity() {
-        UnitHeight unitHeight = UnitHeight.builder().value(UnitHeightEnum.STANDARD.toString()).build();
-        Unit swordmaster = Unit.builder().name("Swordmaster").unitHeightByUnitHeightId(unitHeight).movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).basesize(20).modelCount(30).armor(5).modelsPerRank(5).build();
-        Unit blorcs = Unit.builder().name("Black Orc").unitHeightByUnitHeightId(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(25).armor(4).modelsPerRank(10).build();
+        UnitHeightEnum unitHeight =UnitHeightEnum.STANDARD;
+        Unit swordmaster = Unit.builder().name("Swordmaster").height(unitHeight).movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).basesize(20).modelCount(30).armor(5).modelsPerRank(5).build();
+        Unit blorcs = Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(25).armor(4).modelsPerRank(10).build();
 
         Integer attackQuantitySM = subject.determineAttackQuantity(swordmaster, blorcs);
         assertEquals(15, attackQuantitySM);
@@ -61,16 +60,16 @@ class AttackQuantityServiceTest {
 
     @Test
     void determineSupportingAttacks() {
-        UnitHeight unitHeight = UnitHeight.builder().value(UnitHeightEnum.STANDARD.toString()).build();
-        Unit blorcs = Unit.builder().name("Black Orc").unitHeightByUnitHeightId(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(25).armor(4).modelsPerRank(10).build();
-        Unit blorcs2 = Unit.builder().name("Black Orc").unitHeightByUnitHeightId(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(11).armor(4).modelsPerRank(10).build();
-        Unit blorcs3 = Unit.builder().name("Black Orc").unitHeightByUnitHeightId(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(10).armor(4).modelsPerRank(10).build();
-        Unit blorcs4 = Unit.builder().name("Black Orc").unitHeightByUnitHeightId(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(30).armor(4).modelsPerRank(10).build();
-        Unit blorcs5 = Unit.builder().name("Black Orc").unitHeightByUnitHeightId(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(30).armor(4).modelsPerRank(10).build();
-        Unit blorcs6 = Unit.builder().name("Black Orc").unitHeightByUnitHeightId(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(3).armor(4).modelsPerRank(10).build();
-        Unit blorcs7 = Unit.builder().name("Black Orc").unitHeightByUnitHeightId(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(9).armor(4).modelsPerRank(5).build();
-        Unit blorcs8 = Unit.builder().name("Black Orc").unitHeightByUnitHeightId(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(55).armor(4).modelsPerRank(5).build();
-        Unit blorcs9 = Unit.builder().name("Black Orc").unitHeightByUnitHeightId(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(0).armor(4).modelsPerRank(5).build();
+        UnitHeightEnum unitHeight = UnitHeightEnum.STANDARD;
+        Unit blorcs = Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(25).armor(4).modelsPerRank(10).build();
+        Unit blorcs2 = Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(11).armor(4).modelsPerRank(10).build();
+        Unit blorcs3 = Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(10).armor(4).modelsPerRank(10).build();
+        Unit blorcs4 = Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(30).armor(4).modelsPerRank(10).build();
+        Unit blorcs5 = Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(30).armor(4).modelsPerRank(10).build();
+        Unit blorcs6 = Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(3).armor(4).modelsPerRank(10).build();
+        Unit blorcs7 = Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(9).armor(4).modelsPerRank(5).build();
+        Unit blorcs8 = Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(55).armor(4).modelsPerRank(5).build();
+        Unit blorcs9 = Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(0).armor(4).modelsPerRank(5).build();
         Integer BONotInB2B1 = 4;
         Integer BONotInB2B2 = 0;
 
@@ -158,7 +157,7 @@ class AttackQuantityServiceTest {
     @Test
     @DisplayName("Supporting Attack Count - Standard Height")
     void supportingAttackCountStandardHeight() {
-        UnitHeight unitHeight = UnitHeight.builder().value(UnitHeightEnum.STANDARD.toString()).build();
+        UnitHeightEnum unitHeight = UnitHeightEnum.STANDARD;
 
         int noAttacks = subject.getSupportingAttacksPerModel(unitHeight, 0);
         int equalAttacks = subject.getSupportingAttacksPerModel(unitHeight, 1);
@@ -172,7 +171,7 @@ class AttackQuantityServiceTest {
     @Test
     @DisplayName("Supporting Attack Count - Large Height")
     void supportingAttackCountLargeHeight() {
-        UnitHeight unitHeight = UnitHeight.builder().value(UnitHeightEnum.LARGE.toString()).build();
+        UnitHeightEnum unitHeight = UnitHeightEnum.LARGE;
 
         int noAttacks = subject.getSupportingAttacksPerModel(unitHeight, 0);
         int lessAttacks = subject.getSupportingAttacksPerModel(unitHeight, 2);
@@ -188,7 +187,7 @@ class AttackQuantityServiceTest {
     @Test
     @DisplayName("Supporting Attack Count - Gigantic Height")
     void supportingAttackCountGiganticHeight() {
-        UnitHeight unitHeight = UnitHeight.builder().value(UnitHeightEnum.GIGANTIC.toString()).build();
+        UnitHeightEnum unitHeight = UnitHeightEnum.GIGANTIC;
 
         int noAttacks = subject.getSupportingAttacksPerModel(unitHeight, 0);
         int lessAttacks = subject.getSupportingAttacksPerModel(unitHeight, 4);

@@ -325,60 +325,74 @@ CREATE INDEX "fki_fk_character_mount_special_rule$special_rule" ON public.charac
 
 INSERT INTO public.limitation
 (value)
-VALUES('none'),
-('ten wide'),
-('first round');
+VALUES('NONE'),
+('EIGHT_WIDE'),
+('FIRST_ROUND'),
+('LIGHTNING_REFLEXES'),
+('GREAT_WEAPON'),
+('LIGHTNING_REFLEXES_GREAT_WEAPON');
 
 
 -- public.modification inserts
 
 INSERT INTO public.modification
 (value)
-VALUES('strength'),
-('to hit'),
-('extra ranks'),
-('re-roll to hit');
+VALUES('STRENGTH'),
+('TO_HIT'),
+('EXTRA_RANKS'),
+('INITIATIVE'),
+('RE_ROLL_TO_HIT'),
+('ARMOR_PENETRATION'),
+('ARMOR');
 
 
 -- public.timing inserts
 
 INSERT INTO public.timing
 (value)
-VALUES('all'),
-('determine attack quantity'),
-('roll to wound'),
-('roll to hit'),
-('roll armor save');
+VALUES('ALL'),
+('DETERMINE_ATTACK_QUANTITY'),
+('ROLL_TO_WOUND'),
+('ROLL_TO_HIT'),
+('ROLL_ARMOR_SAVE');
 
 
 -- public.special_rule inserts
 
 INSERT INTO public.special_rule
-(limitation_id, modification_id, timing_id, "name", value)
-VALUES(3, 1, 1, 'born to fight', 1),
-(1, 2, 4, 'lightning reflexes', 1),
-(2, 3, 2, 'horde', 1),
-(3, 4, 4, 'hatred', 1);
+(limitation_id, modification_id, timing_id, name, value)
+VALUES(3, 1, 1, 'BORN_TO_FIGHT', 1),
+(6, 2, 4, 'LIGHTNING_REFLEXES', 1),
+(2, 3, 2, 'HORDE', 1),
+(1, 2, 4, 'SWORD_SWORN', 1),
+(3, 4, 4, 'HATRED', 1),
+(1, 1, 1, 'GREAT_WEAPON_STRENGTH', 2),
+(1, 6, 1, 'GREAT_WEAPON_ARMOR_PENETRATION', 2),
+(5, 4, 1, 'LIGHTNING_REFLEXES_GREAT_WEAPON', 0),
+(4, 4, 1, 'STRIKES_LAST', -10),
+(1, 7, 1, 'LIGHT_ARMOR', 1),
+(1, 7, 1, 'HEAVY_ARMOR', 2),
+(1, 7, 1, 'PLATE_ARMOR', 3);
 
 
 -- public.unit_type inserts
 
 INSERT INTO public.unit_type
 ("value")
-VALUES('Infantry'),
-('Beast'),
-('Cavalry'),
-('Construct');
+VALUES('INFANTRY'),
+('BEAST'),
+('CAVALRY'),
+('CONSTRUCT');
 
 
 -- public.unit_height inserts
 
 INSERT INTO public.unit_height
 ("value")
-VALUES('Standard'),
-('Large'),
-('Gigantic'),
-('construct');
+VALUES('STANDARD'),
+('LARGE'),
+('GIGANTIC'),
+('CONSTRUCT');
 
 
 -- public.faction inserts
@@ -392,5 +406,55 @@ VALUES('High Elves'),
 -- public.unit inserts
 INSERT INTO public.unit
 (faction_id, unit_type_id, unit_height_id, "name", movement, leadership, wounds, defensive_weapon_skill, toughness, armor, initiative, offensive_weapon_skill, attacks, strength, armor_penetration, mount_initiative, mount_offensive_weapon_skill, mount_attacks, mount_strength, mount_armor_penetration, basesize, can_have_musician, can_have_standard, is_mounted, equipment_point_limit)
-VALUES(1, 2, 1, 'Swordmaster', 5, 8, 1, 6, 3, 1, 6, 6, 2, 5, 0, 0, 0, 0, 0, 0, 20, true, true, false, 0),
-(2, 2, 1, 'Black Orc', 4, 8, 1, 5, 4, 2, 2, 5, 2, 4, 0, 0, 0, 0, 0, 0, 20, true, true, false, 0);
+VALUES(1, 2, 1, 'SWORDMASTER', 5, 8, 1, 6, 3, 0, 6, 6, 2, 3, 0, 0, 0, 0, 0, 0, 20, true, true, false, 0),
+(2, 2, 1, 'BLACK_ORC', 4, 8, 1, 5, 4, 2, 2, 5, 2, 4, 0, 0, 0, 0, 0, 0, 20, true, true, false, 0);
+
+--public.equipment_type inserts
+INSERT INTO public.equipment_type
+(type)
+VALUES('RANGED'),
+('TWO_HANDED'),
+('ARMOR'),
+('SHIELD'),
+('ONE_HANDED');
+
+
+--public.equipment inserts
+INSERT INTO public.equipment
+(equipment_type_id, name)
+VALUES(2, 'GREAT_WEAPON'),
+(2, 'HALBERD'),
+(2, 'PAIRED_WEAPONS'),
+(3, 'LIGHT'),
+(3, 'HEAVY'),
+(3, 'PLATE'),
+(4, 'SHIELD'),
+(5, 'HAND_WEAPON'),
+(5, 'SPEAR'),
+(5, 'LANCE'),
+(5, 'LIGHT_LANCE');
+
+
+--public.unit_equipment inserts
+INSERT INTO public.unit_equipment
+(unit_id, equipment_id)
+VALUES(1, 1),
+(1, 5);
+
+--public.equipment_special_rule inserts
+INSERT INTO public.equipment_special_rule
+(equipment_id, special_rule_id)
+VALUES(1, 6),
+(1, 9),
+(1, 7),
+(4, 10),
+(5, 11),
+(6, 12);
+
+
+--public.unit_special_rule inserts
+INSERT INTO public.unit_special_rule
+(unit_id, special_rule_id)
+VALUES(1, 3),
+(1, 4),
+(1, 8);

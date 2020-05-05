@@ -1,30 +1,25 @@
 package com.GG.T9AgeCombat.models;
 
+import com.GG.T9AgeCombat.entities.SpecialRuleEntity;
+import com.GG.T9AgeCombat.enums.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.NoArgsConstructor;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 
-import javax.persistence.*;
-import java.util.Collection;
+import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static java.util.stream.Collectors.toList;
 
 @Value
 @Builder
-@Entity
 @JsonInclude(NON_NULL)
-@NoArgsConstructor(force = true)
-@AllArgsConstructor
-@Table(name = "unit", schema = "public", catalog = "T9AgeCombat")
 public class Unit {
     public static final int SINGLE_WOUND_MODEL = 1;
     public static final Integer DEFAULT_REROLL_LESS_THAN = 0;
     public static final Integer DEFAULT_REROLL_GREATER_THAN = 99;
 
-    @Id
     long id;
     String name;
     int movement;
@@ -46,81 +41,51 @@ public class Unit {
     int mountStrength;
     int mountArmorPenetration;
     int basesize;
-    Boolean canHaveMusician;
-    Boolean canHaveStandard;
     @NonFinal
     boolean isMounted;
+    Boolean canHaveMusician;
+    Boolean canHaveStandard;
     int equipmentPointLimit;
-    @ManyToOne
-    @JoinColumn(name = "faction_id", referencedColumnName = "id", nullable = false)
-    Faction factionByFactionId;
-    @ManyToOne
-    @JoinColumn(name = "unit_type_id", referencedColumnName = "id", nullable = false)
-    UnitType unitTypeByUnitTypeId;
-    @ManyToOne
-    @JoinColumn(name = "unit_height_id", referencedColumnName = "id", nullable = false)
-    UnitHeight unitHeightByUnitHeightId;
-    @OneToMany(mappedBy = "unitByUnitId")
-    Collection<UnitEquipment> unitEquipmentsById;
-    @OneToMany(mappedBy = "unitByUnitId")
-    Collection<UnitCharacterMount> unitCharacterMountsById;
-    @OneToMany(mappedBy = "unitByUnitId", fetch = FetchType.EAGER)
-    Collection<UnitSpecialRule> unitSpecialRulesById;
+    UnitHeightEnum height;
+    List<SpecialRule> specialRuleList;
+    List<Equipment> equipmentList;
 
-    @Transient
     Integer wardSave;
-    @Transient
     Integer standardBearer;
-    @Transient
     boolean hasMusician;
-    @Transient
     boolean isMount;
-    @Transient
     @NonFinal
     Integer selection;
-    @Transient
     @NonFinal
     int modelCount;
-    @Transient
     @NonFinal
     int modelsPerRank;
-    @Transient
     @NonFinal
     int pendingWounds;
-    @Transient
     @NonFinal
     int woundTracker;
-    @Transient
     @NonFinal
     @Builder.Default
     Integer reRollToHitLessThan = DEFAULT_REROLL_LESS_THAN;
-    @Transient
     @NonFinal
     @Builder.Default
     Integer reRollToHitGreaterThan = DEFAULT_REROLL_GREATER_THAN;
-    @Transient
     @NonFinal
     @Builder.Default
     Integer reRollToWoundLessThan = DEFAULT_REROLL_LESS_THAN;
-    @Transient
     @NonFinal
     @Builder.Default
     Integer reRollToWoundGreaterThan = DEFAULT_REROLL_GREATER_THAN;
-    @Transient
     @NonFinal
     @Builder.Default
     Integer reRollArmorSaveLessThan = DEFAULT_REROLL_LESS_THAN;
-    @Transient
     @NonFinal
     @Builder.Default
     Integer reRollArmorSaveGreaterThan = DEFAULT_REROLL_GREATER_THAN;
-    @Transient
     @NonFinal
     Boolean hasReRollLeadership;
-    @Transient
     @NonFinal
     Integer toHitBonus;
-    @Transient
     @NonFinal
     Integer extraRanks;
 

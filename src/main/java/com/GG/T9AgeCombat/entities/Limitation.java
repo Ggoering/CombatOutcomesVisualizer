@@ -1,4 +1,4 @@
-package com.GG.T9AgeCombat.models;
+package com.GG.T9AgeCombat.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package com.GG.T9AgeCombat.models;
+package com.GG.T9AgeCombat.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,8 +14,8 @@ import javax.persistence.Table;
 @Entity
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-@Table(name = "modification", schema = "public", catalog = "T9AgeCombat")
-public class Modification {
+@Table(name = "unit_height", schema = "public", catalog = "T9AgeCombat")
+public class UnitHeight {
     @Id
     long id;
     String value;

@@ -2,10 +2,10 @@ package com.GG.T9AgeCombat.service;
 
 import com.GG.T9AgeCombat.enums.UnitHeightEnum;
 import com.GG.T9AgeCombat.models.Unit;
-import com.GG.T9AgeCombat.models.UnitHeight;
 import org.springframework.stereotype.Service;
 
 import static com.GG.T9AgeCombat.common.Constants.HORDE_MODELS_PER_RANK;
+import static com.GG.T9AgeCombat.enums.UnitHeightEnum.*;
 
 @Service
 public class AttackQuantityService {
@@ -48,7 +48,7 @@ public class AttackQuantityService {
 
         int backRankSupports = determineBackRankSupports(modelsNotInB2B, supportingRanks, modelCount, unitWidth);
         int midRankSupports = determineMidRankSupports(modelsNotInB2B, supportingRanks - 1, backRankSupports, modelCount, unitWidth);
-        int supportingAttackByModel = getSupportingAttacksPerModel(attacker.getUnitHeightByUnitHeightId(), attacker.getAttacks());
+        int supportingAttackByModel = getSupportingAttacksPerModel(attacker.getHeight(), attacker.getAttacks());
 
         return (midRankSupports + backRankSupports) * supportingAttackByModel;
     }
@@ -80,16 +80,15 @@ public class AttackQuantityService {
         return supportingRankCount * width - supportingRankCount * modelsNotInB2b;
     }
 
-    int getSupportingAttacksPerModel(UnitHeight unitHeight, int numberOfAttacks) {
-        if (unitHeight.getValue().equals(UnitHeightEnum.STANDARD.toString())) {
+    int getSupportingAttacksPerModel(UnitHeightEnum unitHeight, int numberOfAttacks) {
+        switch (unitHeight) {
+        case STANDARD:
             return (Math.min(numberOfAttacks, STANDARD_HEIGHT_SUPPORTING_ATTACKS));
-        } else if (unitHeight.getValue().equals(UnitHeightEnum.LARGE.toString())) {
+        case LARGE:
             return (Math.min(numberOfAttacks, LARGE_HEIGHT_SUPPORTING_ATTACKS));
-        } else if (unitHeight.getValue().equals(UnitHeightEnum.GIGANTIC.toString())) {
+        case GIGANTIC:
             return (Math.min(numberOfAttacks, GIGANTIC_HEIGHT_SUPPORTING_ATTACKS));
-        } else {
-            // TODO: Log and throw an exception if a model doesn't have a valid height
-            return 0;
+        default: return 0;
         }
     }
 }
