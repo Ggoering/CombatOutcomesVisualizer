@@ -17,21 +17,17 @@ public class ToWoundService {
         this.diceRollingService = diceRollingService;
     }
 
-    Integer rollToWound(Unit attacker, Unit defender, Integer quantity) {
-        Integer attackerStrength = attacker.getStrength();
-        Integer defenderToughness = defender.getToughness();
-        Integer toWoundThreshold = this.determineToWoundThreshold(attackerStrength, defenderToughness);
-        List<Integer> dice = diceRollingService.roll(quantity);
+    int rollToWound(Unit attacker, Unit defender, int quantity) {
+        int toWoundThreshold = this.determineToWoundThreshold(attacker.getActualStrength(), defender.getActualToughness());
+        List<Integer> resultList = diceRollingService.roll(quantity);
 
-
-        return diceRollingService.getFinalWithReRolls(dice, toWoundThreshold, attacker.getReRollToWoundLessThan(), attacker.getReRollToWoundGreaterThan());
+        return diceRollingService.getFinalWithReRolls(resultList, toWoundThreshold, attacker.getReRollToWoundLessThan(), attacker.getReRollToWoundGreaterThan());
     }
 
-    Integer determineToWoundThreshold(Integer attackerStrength, Integer defenderToughness) {
-        Integer toWoundThreshold = TO_WOUND_DEFAULT_THRESHOLD - (attackerStrength - defenderToughness);
+    int determineToWoundThreshold(int attackerStrength, int defenderToughness) {
+        int toWoundThreshold = TO_WOUND_DEFAULT_THRESHOLD - (attackerStrength - defenderToughness);
 
-        return  toWoundThreshold < MINIMUM_TO_WOUND_SUCCESS ?
-                MINIMUM_TO_WOUND_SUCCESS : toWoundThreshold > TO_WOUND_AUTO_SUCCESS ?
-                TO_WOUND_AUTO_SUCCESS : toWoundThreshold;
+        return toWoundThreshold < MINIMUM_TO_WOUND_SUCCESS ?
+                MINIMUM_TO_WOUND_SUCCESS : Math.min(toWoundThreshold, TO_WOUND_AUTO_SUCCESS);
     }
 }

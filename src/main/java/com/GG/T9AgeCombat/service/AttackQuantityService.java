@@ -5,7 +5,6 @@ import com.GG.T9AgeCombat.models.Unit;
 import org.springframework.stereotype.Service;
 
 import static com.GG.T9AgeCombat.common.Constants.HORDE_MODELS_PER_RANK;
-import static com.GG.T9AgeCombat.enums.UnitHeightEnum.*;
 
 @Service
 public class AttackQuantityService {
@@ -14,15 +13,15 @@ public class AttackQuantityService {
     private static final int GIGANTIC_HEIGHT_SUPPORTING_ATTACKS = 5;
     private static final int DEFAULT_SUPPORTING_RANKS = 1;
 
-    Integer determineAttackQuantity(Unit attacker, Unit defender) {
-        Integer modelsNotInB2B = determineModelsNotInBaseContact(attacker.getWidth(), attacker, defender.getWidth());
-        Integer supportingAttacks = determineSupportingAttacks(attacker, modelsNotInB2B);
-        Integer frontRankAttacks = determineFrontRankAttacks(attacker, modelsNotInB2B);
+    int determineAttackQuantity(Unit attacker, Unit defender) {
+        int modelsNotInB2B = determineModelsNotInBaseContact(attacker.getWidth(), attacker, defender.getWidth());
+        int supportingAttacks = determineSupportingAttacks(attacker, modelsNotInB2B);
+        int frontRankAttacks = determineFrontRankAttacks(attacker, modelsNotInB2B);
 
         return supportingAttacks + frontRankAttacks;
     }
 
-    Integer determineModelsNotInBaseContact(Integer attackerActualWidth, Unit attacker, Integer defenderActualWidth) {
+    int determineModelsNotInBaseContact(int attackerActualWidth, Unit attacker, int defenderActualWidth) {
         int widthDifference = defenderActualWidth - attackerActualWidth;
 
         if (widthDifference >= 0) {
@@ -32,7 +31,7 @@ public class AttackQuantityService {
         return Math.abs(widthDifference / attacker.getBasesize()) - 2;
     }
 
-    Integer determineSupportingAttacks(Unit attacker, Integer modelsNotInB2B) {
+    int determineSupportingAttacks(Unit attacker, int modelsNotInB2B) {
         int modelCount = attacker.getModelCount();
         int unitWidth = attacker.getModelsPerRank();
 
@@ -48,16 +47,16 @@ public class AttackQuantityService {
 
         int backRankSupports = determineBackRankSupports(modelsNotInB2B, supportingRanks, modelCount, unitWidth);
         int midRankSupports = determineMidRankSupports(modelsNotInB2B, supportingRanks - 1, backRankSupports, modelCount, unitWidth);
-        int supportingAttackByModel = getSupportingAttacksPerModel(attacker.getHeight(), attacker.getAttacks());
+        int supportingAttackByModel = getSupportingAttacksPerModel(attacker.getHeight(), attacker.getActualAttacks());
 
         return (midRankSupports + backRankSupports) * supportingAttackByModel;
     }
 
-    Integer determineFrontRankAttacks(Unit attacker, Integer modelsNotInB2B) {
+    int determineFrontRankAttacks(Unit attacker, int modelsNotInB2B) {
         return attacker.getModelsPerRank() - modelsNotInB2B <= attacker.getModelCount() ? (attacker.getModelsPerRank() - modelsNotInB2B) * attacker.getAttacks() : attacker.getModelCount() * attacker.getAttacks();
     }
 
-    Integer determineBackRankSupports(Integer modelsNotInB2b, Integer supportingRanks, Integer count, Integer width) {
+    int determineBackRankSupports(int modelsNotInB2b, int supportingRanks, int count, int width) {
         int defaultSupports = count > width ? width - modelsNotInB2b : 0;
         boolean backRankSupporting = ((count / width) <= supportingRanks);
 
@@ -69,26 +68,27 @@ public class AttackQuantityService {
         return Math.min(defaultSupports, modelsInBackRank);
     }
 
-    Integer determineMidRankSupports(Integer modelsNotInB2b, Integer supportingRanks, Integer backRankSupports, Integer count, Integer width) {
+    int determineMidRankSupports(int modelsNotInB2b, int supportingRanks, int backRankSupports, int count, int width) {
         int midRankCount = (count - width - backRankSupports) / width;
 
         if (midRankCount < 1) {
             return 0;
         }
 
-        Integer supportingRankCount = midRankCount >= supportingRanks ? supportingRanks : midRankCount;
+        int supportingRankCount = Math.min(midRankCount, supportingRanks);
         return supportingRankCount * width - supportingRankCount * modelsNotInB2b;
     }
 
     int getSupportingAttacksPerModel(UnitHeightEnum unitHeight, int numberOfAttacks) {
         switch (unitHeight) {
-        case STANDARD:
-            return (Math.min(numberOfAttacks, STANDARD_HEIGHT_SUPPORTING_ATTACKS));
-        case LARGE:
-            return (Math.min(numberOfAttacks, LARGE_HEIGHT_SUPPORTING_ATTACKS));
-        case GIGANTIC:
-            return (Math.min(numberOfAttacks, GIGANTIC_HEIGHT_SUPPORTING_ATTACKS));
-        default: return 0;
+            case STANDARD:
+                return (Math.min(numberOfAttacks, STANDARD_HEIGHT_SUPPORTING_ATTACKS));
+            case LARGE:
+                return (Math.min(numberOfAttacks, LARGE_HEIGHT_SUPPORTING_ATTACKS));
+            case GIGANTIC:
+                return (Math.min(numberOfAttacks, GIGANTIC_HEIGHT_SUPPORTING_ATTACKS));
+            default:
+                return 0;
         }
     }
 }

@@ -18,26 +18,20 @@ public class ToHitService {
         this.diceRollingService = diceRollingService;
     }
 
-    List<Integer> rollAttacks(Integer quantity) {
-        return diceRollingService.roll(quantity);
-    }
-
-    Integer rollToHit(Unit attacker, Unit defender, Integer quantity) {
-        Integer attackerWS = attacker.getOffensiveWeaponSkill();
-        Integer defenderWS = defender.getDefensiveWeaponSkill();
-        List<Integer> resultList = rollAttacks(quantity);
-        Integer toHitThreshold = determineToHitThreshold(attackerWS, defenderWS);
+    int rollToHit(Unit attacker, Unit defender, int quantity) {
+        int toHitThreshold = determineToHitThreshold(attacker.getActualOffensiveWeaponSkill(), defender.getActualDefensiveWeaponSkill());
+        List<Integer> resultList = diceRollingService.roll(quantity);
 
         return diceRollingService.getFinalWithReRolls(resultList, toHitThreshold, attacker.getReRollToHitLessThan(), attacker.getReRollToHitGreaterThan());
     }
 
-    Integer determineToHitThreshold(Integer attackerWS, Integer defenderWS) {
-        if (attackerWS.equals(defenderWS)) {
+    int determineToHitThreshold(int attackerOWS, int defenderDWS) {
+        if (attackerOWS == defenderDWS) {
             return TO_HIT_DEFAULT_THRESHOLD;
-        } else if (attackerWS > defenderWS) {
-            return attackerWS - defenderWS > TO_HIT_ATTACKER_SKILL_THRESHOLD ? TO_HIT_DEFAULT_THRESHOLD - TO_HIT_SUBSTANTIAL_SKILL_DIFFERENCE : TO_HIT_DEFAULT_THRESHOLD - TO_HIT_MINIMAL_SKILL_DIFFERENCE;
+        } else if (attackerOWS > defenderDWS) {
+            return attackerOWS - defenderDWS > TO_HIT_ATTACKER_SKILL_THRESHOLD ? TO_HIT_DEFAULT_THRESHOLD - TO_HIT_SUBSTANTIAL_SKILL_DIFFERENCE : TO_HIT_DEFAULT_THRESHOLD - TO_HIT_MINIMAL_SKILL_DIFFERENCE;
         } else {
-            return attackerWS - defenderWS < TO_HIT_DEFENDER_SKILL_THRESHOLD ? TO_HIT_DEFAULT_THRESHOLD + TO_HIT_MINIMAL_SKILL_DIFFERENCE : TO_HIT_DEFAULT_THRESHOLD;
+            return attackerOWS - defenderDWS < TO_HIT_DEFENDER_SKILL_THRESHOLD ? TO_HIT_DEFAULT_THRESHOLD + TO_HIT_MINIMAL_SKILL_DIFFERENCE : TO_HIT_DEFAULT_THRESHOLD;
         }
     }
 }

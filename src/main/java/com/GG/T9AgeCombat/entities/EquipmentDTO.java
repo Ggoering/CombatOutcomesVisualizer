@@ -11,7 +11,6 @@ import lombok.Value;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.io.Serializable;
-import java.util.List;
 
 @Value
 @Builder
@@ -35,6 +34,6 @@ public class EquipmentDTO implements Serializable {
                 .id(id)
                 .name(EquipmentEnum.valueOf(name))
                 .type(EquipmentTypeEnum.valueOf(equipmentType))
-            .build();
+                .build();
     }
 }

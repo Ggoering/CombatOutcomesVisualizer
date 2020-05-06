@@ -49,3 +49,9 @@ task generateMigration {
 		new File("src/main/resources/db/migration/V${migrationId}__${mName}.sql").write('')
 	}
 }
+
+flyway {
+	url = 'jdbc:postgresql://localhost:5432/postgres'
+	user = 'postgres'
+	password = 'root'
+}

@@ -16,6 +16,7 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class EquipmentService {
     SpecialRuleService specialRuleService;
+
     EquipmentService(SpecialRuleService specialRuleService) {
         this.specialRuleService = specialRuleService;
     }

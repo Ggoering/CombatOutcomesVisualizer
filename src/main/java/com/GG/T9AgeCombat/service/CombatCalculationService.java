@@ -1,8 +1,10 @@
 package com.GG.T9AgeCombat.service;
 
+import com.GG.T9AgeCombat.enums.LimitationEnum;
+import com.GG.T9AgeCombat.models.Result;
+import com.GG.T9AgeCombat.models.Round;
 import com.GG.T9AgeCombat.models.SpecialRule;
-import com.GG.T9AgeCombat.entities.SpecialRuleEntity;
-import com.GG.T9AgeCombat.models.*;
+import com.GG.T9AgeCombat.models.Unit;
 import com.GG.T9AgeCombat.predicates.DetermineModificationPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +40,9 @@ public class CombatCalculationService {
     }
 
     Result combat(Unit primary, Unit secondary) {
+        applyPermanentSpecialRules(primary);
+        applyPermanentSpecialRules(secondary);
+
         List<Round> rounds = fight(primary, secondary, false, new ArrayList<>());
         int endingRound = rounds.size() - 1;
         String winner = rounds.get(endingRound).getWinner();
@@ -54,8 +59,11 @@ public class CombatCalculationService {
         int primaryUnitWoundsDealt = 0;
         int secondaryUnitWoundsDealt = 0;
 
-        applySpecialRules(primary, isFirstRound);
-        applySpecialRules(secondary, isFirstRound);
+        primary.resetStatModifiers();
+        secondary.resetStatModifiers();
+
+        applyTemporarySpecialRules(primary, isFirstRound);
+        applyTemporarySpecialRules(secondary, isFirstRound);
         List<Unit> unitsByInitiative = orderUnitsByInitiative(primary, secondary);
 
         for (Unit attacker : unitsByInitiative) {
@@ -73,7 +81,7 @@ public class CombatCalculationService {
 
                 int failedSaves = armorSaveService.rollArmorSaves(attacker, defender, numberOfWounds);
 
-                if (defender.getWardSave() != null) {
+                if (defender.getWardSave() != 0) {
                     failedSaves = wardSaveService.rollWardSaves(defender, failedSaves);
                 }
 
@@ -88,7 +96,7 @@ public class CombatCalculationService {
                 // If the attacker is the last in the list then apply wounds
                 // If the next unit has the same initiative as the attacker then do not apply wounds yet
                 if (unitsByInitiative.indexOf(attacker) + 1 == unitsByInitiative.size()
-                        || attacker.getInitiative() != unitsByInitiative.get(unitsByInitiative.indexOf(attacker) + 1).getInitiative()) {
+                        || attacker.getActualInitiative() != unitsByInitiative.get(unitsByInitiative.indexOf(attacker) + 1).getActualInitiative()) {
                     for (Unit unit : unitsByInitiative) {
                         if (!unit.isMount()) {
                             unit.applyPendingWounds();
@@ -126,14 +134,24 @@ public class CombatCalculationService {
                     .modelCount(secondary.getModelCount()).build());
         }
 
-        return unitList.stream().sorted(Comparator.comparing(Unit::getInitiative).reversed()).collect(toList());
+        return unitList.stream().sorted(Comparator.comparing(Unit::getActualInitiative).reversed()).collect(toList());
     }
 
-    void applySpecialRules(Unit unit, boolean isFirstRound) {
-        if (unit.getSpecialRuleList() != null && unit.getSpecialRuleList().size() > 0) {
+    void applyPermanentSpecialRules(Unit unit) {
+        if (unit.getSpecialRuleList() != null && !unit.getSpecialRuleList().isEmpty()) {
             for (SpecialRule specialRule : unit.getSpecialRuleList()) {
-                if (specialRuleRoutingService.routeLimitationToPredicate(specialRule.getLimitation(), unit, isFirstRound)) {
-                    DetermineModificationPredicate.applyBonus(unit, specialRule.getModification(), specialRule.getValue());
+                if (specialRule.getLimitation() == LimitationEnum.NONE) {
+                    DetermineModificationPredicate.applyPermanentBonus(unit, specialRule.getModification(), specialRule.getValue());
+                }
+            }
+        }
+    }
+
+    void applyTemporarySpecialRules(Unit unit, boolean isFirstRound) {
+        if (unit.getSpecialRuleList() != null && !unit.getSpecialRuleList().isEmpty()) {
+            for (SpecialRule specialRule : unit.getSpecialRuleList()) {
+                if (specialRuleRoutingService.routeTemporaryLimitationToPredicate(specialRule.getLimitation(), unit, isFirstRound)) {
+                    DetermineModificationPredicate.applyTemporaryBonus(unit, specialRule.getModification(), specialRule.getValue());
                 }
             }
         }

@@ -50,13 +50,13 @@ public class DiceRollingService {
         List<Integer> initialSuccesses = resultList.stream().filter(r -> r >= successThreshold).collect(Collectors.toList());
         Integer successCount = initialSuccesses.size();
 
-        if(reRollGreaterThan < REROLL_GREATER_THAN_MINIMUM) {
+        if (reRollGreaterThan < REROLL_GREATER_THAN_MINIMUM) {
             Integer quantityToReRoll = (int) initialSuccesses.stream().filter(r -> r > reRollGreaterThan).count();
             Integer failuresAfterReRoll = (int) this.roll(quantityToReRoll).stream().filter(r -> r < successThreshold).count();
             successCount = successCount - failuresAfterReRoll;
         }
 
-        if(reRollLessThan > REROLL_LESS_THAN_MINIMUM) {
+        if (reRollLessThan > REROLL_LESS_THAN_MINIMUM) {
             List<Integer> initialFailures = resultList.stream().filter(r -> r < successThreshold).collect(Collectors.toList());
             Integer quantityToReRoll = (int) initialFailures.stream().filter(r -> r < reRollLessThan).count();
             Integer successAfterReroll = (int) this.roll(quantityToReRoll).stream().filter(r -> r >= successThreshold).count();

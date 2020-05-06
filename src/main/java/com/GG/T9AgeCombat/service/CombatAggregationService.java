@@ -48,6 +48,6 @@ public class CombatAggregationService {
         long swordmasterCount = resultList.stream().filter(a -> a.getWinner().equals("Swordmaster")).count();
         long blackOrcCount = resultList.stream().filter(a -> a.getWinner().equals("Black Orc")).count();
         logger.info("{} Swordmaster", swordmasterCount);
-        logger.info( "{} Black Orc", blackOrcCount);
+        logger.info("{} Black Orc", blackOrcCount);
     }
 }

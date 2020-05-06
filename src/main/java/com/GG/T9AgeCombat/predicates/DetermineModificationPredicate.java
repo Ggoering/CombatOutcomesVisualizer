@@ -9,24 +9,33 @@ public class DetermineModificationPredicate {
     private DetermineModificationPredicate() {
     }
 
-    public static void applyBonus(Unit unit, ModificationEnum modification, Object value) {
+    public static void applyPermanentBonus(Unit unit, ModificationEnum modification, Object value) {
         switch (modification) {
-            case STRENGTH: {
-                unit.updateStrength((Integer) value);
+            case STRENGTH:
+                unit.updateStrength((int) value);
                 break;
-            }
-            case RE_ROLL_TO_HIT: {
-                unit.updateReRollToHit((Integer) value);
-                break;
-            }
-            case TO_HIT: {
+            case TO_HIT:
                 unit.updateToHitBonus((Integer) value);
                 break;
-            }
-            case EXTRA_RANKS: {
+            default:
+                break;
+        }
+    }
+
+    public static void applyTemporaryBonus(Unit unit, ModificationEnum modification, Object value) {
+        switch (modification) {
+            case STRENGTH:
+                unit.updateStrengthModifier((Integer) value);
+                break;
+            case RE_ROLL_TO_HIT:
+                unit.updateReRollToHit((Integer) value);
+                break;
+            case TO_HIT:
+                unit.updateToHitBonusModifier((Integer) value);
+                break;
+            case EXTRA_RANKS:
                 unit.updateExtraRank((Integer) value);
                 break;
-            }
             default:
                 break;
         }

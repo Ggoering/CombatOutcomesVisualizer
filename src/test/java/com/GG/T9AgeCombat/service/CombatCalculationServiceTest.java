@@ -1,9 +1,5 @@
 package com.GG.T9AgeCombat.service;
 
-import com.GG.T9AgeCombat.entities.Limitation;
-import com.GG.T9AgeCombat.entities.Modification;
-import com.GG.T9AgeCombat.entities.SpecialRuleEntity;
-import com.GG.T9AgeCombat.entities.Timing;
 import com.GG.T9AgeCombat.enums.*;
 import com.GG.T9AgeCombat.models.*;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -202,12 +197,11 @@ public class CombatCalculationServiceTest {
                 .value(-10)
                 .build();
 
-
             SpecialRule specialRuleGreatWeapon = SpecialRule.builder()
                 .limitation(LimitationEnum.NONE)
                 .modification(ModificationEnum.STRENGTH_AND_ARMOR_PENETRATION)
                 .timing(TimingEnum.ALL)
-                .name(SpecialRuleEnum.GREAT_WEAPON)
+                .name(SpecialRuleEnum.GREAT_WEAPON_STRENGTH)
                 .value(2)
                 .build();
 
@@ -291,8 +285,6 @@ public class CombatCalculationServiceTest {
         unitSpecialRulesSwordMaster.add(specialRuleSwordSworn);
         unitSpecialRulesSwordMaster.add(specialRuleHorde);
 
-
-
         Unit unit1 = Unit.builder().name("Swordmaster").movement(5).height(UnitHeightEnum.STANDARD).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(30).armor(5).modelsPerRank(10).selection(1).standardBearer(1).reRollToHitLessThan(0).toHitBonus(0).extraRanks(0).hasMusician(true).specialRuleList(unitSpecialRulesSwordMaster).equipmentList(equipmentSwordMaster).build();
         Unit unit2 = Unit.builder().name("Black Orc").movement(5).height(UnitHeightEnum.STANDARD).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(4).toughness(4).initiative(3).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(12).armor(5).modelsPerRank(5).selection(2).standardBearer(1).reRollToHitLessThan(0).toHitBonus(0).extraRanks(0).hasMusician(true).specialRuleList(unitSpecialRulesBlackOrc).equipmentList(equipmentBlackOrc).build();
 
@@ -302,14 +294,16 @@ public class CombatCalculationServiceTest {
         Integer expectedResultBornToFightApplied = 5;
         Integer expectedResultHatredApplied = 6;
 
-        getCombatCalculationService().applySpecialRules(unit1, true);
-        getCombatCalculationService().applySpecialRules(unit2, true);
+        getCombatCalculationService().applyPermanentSpecialRules(unit1);
+        getCombatCalculationService().applyPermanentSpecialRules(unit2);
+        getCombatCalculationService().applyTemporarySpecialRules(unit1, true);
+        getCombatCalculationService().applyTemporarySpecialRules(unit2, true);
 
-        assertThat(unit1.getToHitBonus()).isEqualTo(expectedResultLightningReflexesApplied);
+        assertThat(unit1.getActualToHitBonus()).isEqualTo(expectedResultLightningReflexesApplied);
         assertThat(unit1.getExtraRanks()).isEqualTo(expectedResultSwordMasterHordeApplied);
 
         assertThat(unit2.getExtraRanks()).isEqualTo(expectedResultBlackOrcHordeApplied);
-        assertThat(unit2.getStrength()).isEqualTo(expectedResultBornToFightApplied);
+        assertThat(unit2.getActualStrength()).isEqualTo(expectedResultBornToFightApplied);
         assertThat(unit2.getReRollToHitLessThan()).isEqualTo(expectedResultHatredApplied);
     }
 

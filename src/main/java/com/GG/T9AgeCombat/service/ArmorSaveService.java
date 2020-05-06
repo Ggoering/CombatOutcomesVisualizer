@@ -17,7 +17,7 @@ public class ArmorSaveService {
     }
 
     int rollArmorSaves(Unit attacker, Unit defender, int quantity) {
-        int armorSaveThreshold = calculateArmorSaveThreshold(defender.getArmor(), attacker.getArmorPenetration());
+        int armorSaveThreshold = calculateArmorSaveThreshold(defender.getActualArmor(), attacker.getActualArmorPenetration());
 
         // Only roll armor saves if there is a chance to save
         if (armorSaveThreshold < ARMOR_SAVE_DEFAULT_THRESHOLD) {

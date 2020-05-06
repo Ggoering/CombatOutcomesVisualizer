@@ -1,7 +1,6 @@
 package com.GG.T9AgeCombat.models;
 
-import com.GG.T9AgeCombat.entities.SpecialRuleEntity;
-import com.GG.T9AgeCombat.enums.*;
+import com.GG.T9AgeCombat.enums.UnitHeightEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Value;
@@ -10,7 +9,6 @@ import lombok.experimental.NonFinal;
 import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
-import static java.util.stream.Collectors.toList;
 
 @Value
 @Builder
@@ -37,7 +35,6 @@ public class Unit {
     int mountInitiative;
     int mountOffensiveWeaponSkill;
     int mountAttacks;
-    @NonFinal
     int mountStrength;
     int mountArmorPenetration;
     int basesize;
@@ -50,8 +47,7 @@ public class Unit {
     List<SpecialRule> specialRuleList;
     List<Equipment> equipmentList;
 
-    Integer wardSave;
-    Integer standardBearer;
+    int standardBearer;
     boolean hasMusician;
     boolean isMount;
     @NonFinal
@@ -85,9 +81,37 @@ public class Unit {
     @NonFinal
     Boolean hasReRollLeadership;
     @NonFinal
-    Integer toHitBonus;
+    int toHitBonus;
     @NonFinal
     Integer extraRanks;
+
+    // Stat modifiers
+    @NonFinal
+    int movementModifier;
+    @NonFinal
+    int leadershipModifier;
+    @NonFinal
+    int woundsModifier;
+    @NonFinal
+    int defensiveWeaponSkillModifier;
+    @NonFinal
+    int toughnessModifier;
+    @NonFinal
+    int armorModifier;
+    @NonFinal
+    int initiativeModifier;
+    @NonFinal
+    int offensiveWeaponSkillModifier;
+    @NonFinal
+    int attacksModifier;
+    @NonFinal
+    int strengthModifier;
+    @NonFinal
+    int armorPenetrationModifier;
+    @NonFinal
+    int wardSave;
+    @NonFinal
+    int toHitBonusModifier;
 
     public int getRankBonus() {
         return modelCount / modelsPerRank;
@@ -125,17 +149,13 @@ public class Unit {
     }
 
     private void adjustModelCountFromPendingWounds() {
-        woundTracker = pendingWounds % wounds;
-        int modelsKilled = (pendingWounds - woundTracker) / wounds;
+        woundTracker = pendingWounds % (wounds + woundsModifier);
+        int modelsKilled = (pendingWounds - woundTracker) / (wounds + woundsModifier);
         modelCount = (modelsKilled > modelCount ? 0 : modelCount - modelsKilled);
 
         if (modelCount == 0) {
             woundTracker = 0;
         }
-    }
-
-    public void updateStrength(Integer strength) {
-        this.strength += strength;
     }
 
     public void updateReRollToHit(Integer reRollToHit) {
@@ -152,5 +172,124 @@ public class Unit {
 
     public void setSelection(int selection) {
         this.selection = selection;
+    }
+
+    public void updateStrength(int strength) {
+        this.strength += strength;
+    }
+
+    public void updateMovementModifier(int movementModifier) {
+        this.movementModifier += movementModifier;
+    }
+
+    public void updateLeadershipModifier(int leadershipModifier) {
+        this.leadershipModifier += leadershipModifier;
+    }
+
+    public void updateWoundsModifier(int woundsModifier) {
+        this.woundsModifier += woundsModifier;
+    }
+
+    public void updateDefensiveWeaponSkillModifier(int defensiveWeaponSkillModifier) {
+        this.defensiveWeaponSkillModifier += defensiveWeaponSkillModifier;
+    }
+
+    public void updateToughnessModifier(int toughnessModifier) {
+        this.toughnessModifier += toughnessModifier;
+    }
+
+    public void updateArmorModifier(int armorModifier) {
+        this.armorModifier += armorModifier;
+    }
+
+    public void updateInitiativeModifier(int initiativeModifier) {
+        this.initiativeModifier += initiativeModifier;
+    }
+
+    public void updateOffensiveWeaponSkillModifier(int offensiveWeaponSkillModifier) {
+        this.offensiveWeaponSkillModifier += offensiveWeaponSkillModifier;
+    }
+
+    public void updateAttacksModifier(int attacksModifier) {
+        this.attacksModifier += attacksModifier;
+    }
+
+    public void updateStrengthModifier(int strengthModifier) {
+        this.strengthModifier += strengthModifier;
+    }
+
+    public void updateArmorPenetrationModifier(int armorPenetrationModifier) {
+        this.armorPenetrationModifier += armorPenetrationModifier;
+    }
+
+    public void updateToHitBonusModifier(int toHitBonusModifier) {
+        this.toHitBonusModifier += toHitBonusModifier;
+    }
+
+    public void setWardSave(int wardSave) {
+        this.wardSave = wardSave;
+    }
+
+    public void resetStatModifiers() {
+        movementModifier = 0;
+        leadershipModifier = 0;
+        woundsModifier = 0;
+        defensiveWeaponSkillModifier = 0;
+        toughnessModifier = 0;
+        armorModifier = 0;
+        initiativeModifier = 0;
+        offensiveWeaponSkillModifier = 0;
+        attacksModifier = 0;
+        strengthModifier = 0;
+        armorPenetrationModifier = 0;
+        toHitBonusModifier = 0;
+    }
+
+    public int getActualMovement() {
+        return movement + movementModifier;
+    }
+
+    public int getActualLeadership() {
+        return leadership + leadershipModifier;
+    }
+
+    public int getActualWounds() {
+        return wounds + woundsModifier;
+    }
+
+    public int getActualDefensiveWeaponSkill() {
+        return defensiveWeaponSkill + defensiveWeaponSkillModifier;
+    }
+
+    public int getActualToughness() {
+        return toughness + toughnessModifier;
+    }
+
+    public int getActualArmor() {
+        return armor + armorModifier;
+    }
+
+    public int getActualInitiative() {
+        return initiative + initiativeModifier;
+    }
+
+    public int getActualOffensiveWeaponSkill() {
+        return offensiveWeaponSkill + offensiveWeaponSkillModifier;
+    }
+
+    public int getActualAttacks() {
+        return attacks + attacksModifier;
+    }
+
+    public int getActualStrength() {
+        return strength + strengthModifier;
+    }
+
+    public int getActualArmorPenetration() {
+        return armorPenetration + armorPenetrationModifier;
+    }
+
+    public int getActualToHitBonus() {
+        return toHitBonus + toHitBonusModifier;
     }
 }
