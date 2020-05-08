@@ -2,6 +2,8 @@ package com.GG.T9AgeCombat.predicates;
 
 import org.springframework.stereotype.Component;
 
+import static com.GG.T9AgeCombat.common.Constants.HORDE_MODELS_PER_RANK;
+
 @Component
 public class CheckLimitationPredicate {
     private CheckLimitationPredicate() {
@@ -12,6 +14,6 @@ public class CheckLimitationPredicate {
     }
 
     public static boolean checkHorde(Integer unitWidth) {
-        return unitWidth >= 10;
+        return unitWidth >= HORDE_MODELS_PER_RANK;
     }
 }

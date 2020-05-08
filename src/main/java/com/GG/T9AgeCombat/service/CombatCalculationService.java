@@ -1,5 +1,7 @@
 package com.GG.T9AgeCombat.service;
 
+import com.GG.T9AgeCombat.models.SpecialRule;
+import com.GG.T9AgeCombat.entities.SpecialRuleEntity;
 import com.GG.T9AgeCombat.models.*;
 import com.GG.T9AgeCombat.predicates.DetermineModificationPredicate;
 import org.slf4j.Logger;
@@ -128,12 +130,10 @@ public class CombatCalculationService {
     }
 
     void applySpecialRules(Unit unit, boolean isFirstRound) {
-        if (unit.getUnitSpecialRulesById() != null) {
-            for (UnitSpecialRule unitSpecialRule : unit.getUnitSpecialRulesById()) {
-                SpecialRule specialRule = unitSpecialRule.getSpecialRuleBySpecialRuleId();
-
-                if (specialRuleRoutingService.routeLimitationToPredicate(specialRule.getLimitationByLimitationId().getValue(), unit, isFirstRound)) {
-                    DetermineModificationPredicate.applyBonus(unit, specialRule.getModificationByModificationId().getValue(), specialRule.getValue());
+        if (unit.getSpecialRuleList() != null && unit.getSpecialRuleList().size() > 0) {
+            for (SpecialRule specialRule : unit.getSpecialRuleList()) {
+                if (specialRuleRoutingService.routeLimitationToPredicate(specialRule.getLimitation(), unit, isFirstRound)) {
+                    DetermineModificationPredicate.applyBonus(unit, specialRule.getModification(), specialRule.getValue());
                 }
             }
         }

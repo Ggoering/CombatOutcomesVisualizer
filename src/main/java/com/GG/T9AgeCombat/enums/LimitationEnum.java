@@ -1,18 +1,10 @@
 package com.GG.T9AgeCombat.enums;
 
 public enum LimitationEnum {
-    NONE("none"),
-    TEN_WIDE("ten wide"),
-    FIRST_ROUND("first round");
-
-    private final String value;
-
-    LimitationEnum(String value) {
-        this.value = value;
-    }
-
-    @Override
-    public String toString() {
-        return value;
-    }
+    NONE,
+    EIGHT_WIDE,
+    FIRST_ROUND,
+    LIGHTNING_REFLEXES,
+    GREAT_WEAPON,
+    LIGHTNING_REFLEXES_GREAT_WEAPON;
 }

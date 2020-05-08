@@ -1,9 +1,10 @@
 package com.GG.T9AgeCombat.service;
 
-import com.GG.T9AgeCombat.enums.LimitationEnum;
-import com.GG.T9AgeCombat.enums.ModificationEnum;
-import com.GG.T9AgeCombat.enums.SpecialRuleEnum;
-import com.GG.T9AgeCombat.enums.TimingEnum;
+import com.GG.T9AgeCombat.entities.Limitation;
+import com.GG.T9AgeCombat.entities.Modification;
+import com.GG.T9AgeCombat.entities.SpecialRuleEntity;
+import com.GG.T9AgeCombat.entities.Timing;
+import com.GG.T9AgeCombat.enums.*;
 import com.GG.T9AgeCombat.models.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -161,49 +162,139 @@ public class CombatCalculationServiceTest {
     @Test
     @DisplayName("Applies special rules")
     void applySpecialRules() {
-        Limitation limitationFirstRound = Limitation.builder().value(LimitationEnum.FIRST_ROUND.toString()).build();
-        Modification modificationStrength = Modification.builder().value(ModificationEnum.STRENGTH.toString()).build();
-        Timing timingAll = Timing.builder().value(TimingEnum.ALL.toString()).build();
-        SpecialRule specialRuleBorToFight = SpecialRule.builder().limitationByLimitationId(limitationFirstRound)
-                .modificationByModificationId(modificationStrength).timingByTimingId(timingAll)
-                .name(SpecialRuleEnum.BORN_TO_FIGHT.toString()).value(1).build();
+        SpecialRule specialRuleHatred = SpecialRule.builder()
+                .limitation(LimitationEnum.FIRST_ROUND)
+                .modification(ModificationEnum.RE_ROLL_TO_HIT)
+                .timing(TimingEnum.ALL)
+                .name(SpecialRuleEnum.HATRED)
+                .value(6)
+                .build();
 
-        Limitation limitationNone = Limitation.builder().value(LimitationEnum.NONE.toString()).build();
-        Modification modificationToHit = Modification.builder().value(ModificationEnum.TO_HIT.toString()).build();
-        Timing timingRoleToHit = Timing.builder().value(TimingEnum.ROLL_TO_HIT.toString()).build();
-        SpecialRule specialRuleLightningReflexes = SpecialRule.builder().limitationByLimitationId(limitationNone)
-                .modificationByModificationId(modificationToHit).timingByTimingId(timingRoleToHit)
-                .name(SpecialRuleEnum.LIGHTNING_REFLEXES.toString()).value(1).build();
+        SpecialRule specialRuleHorde = SpecialRule.builder()
+                .limitation(LimitationEnum.EIGHT_WIDE)
+                .modification(ModificationEnum.EXTRA_RANKS)
+                .timing(TimingEnum.ALL)
+                .name(SpecialRuleEnum.HORDE)
+                .value(1)
+                .build();
 
-        Limitation limitationTenWide = Limitation.builder().value(LimitationEnum.TEN_WIDE.toString()).build();
-        Modification modificationExtraRanks = Modification.builder().value(ModificationEnum.EXTRA_RANKS.toString()).build();
-        Timing timingDetermineAttackQuantity = Timing.builder().value(TimingEnum.DETERMINE_ATTACK_QUANTITY.toString()).build();
-        SpecialRule specialRuleHorde = SpecialRule.builder().limitationByLimitationId(limitationTenWide)
-                .modificationByModificationId(modificationExtraRanks).timingByTimingId(timingDetermineAttackQuantity)
-                .name(SpecialRuleEnum.HORDE.toString()).value(1).build();
+        SpecialRule specialRuleSwordSworn = SpecialRule.builder()
+                .limitation(LimitationEnum.NONE)
+                .modification(ModificationEnum.TO_HIT)
+                .timing(TimingEnum.ALL)
+                .name(SpecialRuleEnum.SWORD_SWORN)
+                .value(1)
+                .build();
 
-        Modification modificationReRollToHit = Modification.builder().value(ModificationEnum.RE_ROLL_TO_HIT.toString()).build();
-        Timing timingDetermineRollToHit = Timing.builder().value(TimingEnum.ROLL_TO_HIT.toString()).build();
-        SpecialRule specialRuleHatred = SpecialRule.builder().limitationByLimitationId(limitationFirstRound)
-                .modificationByModificationId(modificationReRollToHit).timingByTimingId(timingDetermineRollToHit)
-                .name(SpecialRuleEnum.HATRED.toString()).value(6).build();
+        SpecialRule specialRuleLightningReflexesGreatWeapon = SpecialRule.builder()
+                .limitation(LimitationEnum.LIGHTNING_REFLEXES)
+                .modification(ModificationEnum.INITIATIVE)
+                .timing(TimingEnum.ALL)
+                .name(SpecialRuleEnum.LIGHTNING_REFLEXES_GREAT_WEAPON)
+                .value(0)
+                .build();
 
-        UnitSpecialRule swordMasterLightningReflexes = UnitSpecialRule.builder().specialRuleBySpecialRuleId(specialRuleLightningReflexes).build();
-        UnitSpecialRule swordMasterHorde = UnitSpecialRule.builder().specialRuleBySpecialRuleId(specialRuleHorde).build();
-        Collection<UnitSpecialRule> swordMasterSpecialRuleList = new ArrayList<>();
-        swordMasterSpecialRuleList.add(swordMasterLightningReflexes);
-        swordMasterSpecialRuleList.add(swordMasterHorde);
+        SpecialRule specialRuleGreatWeaponStrikeLast = SpecialRule.builder()
+                .limitation(LimitationEnum.LIGHTNING_REFLEXES)
+                .modification(ModificationEnum.INITIATIVE)
+                .timing(TimingEnum.ALL)
+                .name(SpecialRuleEnum.STRIKES_LAST)
+                .value(-10)
+                .build();
 
-        UnitSpecialRule blackOrcBornToFight = UnitSpecialRule.builder().specialRuleBySpecialRuleId(specialRuleBorToFight).build();
-        UnitSpecialRule blackOrcHorde = UnitSpecialRule.builder().specialRuleBySpecialRuleId(specialRuleHorde).build();
-        UnitSpecialRule blackOrcHatred = UnitSpecialRule.builder().specialRuleBySpecialRuleId(specialRuleHatred).build();
-        Collection<UnitSpecialRule> unitSpecialRulesBlackOrc = new ArrayList<>();
-        unitSpecialRulesBlackOrc.add(blackOrcBornToFight);
-        unitSpecialRulesBlackOrc.add(blackOrcHorde);
-        unitSpecialRulesBlackOrc.add(blackOrcHatred);
 
-        Unit unit1 = Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(30).armor(5).modelsPerRank(10).selection(1).standardBearer(1).reRollToHitLessThan(0).toHitBonus(0).extraRanks(0).hasMusician(true).unitSpecialRulesById(swordMasterSpecialRuleList).build();
-        Unit unit2 = Unit.builder().name("Black Orc").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(4).toughness(4).initiative(3).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(12).armor(5).modelsPerRank(5).selection(2).standardBearer(1).reRollToHitLessThan(0).toHitBonus(0).extraRanks(0).hasMusician(true).unitSpecialRulesById(unitSpecialRulesBlackOrc).build();
+            SpecialRule specialRuleGreatWeapon = SpecialRule.builder()
+                .limitation(LimitationEnum.NONE)
+                .modification(ModificationEnum.STRENGTH_AND_ARMOR_PENETRATION)
+                .timing(TimingEnum.ALL)
+                .name(SpecialRuleEnum.GREAT_WEAPON)
+                .value(2)
+                .build();
+
+            SpecialRule specialRuleBornToFight = SpecialRule.builder()
+                .limitation(LimitationEnum.FIRST_ROUND)
+                .modification(ModificationEnum.STRENGTH)
+                .timing(TimingEnum.ALL)
+                .name(SpecialRuleEnum.BORN_TO_FIGHT)
+                .value(1)
+                .build();
+
+            SpecialRule specialRuleHeavyArmor = SpecialRule.builder()
+                .limitation(LimitationEnum.NONE)
+                .modification(ModificationEnum.ARMOR)
+                .timing(TimingEnum.ALL)
+                .name(SpecialRuleEnum.HEAVY_ARMOR)
+                .value(1)
+                .build();
+
+            SpecialRule specialRulePlateArmor = SpecialRule.builder()
+                .limitation(LimitationEnum.NONE)
+                .modification(ModificationEnum.ARMOR)
+                .timing(TimingEnum.ALL)
+                .name(SpecialRuleEnum.HEAVY_ARMOR)
+                .value(1)
+                .build();
+
+        List<SpecialRule> armorSpecialRulesBlackOrc = new ArrayList<>();
+        armorSpecialRulesBlackOrc.add(specialRulePlateArmor);
+
+        List<SpecialRule> armorSpecialRulesSwordMaster = new ArrayList<>();
+        armorSpecialRulesSwordMaster.add(specialRuleHeavyArmor);
+
+        List<SpecialRule> greatWeaponSpecialRulesBlackOrc = new ArrayList<>();
+        greatWeaponSpecialRulesBlackOrc.add(specialRuleGreatWeapon);
+        greatWeaponSpecialRulesBlackOrc.add(specialRuleGreatWeaponStrikeLast);
+
+        List<SpecialRule> greatWeaponSpecialRulesSwordMaster = new ArrayList<>();
+        greatWeaponSpecialRulesSwordMaster.add(specialRuleGreatWeapon);
+        greatWeaponSpecialRulesSwordMaster.add(specialRuleGreatWeaponStrikeLast);
+
+        Equipment blackOrcGreatWeapon = Equipment.builder()
+                .name(EquipmentEnum.GREAT_WEAPON)
+                .type(EquipmentTypeEnum.TWO_HANDED)
+                .specialRules(greatWeaponSpecialRulesBlackOrc)
+              .build();
+
+        Equipment blackOrcPlate = Equipment.builder()
+                .name(EquipmentEnum.PLATE)
+                .type(EquipmentTypeEnum.ARMOR)
+                .specialRules(armorSpecialRulesBlackOrc)
+                .build();
+
+        Equipment swordMasterGreatWeapon = Equipment.builder()
+                .name(EquipmentEnum.GREAT_WEAPON)
+                .type(EquipmentTypeEnum.TWO_HANDED)
+                .specialRules(greatWeaponSpecialRulesSwordMaster)
+              .build();
+
+        Equipment swordMasterHeavyArmor = Equipment.builder()
+                .name(EquipmentEnum.HEAVY)
+                .type(EquipmentTypeEnum.ARMOR)
+                .specialRules(armorSpecialRulesSwordMaster)
+                .build();
+
+        List<Equipment> equipmentBlackOrc = new ArrayList<>();
+        equipmentBlackOrc.add(blackOrcGreatWeapon);
+        equipmentBlackOrc.add(blackOrcPlate);
+
+        List<Equipment> equipmentSwordMaster = new ArrayList<>();
+        equipmentSwordMaster.add(swordMasterGreatWeapon);
+        equipmentSwordMaster.add(swordMasterHeavyArmor);
+
+        List<SpecialRule> unitSpecialRulesBlackOrc = new ArrayList<>();
+        unitSpecialRulesBlackOrc.add(specialRuleBornToFight);
+        unitSpecialRulesBlackOrc.add(specialRuleHorde);
+        unitSpecialRulesBlackOrc.add(specialRuleHatred);
+
+        List<SpecialRule> unitSpecialRulesSwordMaster = new ArrayList<>();
+        unitSpecialRulesSwordMaster.add(specialRuleLightningReflexesGreatWeapon);
+        unitSpecialRulesSwordMaster.add(specialRuleSwordSworn);
+        unitSpecialRulesSwordMaster.add(specialRuleHorde);
+
+
+
+        Unit unit1 = Unit.builder().name("Swordmaster").movement(5).height(UnitHeightEnum.STANDARD).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(30).armor(5).modelsPerRank(10).selection(1).standardBearer(1).reRollToHitLessThan(0).toHitBonus(0).extraRanks(0).hasMusician(true).specialRuleList(unitSpecialRulesSwordMaster).equipmentList(equipmentSwordMaster).build();
+        Unit unit2 = Unit.builder().name("Black Orc").movement(5).height(UnitHeightEnum.STANDARD).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(4).toughness(4).initiative(3).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(12).armor(5).modelsPerRank(5).selection(2).standardBearer(1).reRollToHitLessThan(0).toHitBonus(0).extraRanks(0).hasMusician(true).specialRuleList(unitSpecialRulesBlackOrc).equipmentList(equipmentBlackOrc).build();
 
         Integer expectedResultLightningReflexesApplied = 1;
         Integer expectedResultSwordMasterHordeApplied = 1;

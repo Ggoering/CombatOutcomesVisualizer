@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import static org.mockito.Mockito.when;
 
@@ -47,23 +47,22 @@ public class CombatAggregationServiceTest {
 
     @Test
     void getDataAggregation() {
-        Limitation limitation = Limitation.builder().value(LimitationEnum.FIRST_ROUND.toString()).build();
-        Modification modification = Modification.builder().value(ModificationEnum.STRENGTH.toString()).build();
-        Timing timing = Timing.builder().value(TimingEnum.ALL.toString()).build();
+        LimitationEnum limitation = LimitationEnum.FIRST_ROUND;
+        ModificationEnum modification = ModificationEnum.STRENGTH;
+        TimingEnum timing = TimingEnum.ALL;
 
-        SpecialRule specialRule = SpecialRule.builder().limitationByLimitationId(limitation).modificationByModificationId(modification)
-                .timingByTimingId(timing).name(SpecialRuleEnum.BORN_TO_FIGHT.toString()).value(1).build();
-        UnitSpecialRule unitSpecialRule = UnitSpecialRule.builder().specialRuleBySpecialRuleId(specialRule).build();
+        SpecialRule specialRule = SpecialRule.builder().limitation(limitation).modification(modification)
+                .timing(timing).name(SpecialRuleEnum.BORN_TO_FIGHT).value(1).build();
 
-        Collection<UnitSpecialRule> unitSpecialRules = new ArrayList<>();
-        unitSpecialRules.add(unitSpecialRule);
+        List<SpecialRule> unitSpecialRules = new ArrayList<>();
+        unitSpecialRules.add(specialRule);
 
-        UnitHeight unitHeight = UnitHeight.builder().value(UnitHeightEnum.STANDARD.toString()).build();
+        UnitHeightEnum unitHeight = UnitHeightEnum.STANDARD;
 
         when(mockUnitService.retrieveUnit(1)).thenReturn(
-                Unit.builder().name("Swordmaster").unitHeightByUnitHeightId(unitHeight).movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).basesize(20).modelCount(30).armor(5).modelsPerRank(5).selection(1).standardBearer(1).hasMusician(true).build());
+                Unit.builder().name("Swordmaster").height(unitHeight).movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).basesize(20).modelCount(30).armor(5).modelsPerRank(5).selection(1).standardBearer(1).hasMusician(true).build());
         when(mockUnitService.retrieveUnit(2)).thenReturn(
-                Unit.builder().name("Black Orc").unitHeightByUnitHeightId(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(2).leadership(8).basesize(25).modelCount(25).armor(4).modelsPerRank(5).selection(2).standardBearer(1).hasMusician(true).unitSpecialRulesById(unitSpecialRules).build());
+                Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(2).leadership(8).basesize(25).modelCount(25).armor(4).modelsPerRank(5).selection(2).standardBearer(1).hasMusician(true).specialRuleList(unitSpecialRules).build());
 
         subject.getDataAggregation();
     }

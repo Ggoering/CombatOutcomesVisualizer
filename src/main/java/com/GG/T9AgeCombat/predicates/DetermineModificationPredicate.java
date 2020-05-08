@@ -1,24 +1,34 @@
 package com.GG.T9AgeCombat.predicates;
 
+import com.GG.T9AgeCombat.enums.ModificationEnum;
 import com.GG.T9AgeCombat.models.Unit;
 import org.springframework.stereotype.Component;
-
-import static com.GG.T9AgeCombat.enums.ModificationEnum.*;
 
 @Component
 public class DetermineModificationPredicate {
     private DetermineModificationPredicate() {
     }
 
-    public static void applyBonus(Unit unit, String modification, int value) {
-        if (modification.equals(STRENGTH.toString())) {
-            unit.updateStrength(value);
-        } else if (modification.equals(RE_ROLL_TO_HIT.toString())) {
-            unit.updateReRollToHit(value);
-        } else if (modification.equals(TO_HIT.toString())) {
-            unit.updateToHitBonus(value);
-        } else if (modification.equals(EXTRA_RANKS.toString())) {
-            unit.updateExtraRank(value);
+    public static void applyBonus(Unit unit, ModificationEnum modification, Object value) {
+        switch (modification) {
+            case STRENGTH: {
+                unit.updateStrength((Integer) value);
+                break;
+            }
+            case RE_ROLL_TO_HIT: {
+                unit.updateReRollToHit((Integer) value);
+                break;
+            }
+            case TO_HIT: {
+                unit.updateToHitBonus((Integer) value);
+                break;
+            }
+            case EXTRA_RANKS: {
+                unit.updateExtraRank((Integer) value);
+                break;
+            }
+            default:
+                break;
         }
     }
 }

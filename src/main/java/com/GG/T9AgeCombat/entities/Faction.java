@@ -1,4 +1,4 @@
-package com.GG.T9AgeCombat.models;
+package com.GG.T9AgeCombat.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,16 +7,14 @@ import lombok.Value;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 @Value
 @Builder
 @Entity
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-@Table(name = "timing", schema = "public", catalog = "T9AgeCombat")
-public class Timing {
+public class Faction {
     @Id
     long id;
-    String value;
+    String name;
 }
