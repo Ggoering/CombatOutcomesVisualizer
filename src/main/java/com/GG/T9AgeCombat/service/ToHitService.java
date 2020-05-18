@@ -10,8 +10,8 @@ public class ToHitService {
     private static final int TO_HIT_DEFAULT_THRESHOLD = 4;
     private static final int TO_HIT_MINIMAL_SKILL_DIFFERENCE = 1;
     private static final int TO_HIT_SUBSTANTIAL_SKILL_DIFFERENCE = 2;
-    private static final int TO_HIT_ATTACKER_SKILL_THRESHOLD = 3;
-    private static final int TO_HIT_DEFENDER_SKILL_THRESHOLD = -3;
+    private static final int TO_HIT_MINIMUM_THRESHOLD = 2;
+    private static final int TO_HIT_MAXIMUM_THRESHOLD = 6;
     DiceRollingService diceRollingService;
 
     public ToHitService(DiceRollingService diceRollingService) {
@@ -19,19 +19,39 @@ public class ToHitService {
     }
 
     int rollToHit(Unit attacker, Unit defender, int quantity) {
-        int toHitThreshold = determineToHitThreshold(attacker.getActualOffensiveWeaponSkill(), defender.getActualDefensiveWeaponSkill());
+        int toHitThreshold = determineToHitThreshold(attacker.getActualOffensiveWeaponSkill(),
+                defender.getActualDefensiveWeaponSkill(), attacker.getActualToHitBonus());
         List<Integer> resultList = diceRollingService.roll(quantity);
 
-        return diceRollingService.getFinalWithReRolls(resultList, toHitThreshold, attacker.getReRollToHitLessThan(), attacker.getReRollToHitGreaterThan());
+        return diceRollingService.getFinalWithReRolls(resultList, toHitThreshold, attacker.getReRollToHitLessThan(),
+                attacker.getReRollToHitGreaterThan());
     }
 
-    int determineToHitThreshold(int attackerOWS, int defenderDWS) {
-        if (attackerOWS == defenderDWS) {
-            return TO_HIT_DEFAULT_THRESHOLD;
-        } else if (attackerOWS > defenderDWS) {
-            return attackerOWS - defenderDWS > TO_HIT_ATTACKER_SKILL_THRESHOLD ? TO_HIT_DEFAULT_THRESHOLD - TO_HIT_SUBSTANTIAL_SKILL_DIFFERENCE : TO_HIT_DEFAULT_THRESHOLD - TO_HIT_MINIMAL_SKILL_DIFFERENCE;
+    int determineToHitThreshold(int attackerOWS, int defenderDWS, int attackerToHitBonus) {
+        int weaponSkillDifference = attackerOWS - defenderDWS;
+        int toHitThreshold;
+
+        if (weaponSkillDifference >= 4) {
+            toHitThreshold = TO_HIT_DEFAULT_THRESHOLD - TO_HIT_SUBSTANTIAL_SKILL_DIFFERENCE;
+        } else if (weaponSkillDifference >= 1) {
+            toHitThreshold = TO_HIT_DEFAULT_THRESHOLD - TO_HIT_MINIMAL_SKILL_DIFFERENCE;
+        } else if (weaponSkillDifference >= -3) {
+            toHitThreshold = TO_HIT_DEFAULT_THRESHOLD;
+        } else if (weaponSkillDifference >= -7) {
+            toHitThreshold = TO_HIT_DEFAULT_THRESHOLD + TO_HIT_MINIMAL_SKILL_DIFFERENCE;
         } else {
-            return attackerOWS - defenderDWS < TO_HIT_DEFENDER_SKILL_THRESHOLD ? TO_HIT_DEFAULT_THRESHOLD + TO_HIT_MINIMAL_SKILL_DIFFERENCE : TO_HIT_DEFAULT_THRESHOLD;
+            toHitThreshold = TO_HIT_DEFAULT_THRESHOLD + TO_HIT_SUBSTANTIAL_SKILL_DIFFERENCE;
         }
+
+        if (attackerToHitBonus != 0) {
+            // A positive to hit bonus decreases the to hit threshold, making it easier to hit
+            // A negative to hit bonus increases the to hit threshold, making it harder to hit
+            toHitThreshold -= attackerToHitBonus;
+        }
+
+        toHitThreshold = (toHitThreshold > 6 ? TO_HIT_MAXIMUM_THRESHOLD : toHitThreshold);
+        toHitThreshold = (toHitThreshold < 2 ? TO_HIT_MINIMUM_THRESHOLD : toHitThreshold);
+
+        return toHitThreshold;
     }
 }
