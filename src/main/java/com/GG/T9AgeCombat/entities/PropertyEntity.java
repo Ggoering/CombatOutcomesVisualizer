@@ -7,16 +7,18 @@ import lombok.Value;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 @Value
 @Builder
 @Entity
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-@Table(name = "modification", schema = "public", catalog = "T9AgeCombat")
-public class Modification {
+public class PropertyEntity {
     @Id
     long id;
-    String value;
+    String name;
+    int value;
+    String modificationValue;
+    String limitationValue;
+    String timingValue;
 }

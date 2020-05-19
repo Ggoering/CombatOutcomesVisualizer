@@ -1,4 +1,4 @@
-package com.GG.T9AgeCombat.entities;
+package com.GG.T9AgeCombat.dto;
 
 import com.GG.T9AgeCombat.enums.EquipmentEnum;
 import com.GG.T9AgeCombat.enums.EquipmentTypeEnum;
@@ -17,7 +17,7 @@ import java.io.Serializable;
 @Entity
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-public class EquipmentDTO implements Serializable {
+public class UnitEquipmentSpecialRuleDTO implements Serializable {
     @Id
     long id;
     String name;

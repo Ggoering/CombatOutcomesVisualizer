@@ -13,7 +13,6 @@ import javax.persistence.Id;
 @Entity
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-//@Table(name = "character_mount", schema = "public", catalog = "T9AgeCombat")
 public class CharacterMountEntity {
     @Id
     long id;
@@ -30,11 +29,4 @@ public class CharacterMountEntity {
     Integer armorPenetration;
     int basesize;
     String name;
-//    @ManyToOne
-//    @JoinColumn(name = "unit_type_id", referencedColumnName = "id", nullable = false)
-//    UnitType unitTypeByUnitTypeId;
-//    @OneToMany(mappedBy = "characterMountByCharacterMountId")
-//    Collection<CharacterMountSpecialRule> characterMountSpecialRulesById;
-//    @OneToMany(mappedBy = "characterMountByCharacterMountId")
-//    Collection<UnitCharacterMount> unitCharacterMountsById;
 }

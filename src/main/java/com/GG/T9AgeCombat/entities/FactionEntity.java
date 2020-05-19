@@ -13,7 +13,7 @@ import javax.persistence.Id;
 @Entity
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-public class Faction {
+public class FactionEntity {
     @Id
     long id;
     String name;

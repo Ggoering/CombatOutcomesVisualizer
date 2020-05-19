@@ -1,38 +1,49 @@
 package com.GG.T9AgeCombat.service.repository;
 
-import com.GG.T9AgeCombat.entities.EquipmentDTO;
-import com.GG.T9AgeCombat.entities.SpecialRuleEntity;
+import com.GG.T9AgeCombat.dto.UnitEquipmentSpecialRuleDTO;
+import com.GG.T9AgeCombat.entities.PropertyEntity;
 import com.GG.T9AgeCombat.entities.UnitEntity;
 import com.GG.T9AgeCombat.models.Equipment;
-import com.GG.T9AgeCombat.models.SpecialRule;
+import com.GG.T9AgeCombat.models.SpecialRuleProperty;
 import com.GG.T9AgeCombat.models.Unit;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class UnitService {
     private final EntityManager entityManager;
-    private final SpecialRuleService specialRuleService;
+    private final SpecialRulePropertyService specialRulePropertyService;
     private final EquipmentService equipmentService;
 
     public UnitService(EntityManager entityManager
-            , SpecialRuleService specialRuleService
+            , SpecialRulePropertyService specialRulePropertyService
             , EquipmentService equipmentService) {
         this.entityManager = entityManager;
-        this.specialRuleService = specialRuleService;
+        this.specialRulePropertyService = specialRulePropertyService;
         this.equipmentService = equipmentService;
     }
 
-
     public Unit retrieveUnit(int unitId) {
         UnitEntity unitAttributes = getUnitByUnitId(unitId);
-        List<EquipmentDTO> equipmentDTOList = getEquipmentByUnitId(unitId);
-        List<SpecialRuleEntity> specialRuleEntityList = getSpecialRuleByUnitId(unitId);
-        List<SpecialRule> specialRuleList = specialRuleService.specialRuleFromDTO(specialRuleEntityList);
-        List<Equipment> equipmentList = equipmentService.buildEquipmentFromDTO(equipmentDTOList);
+
+        List<UnitEquipmentSpecialRuleDTO> unitEquipmentSpecialRuleDTOList = getEquipmentByUnitId(unitId);
+        List<Equipment> equipmentList = equipmentService.buildEquipmentFromDTO(unitEquipmentSpecialRuleDTOList);
+
+        // Build special rules inherent to the unit
+        List<PropertyEntity> unitSpecialRuleProperties = getUnitSpecialRules(unitId);
+        List<PropertyEntity> unitHeightSpecialRuleProperties = getUnitHeightSpecialRules(unitId);
+        List<PropertyEntity> unitTypeSpecialRuleProperties = getUnitTypeSpecialRules(unitId);
+        List<SpecialRuleProperty> unitSpecialRulePropertyList = specialRulePropertyService.convertToSpecialRuleProperty(unitSpecialRuleProperties);
+        List<SpecialRuleProperty> unitHeightSpecialRulePropertyList = specialRulePropertyService.convertToSpecialRuleProperty(unitHeightSpecialRuleProperties);
+        List<SpecialRuleProperty> unitTypeSpecialRulePropertyList = specialRulePropertyService.convertToSpecialRuleProperty(unitTypeSpecialRuleProperties);
+        List<SpecialRuleProperty> specialRulePropertyList = Stream.of(unitSpecialRulePropertyList, unitHeightSpecialRulePropertyList,
+                unitTypeSpecialRulePropertyList).flatMap(Collection::stream).collect(Collectors.toList());
 
         return Unit.builder()
                 .id(unitAttributes.getId())
@@ -57,7 +68,7 @@ public class UnitService {
                 .canHaveMusician(unitAttributes.getCanHaveMusician())
                 .canHaveStandard(unitAttributes.getCanHaveStandard())
                 .equipmentPointLimit(unitAttributes.getEquipmentPointLimit())
-                .specialRuleList(specialRuleList)
+                .specialRulePropertyList(specialRulePropertyList)
                 .equipmentList(equipmentList)
                 .build();
     }
@@ -87,64 +98,103 @@ public class UnitService {
                         ",can_have_musician \n" +
                         ",can_have_standard \n" +
                         ",equipment_point_limit \n" +
-                        ",uh.value as unit_height \n" +
-                        ",ut.value as unit_type \n" +
-                        ",f.value as faction \n" +
+                        ",uh.value AS unit_height \n" +
+                        ",ut.value AS unit_type \n" +
+                        ",f.value AS faction \n" +
                         "FROM unit u \n" +
-                        "INNER JOIN unit_height uh on uh.id = u.unit_height_id \n" +
-                        "INNER JOIN unit_type ut on u.unit_type_id = ut.id \n" +
-                        "INNER JOIN faction f on f.id = u.faction_id \n" +
-                        "WHERE u.id = " + unitId + " \n "
+                        "INNER JOIN unit_height uh ON uh.id = u.unit_height_id \n" +
+                        "INNER JOIN unit_type ut ON u.unit_type_id = ut.id \n" +
+                        "INNER JOIN faction f ON f.id = u.faction_id \n" +
+                        "WHERE u.id = " + unitId
                 , UnitEntity.class);
         return (UnitEntity) q.getSingleResult();
     }
 
-
-    public List<SpecialRuleEntity> getSpecialRuleByUnitId(int unitId) {
-        Query q = entityManager.createNativeQuery("SELECT " +
-                        "sr.id as id \n" +
-                        ",sr.name as name \n" +
-                        ",m.value as modification_value \n" +
-                        ",l.value as limitation_value \n" +
-                        ",t.value as timing_value \n" +
-                        ",sr.value as value \n" +
-                        "FROM special_rule sr \n" +
-                        "INNER JOIN unit_special_rule usr \n" +
-                        "ON usr.special_rule_id = sr.id \n" +
-                        "INNER JOIN modification m ON m.id = sr.modification_id \n" +
-                        "INNER JOIN limitation l ON l.id = sr.limitation_id \n" +
-                        "INNER JOIN timing t ON t.id = sr.timing_id \n" +
-                        "WHERE usr.unit_id = " + unitId + "  \n"
-                , SpecialRuleEntity.class);
+    private List<PropertyEntity> getUnitSpecialRules(int unitId) {
+        Query q = entityManager.createNativeQuery("SELECT\n" +
+                        "p.id \n" +
+                        ",p.name \n" +
+                        ",m.value AS modification_value \n" +
+                        ",l.value AS limitation_value \n" +
+                        ",t.value AS timing_value \n" +
+                        ",p.value \n" +
+                        "FROM property p \n" +
+                        "INNER JOIN special_rule_property srp ON p.id = srp.property_id\n" +
+                        "INNER JOIN special_rule sr ON sr.id = srp.special_rule_id\n" +
+                        "INNER JOIN unit_special_rule usr ON usr.special_rule_id = sr.id\n" +
+                        "INNER JOIN modification m ON m.id = p.modification_id\n" +
+                        "INNER JOIN limitation l ON l.id = p.limitation_id\n" +
+                        "INNER JOIN timing t ON t.id = p.timing_id\n" +
+                        "WHERE usr.unit_id = " + unitId
+                , PropertyEntity.class);
 
         return q.getResultList();
     }
 
+    private List<PropertyEntity> getUnitHeightSpecialRules(int unitId) {
+        Query q = entityManager.createNativeQuery("SELECT\n" +
+                        "p.id as id\n" +
+                        ",p.name as name\n" +
+                        ",m.value as modification_value\n" +
+                        ",l.value as limitation_value\n" +
+                        ",t.value as timing_value\n" +
+                        ",p.value as value\n" +
+                        "FROM property p \n" +
+                        "INNER JOIN special_rule_property srp ON p.id = srp.property_id\n" +
+                        "INNER JOIN special_rule sr ON sr.id = srp.special_rule_id\n" +
+                        "INNER JOIN unit_height_special_rule uhsr ON uhsr.special_rule_id = sr.id\n" +
+                        "INNER JOIN modification m ON m.id = p.modification_id\n" +
+                        "INNER JOIN limitation l ON l.id = p.limitation_id\n" +
+                        "INNER JOIN timing t ON t.id = p.timing_id\n" +
+                        "INNER JOIN unit u on u.unit_height_id = uhsr.unit_height_id \n" +
+                        "WHERE u.id = " + unitId
+                , PropertyEntity.class);
 
-    public List<EquipmentDTO> getEquipmentByUnitId(int unitId) {
+        return q.getResultList();
+    }
+
+    private List<PropertyEntity> getUnitTypeSpecialRules(int unitId) {
+        Query q = entityManager.createNativeQuery("SELECT\n" +
+                        "p.id as id\n" +
+                        ",p.name as name\n" +
+                        ",m.value as modification_value\n" +
+                        ",l.value as limitation_value\n" +
+                        ",t.value as timing_value\n" +
+                        ",p.value as value\n" +
+                        "FROM property p \n" +
+                        "INNER JOIN special_rule_property srp ON p.id = srp.property_id\n" +
+                        "INNER JOIN special_rule sr ON sr.id = srp.special_rule_id\n" +
+                        "INNER JOIN unit_type_special_rule utsr ON utsr.special_rule_id = sr.id\n" +
+                        "INNER JOIN modification m ON m.id = p.modification_id\n" +
+                        "INNER JOIN limitation l ON l.id = p.limitation_id\n" +
+                        "INNER JOIN timing t ON t.id = p.timing_id\n" +
+                        "INNER JOIN unit u on u.unit_type_id = utsr.unit_type_id \n" +
+                        "WHERE u.id = " + unitId
+                , PropertyEntity.class);
+
+        return q.getResultList();
+    }
+
+    public List<UnitEquipmentSpecialRuleDTO> getEquipmentByUnitId(int unitId) {
         Query q = entityManager.createNativeQuery("SELECT " +
-                        "eq.id as id \n" +
-                        ",eq.name as name \n" +
-                        ",eqt.type as equipment_type \n" +
-                        ",sr.name as special_rule_name \n" +
-                        ",m.value as modification_value \n" +
-                        ",l.value as limitation_value \n" +
-                        ",t.value as timing_value \n" +
-                        ",sr.value as special_rule_value \n" +
+                        "eq.id \n" +
+                        ",eq.name \n" +
+                        ",eqt.type AS equipment_type \n" +
+                        ",sr.name AS special_rule_name \n" +
+                        ",m.value AS modification_value \n" +
+                        ",l.value AS limitation_value \n" +
+                        ",t.value AS timing_value \n" +
+                        ",sr.value AS special_rule_value \n" +
                         "FROM equipment eq \n" +
-                        "INNER JOIN unit_equipment ue \n" +
-                        "ON ue.equipment_id = eq.id \n" +
-                        "INNER JOIN equipment_type eqt \n" +
-                        "ON eqt.id = eq.equipment_type_id \n" +
-                        "INNER JOIN equipment_special_rule eqsr \n" +
-                        "ON eqsr.equipment_id = eq.id \n" +
-                        "INNER JOIN special_rule sr \n" +
-                        "ON sr.id = eqsr.special_rule_id \n" +
+                        "INNER JOIN unit_equipment ue ON ue.equipment_id = eq.id \n" +
+                        "INNER JOIN equipment_type eqt ON eqt.id = eq.equipment_type_id \n" +
+                        "INNER JOIN equipment_special_rule eqsr ON eqsr.equipment_id = eq.id \n" +
+                        "INNER JOIN special_rule sr ON sr.id = eqsr.special_rule_id \n" +
                         "INNER JOIN modification m ON m.id = sr.modification_id \n" +
                         "INNER JOIN limitation l ON l.id = sr.limitation_id \n" +
                         "INNER JOIN timing t ON t.id = sr.timing_id \n" +
-                        "WHERE ue.unit_id = " + unitId + " \n "
-                , EquipmentDTO.class);
+                        "WHERE ue.unit_id = " + unitId
+                , UnitEquipmentSpecialRuleDTO.class);
 
         return q.getResultList();
     }

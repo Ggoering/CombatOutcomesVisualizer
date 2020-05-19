@@ -1,6 +1,6 @@
 package com.GG.T9AgeCombat.enums;
 
-public enum SpecialRuleEnum {
+public enum SpecialRulePropertyEnum {
     BORN_TO_FIGHT,
     LIGHTNING_REFLEXES,
     HORDE,

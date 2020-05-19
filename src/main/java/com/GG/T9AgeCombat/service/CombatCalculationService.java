@@ -3,7 +3,7 @@ package com.GG.T9AgeCombat.service;
 import com.GG.T9AgeCombat.enums.LimitationEnum;
 import com.GG.T9AgeCombat.models.Result;
 import com.GG.T9AgeCombat.models.Round;
-import com.GG.T9AgeCombat.models.SpecialRule;
+import com.GG.T9AgeCombat.models.SpecialRuleProperty;
 import com.GG.T9AgeCombat.models.Unit;
 import com.GG.T9AgeCombat.predicates.DetermineModificationPredicate;
 import org.slf4j.Logger;
@@ -138,20 +138,20 @@ public class CombatCalculationService {
     }
 
     void applyPermanentSpecialRules(Unit unit) {
-        if (unit.getSpecialRuleList() != null && !unit.getSpecialRuleList().isEmpty()) {
-            for (SpecialRule specialRule : unit.getSpecialRuleList()) {
-                if (specialRule.getLimitation() == LimitationEnum.NONE) {
-                    DetermineModificationPredicate.applyPermanentBonus(unit, specialRule.getModification(), specialRule.getValue());
+        if (unit.getSpecialRulePropertyList() != null && !unit.getSpecialRulePropertyList().isEmpty()) {
+            for (SpecialRuleProperty specialRuleProperty : unit.getSpecialRulePropertyList()) {
+                if (specialRuleProperty.getLimitation() == LimitationEnum.NONE) {
+                    DetermineModificationPredicate.applyPermanentBonus(unit, specialRuleProperty.getModification(), specialRuleProperty.getValue());
                 }
             }
         }
     }
 
     void applyTemporarySpecialRules(Unit unit, boolean isFirstRound) {
-        if (unit.getSpecialRuleList() != null && !unit.getSpecialRuleList().isEmpty()) {
-            for (SpecialRule specialRule : unit.getSpecialRuleList()) {
-                if (specialRuleRoutingService.routeTemporaryLimitationToPredicate(specialRule.getLimitation(), unit, isFirstRound)) {
-                    DetermineModificationPredicate.applyTemporaryBonus(unit, specialRule.getModification(), specialRule.getValue());
+        if (unit.getSpecialRulePropertyList() != null && !unit.getSpecialRulePropertyList().isEmpty()) {
+            for (SpecialRuleProperty specialRuleProperty : unit.getSpecialRulePropertyList()) {
+                if (specialRuleRoutingService.routeTemporaryLimitationToPredicate(specialRuleProperty.getLimitation(), unit, isFirstRound)) {
+                    DetermineModificationPredicate.applyTemporaryBonus(unit, specialRuleProperty.getModification(), specialRuleProperty.getValue());
                 }
             }
         }

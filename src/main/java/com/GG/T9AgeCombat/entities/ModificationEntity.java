@@ -13,10 +13,8 @@ import javax.persistence.Id;
 @Entity
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-//@Table(name = "unit_equipment", schema = "public", catalog = "T9AgeCombat")
-public class UnitEquipment {
+public class ModificationEntity {
     @Id
     long id;
-//    @ManyToOne
-//    Equipment equipmentByEquipmentId;
+    String value;
 }

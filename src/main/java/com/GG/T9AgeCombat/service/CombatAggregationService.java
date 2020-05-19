@@ -28,13 +28,16 @@ public class CombatAggregationService {
         List<Result> resultList = new ArrayList<>();
 
         for (int i = 0; i < MAXIMUM_ROUND_COUNT; i++) {
-            Unit swordmasters = unitService.retrieveUnit(1);
-            Unit blackOrcs = unitService.retrieveUnit(2);
+            Unit attacker = unitService.retrieveUnit(1);
+            Unit defender = unitService.retrieveUnit(2);
 
-            swordmasters.setSelection(1);
-            blackOrcs.setSelection(2);
+            attacker.addEquipmentSpecialRules();
+            defender.addEquipmentSpecialRules();
 
-            Result result = combatCalculationService.combat(swordmasters, blackOrcs);
+            attacker.setSelection(1);
+            defender.setSelection(2);
+
+            Result result = combatCalculationService.combat(attacker, defender);
 
             resultList.add(result);
         }

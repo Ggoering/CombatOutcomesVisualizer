@@ -1,12 +1,12 @@
 package com.GG.T9AgeCombat.service.repository;
 
-import com.GG.T9AgeCombat.entities.EquipmentDTO;
-import com.GG.T9AgeCombat.entities.SpecialRuleEntity;
+import com.GG.T9AgeCombat.dto.UnitEquipmentSpecialRuleDTO;
+import com.GG.T9AgeCombat.entities.PropertyEntity;
 import com.GG.T9AgeCombat.enums.LimitationEnum;
 import com.GG.T9AgeCombat.enums.ModificationEnum;
-import com.GG.T9AgeCombat.enums.SpecialRuleEnum;
+import com.GG.T9AgeCombat.enums.SpecialRulePropertyEnum;
 import com.GG.T9AgeCombat.enums.TimingEnum;
-import com.GG.T9AgeCombat.models.SpecialRule;
+import com.GG.T9AgeCombat.models.SpecialRuleProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,11 +14,11 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 @Service
-public class SpecialRuleService {
-    public List<SpecialRule> specialRuleFromDTO(List<SpecialRuleEntity> specialRuleDTOList) {
-        return specialRuleDTOList.stream().map(dto ->
-                SpecialRule.builder()
-                        .name(SpecialRuleEnum.valueOf(dto.getName()))
+public class SpecialRulePropertyService {
+    public List<SpecialRuleProperty> convertToSpecialRuleProperty(List<PropertyEntity> propertyEntityList) {
+        return propertyEntityList.stream().map(dto ->
+                SpecialRuleProperty.builder()
+                        .name(SpecialRulePropertyEnum.valueOf(dto.getName()))
                         .limitation(LimitationEnum.valueOf(dto.getLimitationValue()))
                         .modification(ModificationEnum.valueOf(dto.getModificationValue()))
                         .timing(TimingEnum.valueOf(dto.getTimingValue()))
@@ -27,9 +27,9 @@ public class SpecialRuleService {
         ).collect(toList());
     }
 
-    public SpecialRule specialRuleFromDTO(EquipmentDTO entity) {
-        return SpecialRule.builder()
-                .name(SpecialRuleEnum.valueOf(entity.getSpecialRuleName()))
+    public SpecialRuleProperty convertToSpecialRuleProperty(UnitEquipmentSpecialRuleDTO entity) {
+        return SpecialRuleProperty.builder()
+                .name(SpecialRulePropertyEnum.valueOf(entity.getSpecialRuleName()))
                 .limitation(LimitationEnum.valueOf(entity.getLimitationValue()))
                 .modification(ModificationEnum.valueOf(entity.getModificationValue()))
                 .timing(TimingEnum.valueOf(entity.getTimingValue()))

@@ -5,7 +5,6 @@ import com.GG.T9AgeCombat.enums.EquipmentTypeEnum;
 import lombok.Builder;
 import lombok.Value;
 
-
 @Value
 @Builder
 public class EquipmentClassification {

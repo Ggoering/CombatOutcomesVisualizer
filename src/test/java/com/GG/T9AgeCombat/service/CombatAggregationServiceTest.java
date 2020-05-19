@@ -51,18 +51,18 @@ public class CombatAggregationServiceTest {
         ModificationEnum modification = ModificationEnum.STRENGTH;
         TimingEnum timing = TimingEnum.ALL;
 
-        SpecialRule specialRule = SpecialRule.builder().limitation(limitation).modification(modification)
-                .timing(timing).name(SpecialRuleEnum.BORN_TO_FIGHT).value(1).build();
+        SpecialRuleProperty specialRuleProperty = SpecialRuleProperty.builder().limitation(limitation).modification(modification)
+                .timing(timing).name(SpecialRulePropertyEnum.BORN_TO_FIGHT).value(1).build();
 
-        List<SpecialRule> unitSpecialRules = new ArrayList<>();
-        unitSpecialRules.add(specialRule);
+        List<SpecialRuleProperty> unitSpecialRuleProperties = new ArrayList<>();
+        unitSpecialRuleProperties.add(specialRuleProperty);
 
         UnitHeightEnum unitHeight = UnitHeightEnum.STANDARD;
 
         when(mockUnitService.retrieveUnit(1)).thenReturn(
                 Unit.builder().name("Swordmaster").height(unitHeight).movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).basesize(20).modelCount(30).armor(5).modelsPerRank(5).selection(1).standardBearer(1).hasMusician(true).build());
         when(mockUnitService.retrieveUnit(2)).thenReturn(
-                Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(2).leadership(8).basesize(25).modelCount(25).armor(4).modelsPerRank(5).selection(2).standardBearer(1).hasMusician(true).specialRuleList(unitSpecialRules).build());
+                Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(2).leadership(8).basesize(25).modelCount(25).armor(4).modelsPerRank(5).selection(2).standardBearer(1).hasMusician(true).specialRulePropertyList(unitSpecialRuleProperties).build());
 
         subject.getDataAggregation();
     }

@@ -137,19 +137,50 @@ CREATE INDEX "fki_fk_character_mount$unit_type" ON public.character_mount USING 
 
 CREATE TABLE public.special_rule (
 	id bigserial NOT NULL,
+	"name" varchar(32) NOT NULL,
+	CONSTRAINT special_rule_pk PRIMARY KEY (id)
+);
+
+
+-- public.property definition
+
+-- Drop table
+
+-- DROP TABLE public.property;
+
+CREATE TABLE public.property (
+	id bigserial NOT NULL,
 	limitation_id int4 NOT NULL,
 	modification_id int4 NOT NULL,
 	timing_id int4 NOT NULL,
 	"name" varchar(32) NOT NULL,
 	value varchar(32) NULL,
-	CONSTRAINT special_rule_pk PRIMARY KEY (id),
-	CONSTRAINT "fk_special_rule$limitation" FOREIGN KEY (limitation_id) REFERENCES limitation(id),
-	CONSTRAINT "fk_special_rule$modification" FOREIGN KEY (modification_id) REFERENCES modification(id),
-	CONSTRAINT "fk_special_rule$timing" FOREIGN KEY (timing_id) REFERENCES timing(id)
+	CONSTRAINT property_pk PRIMARY KEY (id),
+	CONSTRAINT "fk_property$limitation"  FOREIGN KEY (limitation_id) REFERENCES limitation(id),
+	CONSTRAINT "fk_property$modification"  FOREIGN KEY (modification_id) REFERENCES modification(id),
+	CONSTRAINT "fk_property$timing"  FOREIGN KEY (timing_id) REFERENCES timing(id)
 );
-CREATE INDEX "fki_fk_special_rule$limitation" ON public.special_rule USING btree (limitation_id);
-CREATE INDEX "fki_fk_special_rule$modification" ON public.special_rule USING btree (modification_id);
-CREATE INDEX "fki_fk_special_rule$timing" ON public.special_rule USING btree (timing_id);
+CREATE INDEX "fki_fk_property$limitation" ON public.property (limitation_id int4_ops);
+CREATE INDEX "fki_fk_property$modification" ON public.property (modification_id int4_ops);
+CREATE INDEX "fki_fk_property$timing" ON public.property (timing_id int4_ops);
+
+
+-- public.special_rule_property definition
+
+-- Drop table
+
+-- DROP TABLE public.special_rule_property;
+
+CREATE TABLE public.special_rule_property (
+	id bigserial NOT NULL,
+	special_rule_id int4 NOT NULL,
+	property_id int4 NOT NULL,
+	CONSTRAINT special_rule_property_pk PRIMARY KEY (id),
+	CONSTRAINT "fk_special_rule_property$property"  FOREIGN KEY (property_id) REFERENCES property(id),
+	CONSTRAINT "fk_special_rule_property$special_rule"  FOREIGN KEY (special_rule_id) REFERENCES special_rule(id)
+);
+CREATE INDEX "fki_fk_special_rule_property$property" ON public.special_rule_property (property_id int4_ops);
+CREATE INDEX "fki_fk_special_rule_property$special_rule" ON public.special_rule_property (special_rule_id int4_ops);
 
 
 -- public.unit definition
@@ -205,6 +236,7 @@ CREATE TABLE public.unit_equipment (
 	id bigserial NOT NULL,
 	unit_id int4 NOT NULL,
 	equipment_id int4 NOT NULL,
+	is_default bool NOT NULL DEFAULT true,
 	CONSTRAINT unit_equipment_pk PRIMARY KEY (id),
 	CONSTRAINT "fk_unit_equipment$equipment" FOREIGN KEY (equipment_id) REFERENCES equipment(id),
 	CONSTRAINT "fk_unit_equipment$unit" FOREIGN KEY (unit_id) REFERENCES unit(id)
@@ -360,6 +392,23 @@ VALUES('ALL'),
 -- public.special_rule inserts
 
 INSERT INTO public.special_rule
+(name)
+VALUES('BORN_TO_FIGHT'),
+('LIGHTNING_REFLEXES'),
+('HORDE'),
+('SWORD_SWORN'),
+('HATRED'),
+('GREAT_WEAPON'),
+('LIGHTNING_REFLEXES_GREAT_WEAPON'),
+('STRIKES_LAST'),
+('LIGHT_ARMOR'),
+('HEAVY_ARMOR'),
+('PLATE_ARMOR');
+
+
+-- public.property inserts
+
+INSERT INTO public.property
 (limitation_id, modification_id, timing_id, name, value)
 VALUES(3, 1, 1, 'BORN_TO_FIGHT', 1),
 (6, 2, 4, 'LIGHTNING_REFLEXES', 1),
@@ -373,6 +422,24 @@ VALUES(3, 1, 1, 'BORN_TO_FIGHT', 1),
 (1, 7, 1, 'LIGHT_ARMOR', 1),
 (1, 7, 1, 'HEAVY_ARMOR', 2),
 (1, 7, 1, 'PLATE_ARMOR', 3);
+
+
+-- public.special_rule_property inserts
+
+INSERT INTO public.special_rule_property
+(special_rule_id, property_id)
+VALUES(1, 1),
+(2, 2),
+(3, 3),
+(4, 4),
+(5, 5),
+(6, 6),
+(6, 7),
+(7, 8),
+(8, 9),
+(9, 10),
+(10, 11),
+(11, 12);
 
 
 -- public.unit_type inserts
@@ -445,11 +512,10 @@ VALUES(1, 1),
 INSERT INTO public.equipment_special_rule
 (equipment_id, special_rule_id)
 VALUES(1, 6),
-(1, 9),
-(1, 7),
-(4, 10),
-(5, 11),
-(6, 12);
+(1, 8),
+(4, 9),
+(5, 10),
+(6, 11);
 
 
 --public.unit_special_rule inserts
@@ -457,4 +523,4 @@ INSERT INTO public.unit_special_rule
 (unit_id, special_rule_id)
 VALUES(1, 3),
 (1, 4),
-(1, 8);
+(1, 7);

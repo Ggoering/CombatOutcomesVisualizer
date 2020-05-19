@@ -17,8 +17,4 @@ public class SpecialRuleEntity {
     @Id
     long id;
     String name;
-    int value;
-    String modificationValue;
-    String limitationValue;
-    String timingValue;
 }

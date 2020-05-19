@@ -4,6 +4,7 @@ import com.GG.T9AgeCombat.enums.EquipmentEnum;
 import com.GG.T9AgeCombat.enums.EquipmentTypeEnum;
 import lombok.Builder;
 import lombok.Value;
+import lombok.experimental.NonFinal;
 
 import java.util.List;
 
@@ -12,6 +13,8 @@ import java.util.List;
 public class Equipment {
     EquipmentEnum name;
     EquipmentTypeEnum type;
-    List<SpecialRule> specialRules;
+    @NonFinal
+    boolean isEquipped;
+    List<SpecialRuleProperty> specialRuleProperties;
 }
 

@@ -45,21 +45,4 @@ public class UnitEntity {
     String unitHeight;
     String faction;
     String unitType;
-
-
-//    @ManyToOne
-//    @JoinColumn(name = "faction_id", referencedColumnName = "id", nullable = false)
-//    Faction factionByFactionId;
-//    @ManyToOne
-//    @JoinColumn(name = "unit_type_id", referencedColumnName = "id", nullable = false)
-//    UnitType unitTypeByUnitTypeId;
-//    @ManyToOne
-//    @JoinColumn(name = "unit_height_id", referencedColumnName = "id", nullable = false)
-//    UnitHeight unitHeightByUnitHeightId;
-//    @OneToMany(mappedBy = "unitByUnitId")
-//    Collection<UnitEquipment> unitEquipmentsById;
-//    @OneToMany(mappedBy = "unitByUnitId")
-//    Collection<UnitCharacterMount> unitCharacterMountsById;
-//    @OneToMany(mappedBy = "unitByUnitId", fetch = FetchType.EAGER)
-//    Collection<UnitSpecialRule> unitSpecialRulesById;
 }

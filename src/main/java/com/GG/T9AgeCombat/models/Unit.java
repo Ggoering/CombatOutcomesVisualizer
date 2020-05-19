@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
@@ -44,8 +45,11 @@ public class Unit {
     Boolean canHaveStandard;
     int equipmentPointLimit;
     UnitHeightEnum height;
-    List<SpecialRule> specialRuleList;
-    List<Equipment> equipmentList;
+    @NonFinal
+    @Builder.Default
+    List<SpecialRuleProperty> specialRulePropertyList = new ArrayList<>();
+    @Builder.Default
+    List<Equipment> equipmentList = new ArrayList<>();
 
     int standardBearer;
     boolean hasMusician;
@@ -291,5 +295,13 @@ public class Unit {
 
     public int getActualToHitBonus() {
         return toHitBonus + toHitBonusModifier;
+    }
+
+    public void addEquipmentSpecialRules() {
+        for (Equipment equipment : equipmentList) {
+            if (equipment.isEquipped()) {
+                specialRulePropertyList.addAll(equipment.getSpecialRuleProperties());
+            }
+        }
     }
 }
