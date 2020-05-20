@@ -216,6 +216,10 @@ CREATE TABLE public.unit (
 	can_have_standard bool NULL,
 	is_mounted bool NULL DEFAULT false,
 	equipment_point_limit int4 NULL DEFAULT 0,
+	point_cost int4 NOT NULL,
+	extra_model_point_cost int4 NOT NULL,
+	default_model_count int4 NOT NULL,
+	maximum_model_count int4 NOT NULL,
 	CONSTRAINT unit_pk PRIMARY KEY (id),
 	CONSTRAINT "fk_unit$faction" FOREIGN KEY (faction_id) REFERENCES faction(id),
 	CONSTRAINT "fk_unit$unit_height" FOREIGN KEY (unit_height_id) REFERENCES unit_height(id),
@@ -472,9 +476,9 @@ VALUES('High Elves'),
 
 -- public.unit inserts
 INSERT INTO public.unit
-(faction_id, unit_type_id, unit_height_id, "name", movement, leadership, wounds, defensive_weapon_skill, toughness, armor, initiative, offensive_weapon_skill, attacks, strength, armor_penetration, mount_initiative, mount_offensive_weapon_skill, mount_attacks, mount_strength, mount_armor_penetration, basesize, can_have_musician, can_have_standard, is_mounted, equipment_point_limit)
-VALUES(1, 2, 1, 'SWORDMASTER', 5, 8, 1, 6, 3, 0, 6, 6, 2, 3, 0, 0, 0, 0, 0, 0, 20, true, true, false, 0),
-(2, 2, 1, 'BLACK_ORC', 4, 8, 1, 5, 4, 2, 2, 5, 2, 4, 0, 0, 0, 0, 0, 0, 20, true, true, false, 0);
+(faction_id, unit_type_id, unit_height_id, "name", movement, leadership, wounds, defensive_weapon_skill, toughness, armor, initiative, offensive_weapon_skill, attacks, strength, armor_penetration, mount_initiative, mount_offensive_weapon_skill, mount_attacks, mount_strength, mount_armor_penetration, basesize, can_have_musician, can_have_standard, is_mounted, equipment_point_limit, point_cost, extra_model_point_cost, default_model_count, maximum_model_count)
+VALUES(1, 2, 1, 'SWORDMASTER', 5, 8, 1, 6, 3, 0, 6, 6, 2, 3, 0, 0, 0, 0, 0, 0, 20, true, true, false, 0, 0, 0, 0, 0),
+(2, 2, 1, 'BLACK_ORC', 4, 8, 1, 5, 4, 2, 2, 5, 2, 4, 0, 0, 0, 0, 0, 0, 20, true, true, false, 0, 0, 0, 0, 0);
 
 --public.equipment_type inserts
 INSERT INTO public.equipment_type
