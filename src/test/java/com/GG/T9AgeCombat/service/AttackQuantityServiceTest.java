@@ -1,11 +1,15 @@
 package com.GG.T9AgeCombat.service;
 
 import com.GG.T9AgeCombat.enums.UnitHeightEnum;
+import com.GG.T9AgeCombat.models.OffensiveProfile;
 import com.GG.T9AgeCombat.models.Unit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,28 +28,57 @@ class AttackQuantityServiceTest {
 
     @Test
     void determineAttackQuantity() {
-        UnitHeightEnum unitHeight =UnitHeightEnum.STANDARD;
-        Unit swordmaster = Unit.builder().name("Swordmaster").height(unitHeight).movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).basesize(20).modelCount(30).armor(5).modelsPerRank(5).build();
-        Unit blorcs = Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(25).armor(4).modelsPerRank(10).build();
+        UnitHeightEnum unitHeight = UnitHeightEnum.STANDARD;
 
-        Integer attackQuantitySM = subject.determineAttackQuantity(swordmaster, blorcs);
+        OffensiveProfile swordmasterOffensiveProfile = OffensiveProfile.builder()
+                .offensiveWeaponSkill(6)
+                .strength(5)
+                .initiative(6)
+                .attacks(2)
+                .build();
+
+        OffensiveProfile blackorcOffensiveProfile = OffensiveProfile.builder()
+                .offensiveWeaponSkill(5)
+                .strength(4)
+                .initiative(2)
+                .attacks(1)
+                .build();
+
+        List<OffensiveProfile> swordmasterOffensiveProfileList = new ArrayList<>();
+        swordmasterOffensiveProfileList.add(swordmasterOffensiveProfile);
+
+        List<OffensiveProfile> blackorcOffensiveProfileList = new ArrayList<>();
+        blackorcOffensiveProfileList.add(blackorcOffensiveProfile);
+
+        Unit swordmaster = Unit.builder().name("Swordmaster").height(unitHeight).advance(5).defensiveWeaponSkill(6).toughness(3)
+                .wounds(1).leadership(8).basesize(20).modelCount(30).armor(5).modelsPerRank(5)
+                .offensiveProfileList(swordmasterOffensiveProfileList).build();
+        Unit blorcs = Unit.builder().name("Black Orc").height(unitHeight).advance(4).defensiveWeaponSkill(5).toughness(4).wounds(1)
+                .leadership(8).basesize(25).modelCount(25).armor(4).modelsPerRank(10)
+                .offensiveProfileList(blackorcOffensiveProfileList).build();
+
+        Integer attackQuantitySM = subject.determineAttackQuantity(swordmasterOffensiveProfile, swordmaster, blorcs);
         assertEquals(15, attackQuantitySM);
 
-        Integer attackQuantityBO = subject.determineAttackQuantity(blorcs, swordmaster);
+        Integer attackQuantityBO = subject.determineAttackQuantity(blackorcOffensiveProfile, blorcs, swordmaster);
         assertEquals(17, attackQuantityBO);
     }
 
     @Test
     void determineModelsNotInBaseContact() {
-        Unit swordmaster = Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).basesize(20).modelCount(30).armor(5).modelsPerRank(5).build();
-        Unit swordmasterMedium = Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).basesize(20).modelCount(30).armor(5).modelsPerRank(7).build();
-        Unit swordmasterWide = Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(2).leadership(8).basesize(20).modelCount(30).armor(5).modelsPerRank(10).build();
-        Unit blorcs = Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(25).armor(4).modelsPerRank(10).build();
+        Unit swordmaster = Unit.builder().name("Swordmaster").advance(5).defensiveWeaponSkill(6).toughness(3).wounds(1)
+                .leadership(8).basesize(20).modelCount(30).armor(5).modelsPerRank(5).build();
+        Unit swordmasterMedium = Unit.builder().name("Swordmaster").advance(5).defensiveWeaponSkill(6).toughness(3).wounds(1)
+                .leadership(8).basesize(20).modelCount(30).armor(5).modelsPerRank(7).build();
+        Unit swordmasterWide = Unit.builder().name("Swordmaster").advance(5).defensiveWeaponSkill(6).toughness(3).wounds(1)
+                .leadership(8).basesize(20).modelCount(30).armor(5).modelsPerRank(10).build();
+        Unit blorcs = Unit.builder().name("Black Orc").advance(4).defensiveWeaponSkill(5).toughness(4).wounds(1)
+                .leadership(8).basesize(25).modelCount(25).armor(4).modelsPerRank(10).build();
 
-        Integer blorcsActualWidth = blorcs.getWidth();
-        Integer SMActualWidth = swordmaster.getWidth();
-        Integer SMActualWidthWide = swordmasterWide.getWidth();
-        Integer SMActualWidthMed = swordmasterMedium.getWidth();
+        int blorcsActualWidth = blorcs.getWidth();
+        int SMActualWidth = swordmaster.getWidth();
+        int SMActualWidthWide = swordmasterWide.getWidth();
+        int SMActualWidthMed = swordmasterMedium.getWidth();
 
         Integer BONotInB2B = subject.determineModelsNotInBaseContact(blorcsActualWidth, blorcs, SMActualWidth);
         Integer BONotInB2BWideSM = subject.determineModelsNotInBaseContact(blorcsActualWidth, blorcs, SMActualWidthWide);
@@ -60,28 +93,56 @@ class AttackQuantityServiceTest {
 
     @Test
     void determineSupportingAttacks() {
-        UnitHeightEnum unitHeight = UnitHeightEnum.STANDARD;
-        Unit blorcs = Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(25).armor(4).modelsPerRank(10).build();
-        Unit blorcs2 = Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(11).armor(4).modelsPerRank(10).build();
-        Unit blorcs3 = Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(10).armor(4).modelsPerRank(10).build();
-        Unit blorcs4 = Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(30).armor(4).modelsPerRank(10).build();
-        Unit blorcs5 = Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(30).armor(4).modelsPerRank(10).build();
-        Unit blorcs6 = Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(3).armor(4).modelsPerRank(10).build();
-        Unit blorcs7 = Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(9).armor(4).modelsPerRank(5).build();
-        Unit blorcs8 = Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(55).armor(4).modelsPerRank(5).build();
-        Unit blorcs9 = Unit.builder().name("Black Orc").height(unitHeight).movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(0).armor(4).modelsPerRank(5).build();
-        Integer BONotInB2B1 = 4;
-        Integer BONotInB2B2 = 0;
+        OffensiveProfile blackorcOffensiveProfile = OffensiveProfile.builder()
+                .offensiveWeaponSkill(5)
+                .strength(4)
+                .initiative(2)
+                .attacks(1)
+                .build();
 
-        Integer supportAttacks = subject.determineSupportingAttacks(blorcs, BONotInB2B1);
-        Integer supportAttacks2 = subject.determineSupportingAttacks(blorcs2, BONotInB2B1);
-        Integer supportAttacks3 = subject.determineSupportingAttacks(blorcs3, BONotInB2B1);
-        Integer supportAttacks4 = subject.determineSupportingAttacks(blorcs4, BONotInB2B1);
-        Integer supportAttacks5 = subject.determineSupportingAttacks(blorcs5, BONotInB2B2);
-        Integer supportAttacks6 = subject.determineSupportingAttacks(blorcs6, BONotInB2B2);
-        Integer supportAttacks7 = subject.determineSupportingAttacks(blorcs7, BONotInB2B2);
-        Integer supportAttacks8 = subject.determineSupportingAttacks(blorcs8, BONotInB2B2);
-        Integer supportAttacks9 = subject.determineSupportingAttacks(blorcs9, BONotInB2B2);
+        List<OffensiveProfile> blackorcOffensiveProfileList = new ArrayList<>();
+        blackorcOffensiveProfileList.add(blackorcOffensiveProfile);
+        
+        UnitHeightEnum unitHeight = UnitHeightEnum.STANDARD;
+        Unit blorcs = Unit.builder().name("Black Orc").height(unitHeight).advance(4).defensiveWeaponSkill(5).toughness(4)
+                .wounds(1).leadership(8).basesize(25).modelCount(25).armor(4).modelsPerRank(10)
+                .offensiveProfileList(blackorcOffensiveProfileList).build();
+        Unit blorcs2 = Unit.builder().name("Black Orc").height(unitHeight).advance(4).defensiveWeaponSkill(5).toughness(4)
+                .wounds(1).leadership(8).basesize(25).modelCount(11).armor(4).modelsPerRank(10)
+                .offensiveProfileList(blackorcOffensiveProfileList).build();
+        Unit blorcs3 = Unit.builder().name("Black Orc").height(unitHeight).advance(4).defensiveWeaponSkill(5).toughness(4)
+                .wounds(1).leadership(8).basesize(25).modelCount(10).armor(4).modelsPerRank(10)
+                .offensiveProfileList(blackorcOffensiveProfileList).build();
+        Unit blorcs4 = Unit.builder().name("Black Orc").height(unitHeight).advance(4).defensiveWeaponSkill(5).toughness(4)
+                .wounds(1).leadership(8).basesize(25).modelCount(30).armor(4).modelsPerRank(10)
+                .offensiveProfileList(blackorcOffensiveProfileList).build();
+        Unit blorcs5 = Unit.builder().name("Black Orc").height(unitHeight).advance(4).defensiveWeaponSkill(5).toughness(4)
+                .wounds(1).leadership(8).basesize(25).modelCount(30).armor(4).modelsPerRank(10)
+                .offensiveProfileList(blackorcOffensiveProfileList).build();
+        Unit blorcs6 = Unit.builder().name("Black Orc").height(unitHeight).advance(4).defensiveWeaponSkill(5).toughness(4)
+                .wounds(1).leadership(8).basesize(25).modelCount(3).armor(4).modelsPerRank(10)
+                .offensiveProfileList(blackorcOffensiveProfileList).build();
+        Unit blorcs7 = Unit.builder().name("Black Orc").height(unitHeight).advance(4).defensiveWeaponSkill(5).toughness(4)
+                .wounds(1).leadership(8).basesize(25).modelCount(9).armor(4).modelsPerRank(5)
+                .offensiveProfileList(blackorcOffensiveProfileList).build();
+        Unit blorcs8 = Unit.builder().name("Black Orc").height(unitHeight).advance(4).defensiveWeaponSkill(5).toughness(4)
+                .wounds(1).leadership(8).basesize(25).modelCount(55).armor(4).modelsPerRank(5)
+                .offensiveProfileList(blackorcOffensiveProfileList).build();
+        Unit blorcs9 = Unit.builder().name("Black Orc").height(unitHeight).advance(4).defensiveWeaponSkill(5).toughness(4)
+                .wounds(1).leadership(8).basesize(25).modelCount(0).armor(4).modelsPerRank(5)
+                .offensiveProfileList(blackorcOffensiveProfileList).build();
+        int BONotInB2B1 = 4;
+        int BONotInB2B2 = 0;
+
+        Integer supportAttacks = subject.determineSupportingAttacks(blackorcOffensiveProfile, blorcs, BONotInB2B1);
+        Integer supportAttacks2 = subject.determineSupportingAttacks(blackorcOffensiveProfile, blorcs2, BONotInB2B1);
+        Integer supportAttacks3 = subject.determineSupportingAttacks(blackorcOffensiveProfile, blorcs3, BONotInB2B1);
+        Integer supportAttacks4 = subject.determineSupportingAttacks(blackorcOffensiveProfile, blorcs4, BONotInB2B1);
+        Integer supportAttacks5 = subject.determineSupportingAttacks(blackorcOffensiveProfile, blorcs5, BONotInB2B2);
+        Integer supportAttacks6 = subject.determineSupportingAttacks(blackorcOffensiveProfile, blorcs6, BONotInB2B2);
+        Integer supportAttacks7 = subject.determineSupportingAttacks(blackorcOffensiveProfile, blorcs7, BONotInB2B2);
+        Integer supportAttacks8 = subject.determineSupportingAttacks(blackorcOffensiveProfile, blorcs8, BONotInB2B2);
+        Integer supportAttacks9 = subject.determineSupportingAttacks(blackorcOffensiveProfile, blorcs9, BONotInB2B2);
 
         assertEquals(11, supportAttacks);
         assertEquals(1, supportAttacks2);
@@ -96,20 +157,60 @@ class AttackQuantityServiceTest {
 
     @Test
     void determineFrontRankAttacks() {
-        Unit blorcs = Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(2).leadership(8).basesize(25).modelCount(10).armor(4).modelsPerRank(10).build();
-        Unit blorcs2 = Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(11).armor(4).modelsPerRank(10).build();
-        Unit blorcs3 = Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(2).leadership(8).basesize(25).modelCount(1).armor(4).modelsPerRank(5).build();
-        Unit blorcs4 = Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(7).leadership(8).basesize(25).modelCount(0).armor(4).modelsPerRank(5).build();
-        Unit blorcs5 = Unit.builder().name("Black Orc").movement(4).offensiveWeaponSkill(5).defensiveWeaponSkill(5).strength(4).toughness(4).initiative(2).wounds(1).attacks(7).leadership(8).basesize(25).modelCount(0).armor(4).modelsPerRank(5).build();
+        OffensiveProfile blackorcOffensiveProfile2Atk = OffensiveProfile.builder()
+                .offensiveWeaponSkill(5)
+                .strength(4)
+                .initiative(2)
+                .attacks(2)
+                .build();
 
-        Integer BONotInB2B1 = 4;
-        Integer BONotInB2B2 = 0;
+        List<OffensiveProfile> blackorcOffensiveProfile2AtkList = new ArrayList<>();
+        blackorcOffensiveProfile2AtkList.add(blackorcOffensiveProfile2Atk);
 
-        Integer attacks = subject.determineFrontRankAttacks(blorcs, BONotInB2B1);
-        Integer attacks2 = subject.determineFrontRankAttacks(blorcs2, BONotInB2B1);
-        Integer attacks3 = subject.determineFrontRankAttacks(blorcs3, BONotInB2B1);
-        Integer attacks4 = subject.determineFrontRankAttacks(blorcs4, BONotInB2B1);
-        Integer attacks5 = subject.determineFrontRankAttacks(blorcs5, BONotInB2B2);
+        OffensiveProfile blackorcOffensiveProfile1Atk = OffensiveProfile.builder()
+                .offensiveWeaponSkill(5)
+                .strength(4)
+                .initiative(2)
+                .attacks(1)
+                .build();
+
+        List<OffensiveProfile> blackorcOffensiveProfile1AtkList = new ArrayList<>();
+        blackorcOffensiveProfile1AtkList.add(blackorcOffensiveProfile2Atk);
+
+        OffensiveProfile blackorcOffensiveProfile7Atk = OffensiveProfile.builder()
+                .offensiveWeaponSkill(5)
+                .strength(4)
+                .initiative(2)
+                .attacks(7)
+                .build();
+
+        List<OffensiveProfile> blackorcOffensiveProfile7AtkList = new ArrayList<>();
+        blackorcOffensiveProfile7AtkList.add(blackorcOffensiveProfile2Atk);
+
+        Unit blorcs = Unit.builder().name("Black Orc").advance(4).defensiveWeaponSkill(5).toughness(4).wounds(1).leadership(8)
+                .basesize(25).modelCount(10).armor(4).modelsPerRank(10)
+                .offensiveProfileList(blackorcOffensiveProfile2AtkList).build();
+        Unit blorcs2 = Unit.builder().name("Black Orc").advance(4).defensiveWeaponSkill(5).toughness(4).wounds(1).leadership(8)
+                .basesize(25).modelCount(11).armor(4).modelsPerRank(10)
+                .offensiveProfileList(blackorcOffensiveProfile1AtkList).build();
+        Unit blorcs3 = Unit.builder().name("Black Orc").advance(4).defensiveWeaponSkill(5).toughness(4).wounds(1).leadership(8)
+                .basesize(25).modelCount(1).armor(4).modelsPerRank(5)
+                .offensiveProfileList(blackorcOffensiveProfile2AtkList).build();
+        Unit blorcs4 = Unit.builder().name("Black Orc").advance(4).defensiveWeaponSkill(5).toughness(4).wounds(1).leadership(8)
+                .basesize(25).modelCount(0).armor(4).modelsPerRank(5)
+                .offensiveProfileList(blackorcOffensiveProfile7AtkList).build();
+        Unit blorcs5 = Unit.builder().name("Black Orc").advance(4).defensiveWeaponSkill(5).toughness(4).wounds(1).leadership(8)
+                .basesize(25).modelCount(0).armor(4).modelsPerRank(5)
+                .offensiveProfileList(blackorcOffensiveProfile7AtkList).build();
+
+        int BONotInB2B1 = 4;
+        int BONotInB2B2 = 0;
+
+        Integer attacks = subject.determineFrontRankAttacks(blackorcOffensiveProfile2Atk, blorcs, BONotInB2B1);
+        Integer attacks2 = subject.determineFrontRankAttacks(blackorcOffensiveProfile1Atk, blorcs2, BONotInB2B1);
+        Integer attacks3 = subject.determineFrontRankAttacks(blackorcOffensiveProfile2Atk, blorcs3, BONotInB2B1);
+        Integer attacks4 = subject.determineFrontRankAttacks(blackorcOffensiveProfile7Atk, blorcs4, BONotInB2B1);
+        Integer attacks5 = subject.determineFrontRankAttacks(blackorcOffensiveProfile7Atk, blorcs5, BONotInB2B2);
 
         assertEquals(12, attacks);
         assertEquals(6, attacks2);

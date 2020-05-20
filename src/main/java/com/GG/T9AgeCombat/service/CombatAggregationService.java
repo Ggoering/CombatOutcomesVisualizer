@@ -29,10 +29,14 @@ public class CombatAggregationService {
 
         for (int i = 0; i < MAXIMUM_ROUND_COUNT; i++) {
             Unit attacker = unitService.retrieveUnit(1);
-            Unit defender = unitService.retrieveUnit(2);
+            Unit defender = unitService.retrieveUnit(3);
+            Unit third = unitService.retrieveUnit(2);
+            Unit fourth = unitService.retrieveUnit(4);
 
             attacker.addEquipmentSpecialRules();
             defender.addEquipmentSpecialRules();
+            third.addEquipmentSpecialRules();
+            fourth.addEquipmentSpecialRules();
 
             attacker.setSelection(1);
             defender.setSelection(2);

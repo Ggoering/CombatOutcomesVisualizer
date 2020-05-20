@@ -1,10 +1,7 @@
 package com.GG.T9AgeCombat.service;
 
 import com.GG.T9AgeCombat.enums.LimitationEnum;
-import com.GG.T9AgeCombat.models.Result;
-import com.GG.T9AgeCombat.models.Round;
-import com.GG.T9AgeCombat.models.SpecialRuleProperty;
-import com.GG.T9AgeCombat.models.Unit;
+import com.GG.T9AgeCombat.models.*;
 import com.GG.T9AgeCombat.predicates.DetermineModificationPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +22,6 @@ public class CombatCalculationService {
     private final WardSaveService wardSaveService;
     private final CombatResolutionService combatResolutionService;
     private final SpecialRuleRoutingService specialRuleRoutingService;
-    private static final Logger logger = LoggerFactory.getLogger(CombatCalculationService.class);
 
     public CombatCalculationService(AttackQuantityService attackQuantityService, ToHitService toHitService, ToWoundService toWoundService,
                                     ArmorSaveService armorSaveService, WardSaveService wardSaveService, CombatResolutionService combatResolutionService,
@@ -64,47 +60,40 @@ public class CombatCalculationService {
 
         applyTemporarySpecialRules(primary, isFirstRound);
         applyTemporarySpecialRules(secondary, isFirstRound);
-        List<Unit> unitsByInitiative = orderUnitsByInitiative(primary, secondary);
+        List<OffensiveProfile> offensiveProfilesByInitiative = orderUnitsByInitiative(primary, secondary);
 
-        for (Unit attacker : unitsByInitiative) {
-            Unit defender = unitsByInitiative.stream().filter(d -> !d.isMount()
-                    && !d.getSelection().equals(attacker.getSelection())).findFirst().orElse(null);
+        for (OffensiveProfile offensiveProfile : offensiveProfilesByInitiative) {
+            Unit attackingUnit = (offensiveProfile.getSelection() == primary.getSelection() ? primary : secondary);
+            Unit defendingUnit = (offensiveProfile.getSelection() == primary.getSelection() ? secondary : primary);
 
-            if (defender != null) {
-                int numberOfAttacks = attackQuantityService.determineAttackQuantity(attacker, defender);
-                int numberOfHits = toHitService.rollToHit(attacker, defender, numberOfAttacks);
-                int numberOfWounds = toWoundService.rollToWound(attacker, defender, numberOfHits);
+            int numberOfAttacks = attackQuantityService.determineAttackQuantity(offensiveProfile, attackingUnit, defendingUnit);
+            int numberOfHits = toHitService.rollToHit(offensiveProfile, defendingUnit, numberOfAttacks);
+            int numberOfWounds = toWoundService.rollToWound(offensiveProfile, defendingUnit, numberOfHits);
 
-                if (numberOfHits == 0 || numberOfWounds == 0) {
-                    continue;
-                }
+            if (numberOfHits == 0 || numberOfWounds == 0) {
+                continue;
+            }
 
-                int failedSaves = armorSaveService.rollArmorSaves(attacker, defender, numberOfWounds);
+            int failedSaves = armorSaveService.rollArmorSaves(offensiveProfile, defendingUnit, numberOfWounds);
 
-                if (defender.getWardSave() != 0) {
-                    failedSaves = wardSaveService.rollWardSaves(defender, failedSaves);
-                }
+            if (defendingUnit.getWardSave() != 0) {
+                failedSaves = wardSaveService.rollWardSaves(defendingUnit, failedSaves);
+            }
 
-                defender.setPendingWounds(failedSaves);
+            defendingUnit.setPendingWounds(failedSaves);
 
-                if (primary.getSelection().equals(attacker.getSelection())) {
-                    primaryUnitWoundsDealt += failedSaves;
-                } else {
-                    secondaryUnitWoundsDealt += failedSaves;
-                }
-
-                // If the attacker is the last in the list then apply wounds
-                // If the next unit has the same initiative as the attacker then do not apply wounds yet
-                if (unitsByInitiative.indexOf(attacker) + 1 == unitsByInitiative.size()
-                        || attacker.getActualInitiative() != unitsByInitiative.get(unitsByInitiative.indexOf(attacker) + 1).getActualInitiative()) {
-                    for (Unit unit : unitsByInitiative) {
-                        if (!unit.isMount()) {
-                            unit.applyPendingWounds();
-                        }
-                    }
-                }
+            if (primary.getSelection() == offensiveProfile.getSelection()) {
+                primaryUnitWoundsDealt += failedSaves;
             } else {
-                logger.error("Null defender found when fighting.");
+                secondaryUnitWoundsDealt += failedSaves;
+            }
+
+            // If the attacker is the last in the list then apply wounds
+            // If the next unit has the same initiative as the attacker then do not apply wounds yet
+            if (offensiveProfilesByInitiative.indexOf(offensiveProfile) + 1 == offensiveProfilesByInitiative.size()
+                    || offensiveProfile.getActualInitiative() != offensiveProfilesByInitiative.get(offensiveProfilesByInitiative.indexOf(offensiveProfile) + 1).getActualInitiative()) {
+                primary.applyPendingWounds();
+                secondary.applyPendingWounds();
             }
         }
 
@@ -115,26 +104,12 @@ public class CombatCalculationService {
         return fight(primary, secondary, brokenOrWipedOut, rounds);
     }
 
-    List<Unit> orderUnitsByInitiative(Unit primary, Unit secondary) {
-        List<Unit> unitList = new ArrayList<>();
-        unitList.add(primary);
-        unitList.add(secondary);
+    List<OffensiveProfile> orderUnitsByInitiative(Unit primary, Unit secondary) {
+        List<OffensiveProfile> offensiveProfileList = new ArrayList<>();
+        offensiveProfileList.addAll(primary.getOffensiveProfileList());
+        offensiveProfileList.addAll(secondary.getOffensiveProfileList());
 
-        if (primary.isMounted()) {
-            unitList.add(Unit.builder().attacks(primary.getMountAttacks()).initiative(primary.getMountInitiative())
-                    .strength(primary.getMountStrength()).offensiveWeaponSkill(primary.getMountOffensiveWeaponSkill())
-                    .isMount(true).basesize(primary.getBasesize()).selection(1).modelsPerRank(primary.getModelsPerRank())
-                    .modelCount(primary.getModelCount()).build());
-        }
-
-        if (secondary.isMounted()) {
-            unitList.add(Unit.builder().attacks(secondary.getMountAttacks()).initiative(secondary.getMountInitiative())
-                    .strength(secondary.getMountStrength()).offensiveWeaponSkill(secondary.getMountOffensiveWeaponSkill())
-                    .isMount(true).basesize(secondary.getBasesize()).selection(2).modelsPerRank(secondary.getModelsPerRank())
-                    .modelCount(secondary.getModelCount()).build());
-        }
-
-        return unitList.stream().sorted(Comparator.comparing(Unit::getActualInitiative).reversed()).collect(toList());
+        return offensiveProfileList.stream().sorted(Comparator.comparing(OffensiveProfile::getActualInitiative).reversed()).collect(toList());
     }
 
     void applyPermanentSpecialRules(Unit unit) {
@@ -142,6 +117,14 @@ public class CombatCalculationService {
             for (SpecialRuleProperty specialRuleProperty : unit.getSpecialRulePropertyList()) {
                 if (specialRuleProperty.getLimitation() == LimitationEnum.NONE) {
                     DetermineModificationPredicate.applyPermanentBonus(unit, specialRuleProperty.getModification(), specialRuleProperty.getValue());
+                }
+            }
+
+            for (OffensiveProfile offensiveProfile : unit.getOffensiveProfileList()) {
+                for (SpecialRuleProperty specialRuleProperty : offensiveProfile.getSpecialRulePropertyList()) {
+                    if (specialRuleProperty.getLimitation() == LimitationEnum.NONE) {
+                        DetermineModificationPredicate.applyPermanentBonus(offensiveProfile, specialRuleProperty.getModification(), specialRuleProperty.getValue());
+                    }
                 }
             }
         }
@@ -152,6 +135,14 @@ public class CombatCalculationService {
             for (SpecialRuleProperty specialRuleProperty : unit.getSpecialRulePropertyList()) {
                 if (specialRuleRoutingService.routeTemporaryLimitationToPredicate(specialRuleProperty.getLimitation(), unit, isFirstRound)) {
                     DetermineModificationPredicate.applyTemporaryBonus(unit, specialRuleProperty.getModification(), specialRuleProperty.getValue());
+                }
+            }
+
+            for (OffensiveProfile offensiveProfile : unit.getOffensiveProfileList()) {
+                for (SpecialRuleProperty specialRuleProperty : offensiveProfile.getSpecialRulePropertyList()) {
+                    if (specialRuleRoutingService.routeTemporaryLimitationToPredicate(specialRuleProperty.getLimitation(), unit, isFirstRound)) {
+                        DetermineModificationPredicate.applyTemporaryBonus(offensiveProfile, specialRuleProperty.getModification(), specialRuleProperty.getValue());
+                    }
                 }
             }
         }

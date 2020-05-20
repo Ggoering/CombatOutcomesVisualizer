@@ -35,18 +35,45 @@ public class CombatCalculationServiceTest {
         Round expectedRound = Round.builder().combatScoreDifferential(null).primaryWoundsDealt(4).secondaryWoundsDealt(2)
                 .flee(false).caught(null).winner("Swordmaster").wipedOut(true).build();
         expectedResult.add(expectedRound);
-        Unit unit1 = Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(5).armor(5).modelsPerRank(5).selection(1).standardBearer(1).hasMusician(true).build();
-        Unit unit2 = Unit.builder().name("Black Orc").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(2).armor(5).modelsPerRank(5).selection(2).standardBearer(1).hasMusician(true).build();
+
+        OffensiveProfile swordmasterOffensiveProfile = OffensiveProfile.builder()
+                .offensiveWeaponSkill(6)
+                .strength(5)
+                .initiative(6)
+                .attacks(1)
+                .selection(1)
+                .build();
+
+        List<OffensiveProfile> swordmasterOffensiveProfileList = new ArrayList<>();
+        swordmasterOffensiveProfileList.add(swordmasterOffensiveProfile);
+
+        OffensiveProfile blackorcOffensiveProfile = OffensiveProfile.builder()
+                .offensiveWeaponSkill(6)
+                .strength(5)
+                .initiative(6)
+                .attacks(1)
+                .selection(2)
+                .build();
+
+        List<OffensiveProfile> blackorcOffensiveProfileList = new ArrayList<>();
+        blackorcOffensiveProfileList.add(blackorcOffensiveProfile);
+        
+        Unit unit1 = Unit.builder().name("Swordmaster").advance(5).defensiveWeaponSkill(6).toughness(3).wounds(1).leadership(8)
+                .basesize(25).modelCount(5).armor(5).modelsPerRank(5).selection(1).standardBearer(1).hasMusician(true)
+                .offensiveProfileList(swordmasterOffensiveProfileList).selection(1).build();
+        Unit unit2 = Unit.builder().name("Black Orc").advance(5).defensiveWeaponSkill(6).toughness(3).wounds(1).leadership(8)
+                .basesize(25).modelCount(2).armor(5).modelsPerRank(5).selection(2).standardBearer(1).hasMusician(true)
+                .offensiveProfileList(blackorcOffensiveProfileList).selection(2).build();
 
         // Attacker is unit1
-        when(mockToHitService.rollToHit(unit1, unit2, 4)).thenReturn(4);
-        when(mockToWoundService.rollToWound(unit1, unit2, 4)).thenReturn(4);
-        when(mockArmorSaveService.rollArmorSaves(unit1, unit2, 4)).thenReturn(4);
+        when(mockToHitService.rollToHit(swordmasterOffensiveProfile, unit2, 4)).thenReturn(4);
+        when(mockToWoundService.rollToWound(swordmasterOffensiveProfile, unit2, 4)).thenReturn(4);
+        when(mockArmorSaveService.rollArmorSaves(swordmasterOffensiveProfile, unit2, 4)).thenReturn(4);
 
         // Attacker is unit2
-        when(mockToHitService.rollToHit(unit2, unit1, 2)).thenReturn(2);
-        when(mockToWoundService.rollToWound(unit2, unit1, 2)).thenReturn(2);
-        when(mockArmorSaveService.rollArmorSaves(unit2, unit1, 2)).thenReturn(2);
+        when(mockToHitService.rollToHit(blackorcOffensiveProfile, unit1, 2)).thenReturn(2);
+        when(mockToWoundService.rollToWound(blackorcOffensiveProfile, unit1, 2)).thenReturn(2);
+        when(mockArmorSaveService.rollArmorSaves(blackorcOffensiveProfile, unit1, 2)).thenReturn(2);
 
         // Act
         List<Round> actualRound = getCombatCalculationService().fight(unit1, unit2, false, new ArrayList<>());
@@ -63,50 +90,89 @@ public class CombatCalculationServiceTest {
         Round expectedRound = Round.builder().primaryWoundsDealt(2).secondaryWoundsDealt(1)
                 .flee(true).caught(false).winner("Swordmaster").wipedOut(false).build();
         expectedResult.add(expectedRound);
-        Unit unit1 = Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6)
-                .strength(5).toughness(3).initiative(4).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(5).armor(5)
-                .modelsPerRank(5).selection(1).standardBearer(1).hasMusician(true).isMounted(true)
-                .mountAttacks(1).mountInitiative(6).mountStrength(5).mountOffensiveWeaponSkill(5).build();
-        Unit unit1Mount = Unit.builder().isMount(true).offensiveWeaponSkill(5).strength(5).initiative(6)
-                .attacks(1).basesize(25).modelCount(5).modelsPerRank(5).selection(1).build();
-        Unit unit1Wounded = Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6)
-                .strength(5).toughness(3).initiative(4).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(4).armor(5)
-                .modelsPerRank(5).selection(1).standardBearer(1).hasMusician(true).isMounted(true)
-                .mountAttacks(1).mountInitiative(6).mountStrength(5).mountOffensiveWeaponSkill(5).build();
 
-        Unit unit2 = Unit.builder().name("Black Orc").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).
-                strength(5).toughness(3).initiative(3).wounds(1).attacks(1).leadership(3).basesize(25).modelCount(3).armor(5)
-                .modelsPerRank(5).selection(2).standardBearer(1).hasMusician(true).isMounted(true)
-                .mountAttacks(1).mountInitiative(6).mountStrength(5).mountOffensiveWeaponSkill(4).build();
-        Unit unit2Mount = Unit.builder().isMount(true).offensiveWeaponSkill(4).strength(5).initiative(6)
-                .attacks(1).basesize(25).modelCount(3).modelsPerRank(5).selection(2).build();
-        Unit unit2Wounded = Unit.builder().name("Black Orc").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).
-                strength(5).toughness(3).initiative(3).wounds(1).attacks(1).leadership(3).basesize(25).modelCount(2).armor(5)
-                .modelsPerRank(5).selection(2).standardBearer(1).hasMusician(true).isMounted(true)
-                .mountAttacks(1).mountInitiative(6).mountStrength(5).mountOffensiveWeaponSkill(4).build();
-        Unit unit2CriticalWound = Unit.builder().name("Black Orc").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).
-                strength(5).toughness(3).initiative(3).wounds(1).attacks(1).leadership(3).basesize(25).modelCount(1).armor(5)
-                .modelsPerRank(5).selection(2).standardBearer(1).hasMusician(true).isMounted(true)
-                .mountAttacks(1).mountInitiative(6).mountStrength(5).mountOffensiveWeaponSkill(4).build();
+        OffensiveProfile swordmasterOffensiveProfile = OffensiveProfile.builder()
+                .name("Swordmaster")
+                .offensiveWeaponSkill(6)
+                .strength(5)
+                .initiative(4)
+                .attacks(1)
+                .selection(1)
+                .build();
+
+        OffensiveProfile swordmasterMountOffensiveProfile = OffensiveProfile.builder()
+                .name("Swordmaster Mount")
+                .offensiveWeaponSkill(5)
+                .strength(5)
+                .initiative(6)
+                .attacks(1)
+                .isMount(true)
+                .selection(1)
+                .build();
+
+        List<OffensiveProfile> swordmasterOffensiveProfileList = new ArrayList<>();
+        swordmasterOffensiveProfileList.add(swordmasterOffensiveProfile);
+        swordmasterOffensiveProfileList.add(swordmasterMountOffensiveProfile);
+
+        Unit unit1 = Unit.builder().name("Swordmaster").advance(5).defensiveWeaponSkill(6)
+                .toughness(3).wounds(1).leadership(8).basesize(25).modelCount(5).armor(5)
+                .modelsPerRank(5).selection(1).standardBearer(1).hasMusician(true).selection(1)
+                .offensiveProfileList(swordmasterOffensiveProfileList).build();
+        Unit unit1Wounded = Unit.builder().name("Swordmaster").advance(5).defensiveWeaponSkill(6)
+                .toughness(3).wounds(1).leadership(8).basesize(25).modelCount(4).armor(5)
+                .modelsPerRank(5).selection(1).standardBearer(1).hasMusician(true).selection(1)
+                .offensiveProfileList(swordmasterOffensiveProfileList).build();
+
+        OffensiveProfile blackorcOffensiveProfile = OffensiveProfile.builder()
+                .name("Black Orc")
+                .offensiveWeaponSkill(6)
+                .strength(5)
+                .initiative(3)
+                .attacks(1)
+                .selection(2)
+                .build();
+
+        OffensiveProfile blackorcMountOffensiveProfile = OffensiveProfile.builder()
+                .name("Black Orc Mount")
+                .offensiveWeaponSkill(4)
+                .strength(5)
+                .initiative(6)
+                .attacks(1)
+                .isMount(true)
+                .selection(2)
+                .build();
+
+        List<OffensiveProfile> blackorcOffensiveProfileList = new ArrayList<>();
+        blackorcOffensiveProfileList.add(blackorcOffensiveProfile);
+        blackorcOffensiveProfileList.add(blackorcMountOffensiveProfile);
+
+        Unit unit2 = Unit.builder().name("Black Orc").advance(5).defensiveWeaponSkill(6)
+                .toughness(3).wounds(1).leadership(3).basesize(25).modelCount(3).armor(5)
+                .modelsPerRank(5).selection(2).standardBearer(1).hasMusician(true).selection(2)
+                .offensiveProfileList(blackorcOffensiveProfileList).build();
+        Unit unit2Wounded = Unit.builder().name("Black Orc").advance(5).defensiveWeaponSkill(6)
+                .toughness(3).wounds(1).leadership(3).basesize(25).modelCount(2).armor(5)
+                .modelsPerRank(5).selection(2).standardBearer(1).hasMusician(true).selection(2)
+                .offensiveProfileList(blackorcOffensiveProfileList).build();
 
         // Unit1 mount
-        when(mockToHitService.rollToHit(unit1Mount, unit2, 5)).thenReturn(1);
-        when(mockToWoundService.rollToWound(unit1Mount, unit2, 1)).thenReturn(1);
-        when(mockArmorSaveService.rollArmorSaves(unit1Mount, unit2, 1)).thenReturn(1);
+        when(mockToHitService.rollToHit(swordmasterMountOffensiveProfile, unit2, 5)).thenReturn(1);
+        when(mockToWoundService.rollToWound(swordmasterMountOffensiveProfile, unit2, 1)).thenReturn(1);
+        when(mockArmorSaveService.rollArmorSaves(swordmasterMountOffensiveProfile, unit2, 1)).thenReturn(1);
 
         // Unit2 mount
-        when(mockToHitService.rollToHit(unit2Mount, unit1, 3)).thenReturn(1);
-        when(mockToWoundService.rollToWound(unit2Mount, unit1, 1)).thenReturn(1);
-        when(mockArmorSaveService.rollArmorSaves(unit2Mount, unit1, 1)).thenReturn(1);
+        when(mockToHitService.rollToHit(blackorcMountOffensiveProfile, unit1, 3)).thenReturn(1);
+        when(mockToWoundService.rollToWound(blackorcMountOffensiveProfile, unit1, 1)).thenReturn(1);
+        when(mockArmorSaveService.rollArmorSaves(blackorcMountOffensiveProfile, unit1, 1)).thenReturn(1);
 
         // Unit1 riders
-        when(mockToHitService.rollToHit(unit1Wounded, unit2Wounded, 4)).thenReturn(1);
-        when(mockToWoundService.rollToWound(unit1Wounded, unit2Wounded, 1)).thenReturn(1);
-        when(mockArmorSaveService.rollArmorSaves(unit1Wounded, unit2Wounded, 1)).thenReturn(1);
+        when(mockToHitService.rollToHit(swordmasterOffensiveProfile, unit2Wounded, 4)).thenReturn(1);
+        when(mockToWoundService.rollToWound(swordmasterOffensiveProfile, unit2Wounded, 1)).thenReturn(1);
+        when(mockArmorSaveService.rollArmorSaves(swordmasterOffensiveProfile, unit2Wounded, 1)).thenReturn(1);
 
         // Unit2 riders
-        when(mockToHitService.rollToHit(unit2CriticalWound, unit1Wounded, 1)).thenReturn(0);
-        when(mockToWoundService.rollToWound(unit2CriticalWound, unit1Wounded, 0)).thenReturn(0);
+        when(mockToHitService.rollToHit(blackorcOffensiveProfile, unit1Wounded, 1)).thenReturn(0);
+        when(mockToWoundService.rollToWound(blackorcOffensiveProfile, unit1Wounded, 0)).thenReturn(0);
 
         when(mockDiceRollingService.rollWithSum(2)).thenReturn(7);
         when(mockDiceRollingService.rollWithSumTakeHighest(3, 2)).thenReturn(9);
@@ -126,23 +192,46 @@ public class CombatCalculationServiceTest {
         Round expectedRound = Round.builder().combatScoreDifferential(null).primaryWoundsDealt(0).secondaryWoundsDealt(1)
                 .flee(true).caught(false).winner("Black Orc").wipedOut(false).build();
         expectedResult.add(expectedRound);
-        Unit unit1 = Unit.builder().name("Swordmaster").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5)
-                .toughness(3).initiative(6).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(5).armor(5).modelsPerRank(5).selection(1)
-                .standardBearer(1).wardSave(4).build();
-        Unit unit2 = Unit.builder().name("Black Orc").movement(5).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5)
-                .toughness(3).initiative(6).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(2).armor(5).modelsPerRank(5).selection(2)
-                .standardBearer(1).hasMusician(true).wardSave(6).build();
+
+        OffensiveProfile swordmasterOffensiveProfile = OffensiveProfile.builder()
+                .offensiveWeaponSkill(6)
+                .strength(5)
+                .initiative(6)
+                .attacks(1)
+                .selection(1)
+                .build();
+
+        List<OffensiveProfile> swordmasterOffensiveProfileList = new ArrayList<>();
+        swordmasterOffensiveProfileList.add(swordmasterOffensiveProfile);
+
+        OffensiveProfile blackorcOffensiveProfile = OffensiveProfile.builder()
+                .offensiveWeaponSkill(6)
+                .strength(5)
+                .initiative(6)
+                .attacks(1)
+                .selection(2)
+                .build();
+
+        List<OffensiveProfile> blackorcOffensiveProfileList = new ArrayList<>();
+        blackorcOffensiveProfileList.add(blackorcOffensiveProfile);
+
+        Unit unit1 = Unit.builder().name("Swordmaster").advance(5).defensiveWeaponSkill(6)
+                .toughness(3).wounds(1).leadership(8).basesize(25).modelCount(5).armor(5).modelsPerRank(5).selection(1)
+                .standardBearer(1).wardSave(4).offensiveProfileList(swordmasterOffensiveProfileList).selection(1).build();
+        Unit unit2 = Unit.builder().name("Black Orc").advance(5).defensiveWeaponSkill(6)
+                .toughness(3).wounds(1).leadership(8).basesize(25).modelCount(2).armor(5).modelsPerRank(5).selection(2)
+                .standardBearer(1).hasMusician(true).wardSave(6).offensiveProfileList(blackorcOffensiveProfileList).selection(2).build();
 
         // Attacker is unit1
-        when(mockToHitService.rollToHit(unit1, unit2, 4)).thenReturn(4);
-        when(mockToWoundService.rollToWound(unit1, unit2, 4)).thenReturn(4);
-        when(mockArmorSaveService.rollArmorSaves(unit1, unit2, 4)).thenReturn(4);
+        when(mockToHitService.rollToHit(swordmasterOffensiveProfile, unit2, 4)).thenReturn(4);
+        when(mockToWoundService.rollToWound(swordmasterOffensiveProfile, unit2, 4)).thenReturn(4);
+        when(mockArmorSaveService.rollArmorSaves(swordmasterOffensiveProfile, unit2, 4)).thenReturn(4);
         when(mockWardSaveService.rollWardSaves(unit1, 2)).thenReturn(1);
 
         // Attacker is unit2
-        when(mockToHitService.rollToHit(unit2, unit1, 2)).thenReturn(2);
-        when(mockToWoundService.rollToWound(unit2, unit1, 2)).thenReturn(2);
-        when(mockArmorSaveService.rollArmorSaves(unit2, unit1, 2)).thenReturn(2);
+        when(mockToHitService.rollToHit(blackorcOffensiveProfile, unit1, 2)).thenReturn(2);
+        when(mockToWoundService.rollToWound(blackorcOffensiveProfile, unit1, 2)).thenReturn(2);
+        when(mockArmorSaveService.rollArmorSaves(blackorcOffensiveProfile, unit1, 2)).thenReturn(2);
         when(mockWardSaveService.rollWardSaves(unit2, 4)).thenReturn(0);
 
         when(mockDiceRollingService.rollWithSum(2)).thenReturn(12);
@@ -197,15 +286,15 @@ public class CombatCalculationServiceTest {
                 .value(-10)
                 .build();
 
-            SpecialRuleProperty specialRulePropertyGreatWeapon = SpecialRuleProperty.builder()
+        SpecialRuleProperty specialRulePropertyGreatWeapon = SpecialRuleProperty.builder()
                 .limitation(LimitationEnum.NONE)
-                .modification(ModificationEnum.STRENGTH_AND_ARMOR_PENETRATION)
+                .modification(ModificationEnum.STRENGTH)
                 .timing(TimingEnum.ALL)
                 .name(SpecialRulePropertyEnum.GREAT_WEAPON_STRENGTH)
                 .value(2)
                 .build();
 
-            SpecialRuleProperty specialRulePropertyBornToFight = SpecialRuleProperty.builder()
+        SpecialRuleProperty specialRulePropertyBornToFight = SpecialRuleProperty.builder()
                 .limitation(LimitationEnum.FIRST_ROUND)
                 .modification(ModificationEnum.STRENGTH)
                 .timing(TimingEnum.ALL)
@@ -213,7 +302,7 @@ public class CombatCalculationServiceTest {
                 .value(1)
                 .build();
 
-            SpecialRuleProperty specialRulePropertyHeavyArmor = SpecialRuleProperty.builder()
+        SpecialRuleProperty specialRulePropertyHeavyArmor = SpecialRuleProperty.builder()
                 .limitation(LimitationEnum.NONE)
                 .modification(ModificationEnum.ARMOR)
                 .timing(TimingEnum.ALL)
@@ -221,7 +310,7 @@ public class CombatCalculationServiceTest {
                 .value(1)
                 .build();
 
-            SpecialRuleProperty specialRulePropertyPlateArmor = SpecialRuleProperty.builder()
+        SpecialRuleProperty specialRulePropertyPlateArmor = SpecialRuleProperty.builder()
                 .limitation(LimitationEnum.NONE)
                 .modification(ModificationEnum.ARMOR)
                 .timing(TimingEnum.ALL)
@@ -244,49 +333,89 @@ public class CombatCalculationServiceTest {
         greatWeaponSpecialRulesSwordMasterProperty.add(specialRulePropertyGreatWeaponStrikeLast);
 
         Equipment blackOrcGreatWeapon = Equipment.builder()
-                .name(EquipmentEnum.GREAT_WEAPON)
-                .type(EquipmentTypeEnum.TWO_HANDED)
+                .name("Great Weapon")
                 .specialRuleProperties(greatWeaponSpecialRulesBlackOrcProperty)
-              .build();
+                .build();
 
         Equipment blackOrcPlate = Equipment.builder()
-                .name(EquipmentEnum.PLATE)
-                .type(EquipmentTypeEnum.ARMOR)
+                .name("Plate Armor")
                 .specialRuleProperties(armorSpecialRulesBlackOrcProperty)
                 .build();
 
         Equipment swordMasterGreatWeapon = Equipment.builder()
-                .name(EquipmentEnum.GREAT_WEAPON)
-                .type(EquipmentTypeEnum.TWO_HANDED)
+                .name("Great Weapon")
                 .specialRuleProperties(greatWeaponSpecialRulesSwordMasterProperty)
-              .build();
+                .build();
 
         Equipment swordMasterHeavyArmor = Equipment.builder()
-                .name(EquipmentEnum.HEAVY)
-                .type(EquipmentTypeEnum.ARMOR)
+                .name("Heavy Armor")
                 .specialRuleProperties(armorSpecialRulesSwordMasterProperty)
                 .build();
 
         List<Equipment> equipmentBlackOrc = new ArrayList<>();
-        equipmentBlackOrc.add(blackOrcGreatWeapon);
         equipmentBlackOrc.add(blackOrcPlate);
 
+        List<Equipment> offensiveEquipmentBlackOrc = new ArrayList<>();
+        offensiveEquipmentBlackOrc.add(blackOrcGreatWeapon);
+
         List<Equipment> equipmentSwordMaster = new ArrayList<>();
-        equipmentSwordMaster.add(swordMasterGreatWeapon);
         equipmentSwordMaster.add(swordMasterHeavyArmor);
 
+        List<Equipment> offensiveEquipmentSwordMaster = new ArrayList<>();
+        offensiveEquipmentSwordMaster.add(swordMasterGreatWeapon);
+
         List<SpecialRuleProperty> unitSpecialRulesBlackOrcProperty = new ArrayList<>();
-        unitSpecialRulesBlackOrcProperty.add(specialRulePropertyBornToFight);
         unitSpecialRulesBlackOrcProperty.add(specialRulePropertyHorde);
-        unitSpecialRulesBlackOrcProperty.add(specialRulePropertyHatred);
 
         List<SpecialRuleProperty> unitSpecialRulesSwordMasterProperty = new ArrayList<>();
-        unitSpecialRulesSwordMasterProperty.add(specialRulePropertyLightningReflexesGreatWeapon);
-        unitSpecialRulesSwordMasterProperty.add(specialRulePropertySwordSworn);
         unitSpecialRulesSwordMasterProperty.add(specialRulePropertyHorde);
 
-        Unit unit1 = Unit.builder().name("Swordmaster").movement(5).height(UnitHeightEnum.STANDARD).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(5).toughness(3).initiative(6).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(30).armor(5).modelsPerRank(10).selection(1).standardBearer(1).reRollToHitLessThan(0).toHitBonus(0).extraRanks(0).hasMusician(true).specialRulePropertyList(unitSpecialRulesSwordMasterProperty).equipmentList(equipmentSwordMaster).build();
-        Unit unit2 = Unit.builder().name("Black Orc").movement(5).height(UnitHeightEnum.STANDARD).offensiveWeaponSkill(6).defensiveWeaponSkill(6).strength(4).toughness(4).initiative(3).wounds(1).attacks(1).leadership(8).basesize(25).modelCount(12).armor(5).modelsPerRank(5).selection(2).standardBearer(1).reRollToHitLessThan(0).toHitBonus(0).extraRanks(0).hasMusician(true).specialRulePropertyList(unitSpecialRulesBlackOrcProperty).equipmentList(equipmentBlackOrc).build();
+        List<SpecialRuleProperty> offensiveSpecialRulesBlackOrcProperty = new ArrayList<>();
+        offensiveSpecialRulesBlackOrcProperty.add(specialRulePropertyBornToFight);
+        offensiveSpecialRulesBlackOrcProperty.add(specialRulePropertyHatred);
+
+        List<SpecialRuleProperty> offensiveSpecialRulesSwordMasterProperty = new ArrayList<>();
+        offensiveSpecialRulesSwordMasterProperty.add(specialRulePropertyLightningReflexesGreatWeapon);
+        offensiveSpecialRulesSwordMasterProperty.add(specialRulePropertySwordSworn);
+
+        OffensiveProfile swordmasterOffensiveProfile = OffensiveProfile.builder()
+                .offensiveWeaponSkill(6)
+                .strength(5)
+                .initiative(6)
+                .attacks(2)
+                .specialRulePropertyList(offensiveSpecialRulesSwordMasterProperty)
+                .equipmentList(offensiveEquipmentSwordMaster)
+                .selection(1)
+                .build();
+
+        OffensiveProfile blackorcOffensiveProfile = OffensiveProfile.builder()
+                .offensiveWeaponSkill(5)
+                .strength(4)
+                .initiative(3)
+                .attacks(1)
+                .specialRulePropertyList(offensiveSpecialRulesBlackOrcProperty)
+                .equipmentList(offensiveEquipmentBlackOrc)
+                .selection(2)
+                .build();
+
+        List<OffensiveProfile> swordmasterOffensiveProfileList = new ArrayList<>();
+        swordmasterOffensiveProfileList.add(swordmasterOffensiveProfile);
+
+        List<OffensiveProfile> blackorcOffensiveProfileList = new ArrayList<>();
+        blackorcOffensiveProfileList.add(blackorcOffensiveProfile);
+
+        Unit unit1 = Unit.builder().name("Swordmaster").advance(5).height(UnitHeightEnum.STANDARD).defensiveWeaponSkill(6)
+                .toughness(3).wounds(1).leadership(8).basesize(25).modelCount(30).armor(5).modelsPerRank(10).selection(1)
+                .standardBearer(1).extraRanks(0).hasMusician(true)
+                .specialRulePropertyList(unitSpecialRulesSwordMasterProperty)
+                .equipmentList(equipmentSwordMaster)
+                .offensiveProfileList(swordmasterOffensiveProfileList).selection(1).build();
+        Unit unit2 = Unit.builder().name("Black Orc").advance(5).height(UnitHeightEnum.STANDARD).defensiveWeaponSkill(6)
+                .toughness(4).wounds(1).leadership(8).basesize(25).modelCount(12).armor(5).modelsPerRank(5).selection(2)
+                .standardBearer(1).extraRanks(0).hasMusician(true)
+                .specialRulePropertyList(unitSpecialRulesBlackOrcProperty)
+                .equipmentList(equipmentBlackOrc)
+                .offensiveProfileList(blackorcOffensiveProfileList).selection(2).build();
 
         Integer expectedResultLightningReflexesApplied = 1;
         Integer expectedResultSwordMasterHordeApplied = 1;
@@ -299,12 +428,12 @@ public class CombatCalculationServiceTest {
         getCombatCalculationService().applyTemporarySpecialRules(unit1, true);
         getCombatCalculationService().applyTemporarySpecialRules(unit2, true);
 
-        assertThat(unit1.getActualToHitBonus()).isEqualTo(expectedResultLightningReflexesApplied);
+        assertThat(unit1.getOffensiveProfileList().get(0).getActualToHitBonus()).isEqualTo(expectedResultLightningReflexesApplied);
         assertThat(unit1.getExtraRanks()).isEqualTo(expectedResultSwordMasterHordeApplied);
 
         assertThat(unit2.getExtraRanks()).isEqualTo(expectedResultBlackOrcHordeApplied);
-        assertThat(unit2.getActualStrength()).isEqualTo(expectedResultBornToFightApplied);
-        assertThat(unit2.getReRollToHitLessThan()).isEqualTo(expectedResultHatredApplied);
+        assertThat(unit2.getOffensiveProfileList().get(0).getActualStrength()).isEqualTo(expectedResultBornToFightApplied);
+        assertThat(unit2.getOffensiveProfileList().get(0).getReRollToHitLessThan()).isEqualTo(expectedResultHatredApplied);
     }
 
     private CombatCalculationService getCombatCalculationService() {

@@ -1,8 +1,5 @@
 package com.GG.T9AgeCombat.dto;
 
-import com.GG.T9AgeCombat.enums.EquipmentEnum;
-import com.GG.T9AgeCombat.enums.EquipmentTypeEnum;
-import com.GG.T9AgeCombat.models.EquipmentClassification;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -19,21 +16,15 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class UnitEquipmentSpecialRuleDTO implements Serializable {
     @Id
-    long id;
+    int id;
     String name;
+    String equipmentClassification;
     String equipmentType;
-    @Id
+    String equipmentCategory;
+    boolean isDefault;
     String specialRuleName;
-    int specialRuleValue;
+    Integer specialRuleValue;
     String modificationValue;
     String limitationValue;
     String timingValue;
-
-    public EquipmentClassification toEquipmentId() {
-        return EquipmentClassification.builder()
-                .id(id)
-                .name(EquipmentEnum.valueOf(name))
-                .type(EquipmentTypeEnum.valueOf(equipmentType))
-                .build();
-    }
 }

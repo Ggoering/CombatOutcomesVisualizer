@@ -1,5 +1,6 @@
 package com.GG.T9AgeCombat.service;
 
+import com.GG.T9AgeCombat.models.OffensiveProfile;
 import com.GG.T9AgeCombat.models.Unit;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +19,13 @@ public class ToHitService {
         this.diceRollingService = diceRollingService;
     }
 
-    int rollToHit(Unit attacker, Unit defender, int quantity) {
-        int toHitThreshold = determineToHitThreshold(attacker.getActualOffensiveWeaponSkill(),
-                defender.getActualDefensiveWeaponSkill(), attacker.getActualToHitBonus());
+    int rollToHit(OffensiveProfile offensiveProfile, Unit defender, int quantity) {
+        int toHitThreshold = determineToHitThreshold(offensiveProfile.getActualOffensiveWeaponSkill(),
+                defender.getActualDefensiveWeaponSkill(), offensiveProfile.getActualToHitBonus());
         List<Integer> resultList = diceRollingService.roll(quantity);
 
-        return diceRollingService.getFinalWithReRolls(resultList, toHitThreshold, attacker.getReRollToHitLessThan(),
-                attacker.getReRollToHitGreaterThan());
+        return diceRollingService.getFinalWithReRolls(resultList, toHitThreshold, offensiveProfile.getReRollToHitLessThan(),
+                offensiveProfile.getReRollToHitGreaterThan());
     }
 
     int determineToHitThreshold(int attackerOWS, int defenderDWS, int attackerToHitBonus) {

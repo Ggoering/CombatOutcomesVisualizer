@@ -1,6 +1,8 @@
 package com.GG.T9AgeCombat.models;
 
+import com.GG.T9AgeCombat.common.Constants;
 import com.GG.T9AgeCombat.enums.UnitHeightEnum;
+import com.GG.T9AgeCombat.enums.UnitTypeEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Value;
@@ -16,46 +18,36 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @JsonInclude(NON_NULL)
 public class Unit {
     public static final int SINGLE_WOUND_MODEL = 1;
-    public static final Integer DEFAULT_REROLL_LESS_THAN = 0;
-    public static final Integer DEFAULT_REROLL_GREATER_THAN = 99;
 
     long id;
+    String faction;
+    UnitHeightEnum height;
+    UnitTypeEnum type;
     String name;
-    int movement;
+    int advance;
+    int march;
     int leadership;
     int wounds;
+    @NonFinal
     int defensiveWeaponSkill;
+    @NonFinal
     int toughness;
+    @NonFinal
     int armor;
-    int initiative;
-    int offensiveWeaponSkill;
-    int attacks;
-    @NonFinal
-    int strength;
-    int armorPenetration;
-    int mountInitiative;
-    int mountOffensiveWeaponSkill;
-    int mountAttacks;
-    int mountStrength;
-    int mountArmorPenetration;
     int basesize;
+    boolean canHaveMusician;
     @NonFinal
-    boolean isMounted;
-    Boolean canHaveMusician;
-    Boolean canHaveStandard;
-    int equipmentPointLimit;
-    UnitHeightEnum height;
-    @NonFinal
-    @Builder.Default
-    List<SpecialRuleProperty> specialRulePropertyList = new ArrayList<>();
-    @Builder.Default
-    List<Equipment> equipmentList = new ArrayList<>();
-
-    int standardBearer;
     boolean hasMusician;
-    boolean isMount;
+    boolean canHaveStandard;
     @NonFinal
-    Integer selection;
+    int standardBearer;
+    @NonFinal
+    int pointCost;
+    int extraModelPointCost;
+    int defaultModelCount;
+    int maximumModelCount;
+    @NonFinal
+    int selection;
     @NonFinal
     int modelCount;
     @NonFinal
@@ -65,33 +57,26 @@ public class Unit {
     @NonFinal
     int woundTracker;
     @NonFinal
-    @Builder.Default
-    Integer reRollToHitLessThan = DEFAULT_REROLL_LESS_THAN;
+    boolean hasReRollLeadership;
     @NonFinal
     @Builder.Default
-    Integer reRollToHitGreaterThan = DEFAULT_REROLL_GREATER_THAN;
+    int reRollArmorSaveLessThan = Constants.DEFAULT_REROLL_LESS_THAN;
     @NonFinal
     @Builder.Default
-    Integer reRollToWoundLessThan = DEFAULT_REROLL_LESS_THAN;
+    int reRollArmorSaveGreaterThan = Constants.DEFAULT_REROLL_GREATER_THAN;
+    @NonFinal
+    int extraRanks;
     @NonFinal
     @Builder.Default
-    Integer reRollToWoundGreaterThan = DEFAULT_REROLL_GREATER_THAN;
-    @NonFinal
+    List<SpecialRuleProperty> specialRulePropertyList = new ArrayList<>();
     @Builder.Default
-    Integer reRollArmorSaveLessThan = DEFAULT_REROLL_LESS_THAN;
-    @NonFinal
+    List<Equipment> equipmentList = new ArrayList<>();
     @Builder.Default
-    Integer reRollArmorSaveGreaterThan = DEFAULT_REROLL_GREATER_THAN;
-    @NonFinal
-    Boolean hasReRollLeadership;
-    @NonFinal
-    int toHitBonus;
-    @NonFinal
-    Integer extraRanks;
+    List<OffensiveProfile> offensiveProfileList = new ArrayList<>();
 
     // Stat modifiers
     @NonFinal
-    int movementModifier;
+    int advanceModifier;
     @NonFinal
     int leadershipModifier;
     @NonFinal
@@ -103,19 +88,7 @@ public class Unit {
     @NonFinal
     int armorModifier;
     @NonFinal
-    int initiativeModifier;
-    @NonFinal
-    int offensiveWeaponSkillModifier;
-    @NonFinal
-    int attacksModifier;
-    @NonFinal
-    int strengthModifier;
-    @NonFinal
-    int armorPenetrationModifier;
-    @NonFinal
     int wardSave;
-    @NonFinal
-    int toHitBonusModifier;
 
     public int getRankBonus() {
         return modelCount / modelsPerRank;
@@ -162,28 +135,24 @@ public class Unit {
         }
     }
 
-    public void updateReRollToHit(Integer reRollToHit) {
-        this.reRollToHitLessThan = reRollToHit;
-    }
-
-    public void updateToHitBonus(Integer toHitBonus) {
-        this.toHitBonus = this.toHitBonus + toHitBonus;
-    }
-
     public void updateExtraRank(Integer extraRank) {
         this.extraRanks = this.extraRanks + extraRank;
     }
 
     public void setSelection(int selection) {
         this.selection = selection;
+
+        for (OffensiveProfile offensiveProfile : offensiveProfileList) {
+            offensiveProfile.setSelection(selection);
+        }
     }
 
-    public void updateStrength(int strength) {
-        this.strength += strength;
+    public void updateArmor(int armor) {
+        this.armor += armor;
     }
 
-    public void updateMovementModifier(int movementModifier) {
-        this.movementModifier += movementModifier;
+    public void updateAdvanceModifier(int advanceModifier) {
+        this.advanceModifier = advanceModifier;
     }
 
     public void updateLeadershipModifier(int leadershipModifier) {
@@ -206,51 +175,25 @@ public class Unit {
         this.armorModifier += armorModifier;
     }
 
-    public void updateInitiativeModifier(int initiativeModifier) {
-        this.initiativeModifier += initiativeModifier;
-    }
-
-    public void updateOffensiveWeaponSkillModifier(int offensiveWeaponSkillModifier) {
-        this.offensiveWeaponSkillModifier += offensiveWeaponSkillModifier;
-    }
-
-    public void updateAttacksModifier(int attacksModifier) {
-        this.attacksModifier += attacksModifier;
-    }
-
-    public void updateStrengthModifier(int strengthModifier) {
-        this.strengthModifier += strengthModifier;
-    }
-
-    public void updateArmorPenetrationModifier(int armorPenetrationModifier) {
-        this.armorPenetrationModifier += armorPenetrationModifier;
-    }
-
-    public void updateToHitBonusModifier(int toHitBonusModifier) {
-        this.toHitBonusModifier += toHitBonusModifier;
-    }
-
     public void setWardSave(int wardSave) {
         this.wardSave = wardSave;
     }
 
     public void resetStatModifiers() {
-        movementModifier = 0;
+        advanceModifier = 0;
         leadershipModifier = 0;
         woundsModifier = 0;
         defensiveWeaponSkillModifier = 0;
         toughnessModifier = 0;
         armorModifier = 0;
-        initiativeModifier = 0;
-        offensiveWeaponSkillModifier = 0;
-        attacksModifier = 0;
-        strengthModifier = 0;
-        armorPenetrationModifier = 0;
-        toHitBonusModifier = 0;
+
+        for (OffensiveProfile offensiveProfile : offensiveProfileList) {
+            offensiveProfile.resetStatModifiers();
+        }
     }
 
-    public int getActualMovement() {
-        return movement + movementModifier;
+    public int getActualAdvance() {
+        return advance + advanceModifier;
     }
 
     public int getActualLeadership() {
@@ -273,35 +216,15 @@ public class Unit {
         return armor + armorModifier;
     }
 
-    public int getActualInitiative() {
-        return initiative + initiativeModifier;
-    }
-
-    public int getActualOffensiveWeaponSkill() {
-        return offensiveWeaponSkill + offensiveWeaponSkillModifier;
-    }
-
-    public int getActualAttacks() {
-        return attacks + attacksModifier;
-    }
-
-    public int getActualStrength() {
-        return strength + strengthModifier;
-    }
-
-    public int getActualArmorPenetration() {
-        return armorPenetration + armorPenetrationModifier;
-    }
-
-    public int getActualToHitBonus() {
-        return toHitBonus + toHitBonusModifier;
-    }
-
     public void addEquipmentSpecialRules() {
         for (Equipment equipment : equipmentList) {
             if (equipment.isEquipped()) {
                 specialRulePropertyList.addAll(equipment.getSpecialRuleProperties());
             }
+        }
+
+        for (OffensiveProfile offensiveProfile : offensiveProfileList) {
+            offensiveProfile.addEquipmentSpecialRules();
         }
     }
 }
