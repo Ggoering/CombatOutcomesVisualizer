@@ -77,10 +77,10 @@ public class CombatResolutionService {
         boolean isCaught = false;
 
         if (unitFlees) {
-            int fleeDistance = (loser.getActualMovement() != 0 ?
+            int fleeDistance = (loser.getActualAdvance() != 0 ?
                     diceRollingService.rollWithSumTakeHighest(FLEE_AND_PURSUIT_MOUNT_DIE_COUNT, FLEE_AND_PURSUIT_MOUNT_TAKE_HIGHEST_COUNT) :
                     diceRollingService.rollWithSum(FLEE_AND_PURSUIT_DEFAULT_DIE_COUNT));
-            int pursuitDistance = (winner.getActualMovement() != 0 ?
+            int pursuitDistance = (winner.getActualAdvance() != 0 ?
                     diceRollingService.rollWithSumTakeHighest(FLEE_AND_PURSUIT_MOUNT_DIE_COUNT, FLEE_AND_PURSUIT_MOUNT_TAKE_HIGHEST_COUNT) :
                     diceRollingService.rollWithSum(FLEE_AND_PURSUIT_DEFAULT_DIE_COUNT));
             isCaught = fleeDistance > pursuitDistance;

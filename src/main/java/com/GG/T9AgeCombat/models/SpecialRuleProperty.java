@@ -13,6 +13,6 @@ public class SpecialRuleProperty {
     SpecialRulePropertyEnum name;
     TimingEnum timing;
     ModificationEnum modification;
-    Integer value;
     LimitationEnum limitation;
+    Integer value;
 }

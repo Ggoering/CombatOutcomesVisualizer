@@ -1,5 +1,6 @@
 package com.GG.T9AgeCombat.service;
 
+import com.GG.T9AgeCombat.models.OffensiveProfile;
 import com.GG.T9AgeCombat.models.Unit;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +18,11 @@ public class ToWoundService {
         this.diceRollingService = diceRollingService;
     }
 
-    int rollToWound(Unit attacker, Unit defender, int quantity) {
-        int toWoundThreshold = this.determineToWoundThreshold(attacker.getActualStrength(), defender.getActualToughness());
+    int rollToWound(OffensiveProfile offensiveProfile, Unit defender, int quantity) {
+        int toWoundThreshold = this.determineToWoundThreshold(offensiveProfile.getActualStrength(), defender.getActualToughness());
         List<Integer> resultList = diceRollingService.roll(quantity);
 
-        return diceRollingService.getFinalWithReRolls(resultList, toWoundThreshold, attacker.getReRollToWoundLessThan(), attacker.getReRollToWoundGreaterThan());
+        return diceRollingService.getFinalWithReRolls(resultList, toWoundThreshold, offensiveProfile.getReRollToWoundLessThan(), offensiveProfile.getReRollToWoundGreaterThan());
     }
 
     int determineToWoundThreshold(int attackerStrength, int defenderToughness) {

@@ -1,5 +1,6 @@
 package com.GG.T9AgeCombat.service;
 
+import com.GG.T9AgeCombat.models.OffensiveProfile;
 import com.GG.T9AgeCombat.models.Unit;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +17,8 @@ public class ArmorSaveService {
         this.diceRollingService = diceRollingService;
     }
 
-    int rollArmorSaves(Unit attacker, Unit defender, int quantity) {
-        int armorSaveThreshold = calculateArmorSaveThreshold(defender.getActualArmor(), attacker.getActualArmorPenetration());
+    int rollArmorSaves(OffensiveProfile offensiveProfile, Unit defender, int quantity) {
+        int armorSaveThreshold = calculateArmorSaveThreshold(defender.getActualArmor(), offensiveProfile.getActualArmorPenetration());
 
         // Only roll armor saves if there is a chance to save
         if (armorSaveThreshold < ARMOR_SAVE_DEFAULT_THRESHOLD) {

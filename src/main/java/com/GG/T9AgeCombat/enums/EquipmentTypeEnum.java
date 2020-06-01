@@ -1,9 +1,10 @@
 package com.GG.T9AgeCombat.enums;
 
 public enum EquipmentTypeEnum {
-    ONE_HANDED,
-    TWO_HANDED,
-    RANGED,
+    CLOSE_COMBAT_WEAPON,
+    SHOOTING_WEAPON,
     ARMOR,
-    SHIELD;
+    SHIELD,
+    BANNER,
+    ARTIFACT;
 }
