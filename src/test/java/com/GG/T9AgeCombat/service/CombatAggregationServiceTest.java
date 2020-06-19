@@ -29,7 +29,7 @@ public class CombatAggregationServiceTest {
         ArmorSaveService armorSaveService = new ArmorSaveService(diceRollingService);
         WardSaveService wardSaveService = new WardSaveService(diceRollingService);
         AttackQuantityService attackQuantityService = new AttackQuantityService();
-        SpecialRuleRoutingService specialRuleRoutingService = new SpecialRuleRoutingService();
+        SpecialRuleRoutingService specialRuleRoutingService = new SpecialRuleRoutingService(diceRollingService);
         CombatResolutionService combatResolutionService = new CombatResolutionService(diceRollingService);
         CombatCalculationService combatCalculationService = new CombatCalculationService(attackQuantityService, toHitService, toWoundService,
                 armorSaveService, wardSaveService, combatResolutionService, specialRuleRoutingService);
@@ -62,14 +62,14 @@ public class CombatAggregationServiceTest {
         OffensiveProfile swordmasterOffensiveProfile = OffensiveProfile.builder()
                 .offensiveWeaponSkill(6)
                 .strength(5)
-                .initiative(6)
+                .agility(6)
                 .attacks(2)
                 .build();
 
         OffensiveProfile blackorcOffensiveProfile = OffensiveProfile.builder()
                 .offensiveWeaponSkill(5)
                 .strength(4)
-                .initiative(2)
+                .agility(2)
                 .attacks(2)
                 .specialRulePropertyList(unitSpecialRuleProperties)
                 .build();
@@ -80,11 +80,11 @@ public class CombatAggregationServiceTest {
         List<OffensiveProfile> blackorcOffensiveProfileList = new ArrayList<>();
         blackorcOffensiveProfileList.add(blackorcOffensiveProfile);
 
-        when(mockUnitService.retrieveUnit(1)).thenReturn(
+        when(mockUnitService.retrieveUnit(1, 1)).thenReturn(
                 Unit.builder().name("Swordmaster").height(unitHeight).advance(5).defensiveWeaponSkill(6).toughness(3).wounds(1)
                         .leadership(8).basesize(20).modelCount(30).armor(5).modelsPerRank(5).selection(1).standardBearer(1)
                         .hasMusician(true).offensiveProfileList(swordmasterOffensiveProfileList).build());
-        when(mockUnitService.retrieveUnit(2)).thenReturn(
+        when(mockUnitService.retrieveUnit(3, 1)).thenReturn(
                 Unit.builder().name("Black Orc").height(unitHeight).advance(4).defensiveWeaponSkill(5).toughness(4).wounds(1)
                         .leadership(8).basesize(25).modelCount(25).armor(4).modelsPerRank(5).selection(2).standardBearer(1)
                         .hasMusician(true).offensiveProfileList(blackorcOffensiveProfileList).build());

@@ -25,5 +25,5 @@ public class UnitOffensiveProfileEntity {
     int offensiveWeaponSkill;
     int strength;
     int armorPenetration;
-    int initiative;
+    int agility;
 }

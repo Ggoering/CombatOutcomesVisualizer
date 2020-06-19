@@ -4,7 +4,7 @@ public enum ModificationEnum {
     STRENGTH,
     TO_HIT,
     EXTRA_RANKS,
-    INITIATIVE,
+    AGILITY,
     RE_ROLL_TO_HIT,
     ARMOR_PENETRATION,
     ARMOR,
@@ -16,5 +16,8 @@ public enum ModificationEnum {
     MAGICAL_ATTACKS,
     MOVEMENT_ROLL,
     CANNOT_BE_STOMPED,
+    PARRY,
+    TWO_HANDED,
+    IGNORE_PARRY,
     MOUNTED;
 }

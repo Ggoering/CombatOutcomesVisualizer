@@ -28,8 +28,8 @@ public class CombatCalculationServiceTest {
     private WardSaveService mockWardSaveService;
 
     @Test
-    @DisplayName("Units Have Same Initiative")
-    void validateInitiative() {
+    @DisplayName("Units Have Same Agility")
+    void validateAgility() {
         // Arrange
         List<Round> expectedResult = new ArrayList<>();
         Round expectedRound = Round.builder().combatScoreDifferential(null).primaryWoundsDealt(4).secondaryWoundsDealt(2)
@@ -39,7 +39,7 @@ public class CombatCalculationServiceTest {
         OffensiveProfile swordmasterOffensiveProfile = OffensiveProfile.builder()
                 .offensiveWeaponSkill(6)
                 .strength(5)
-                .initiative(6)
+                .agility(6)
                 .attacks(1)
                 .selection(1)
                 .build();
@@ -50,7 +50,7 @@ public class CombatCalculationServiceTest {
         OffensiveProfile blackorcOffensiveProfile = OffensiveProfile.builder()
                 .offensiveWeaponSkill(6)
                 .strength(5)
-                .initiative(6)
+                .agility(6)
                 .attacks(1)
                 .selection(2)
                 .build();
@@ -83,8 +83,8 @@ public class CombatCalculationServiceTest {
     }
 
     @Test
-    @DisplayName("Mounts Have Same Initiative")
-    void validateInitiativeMounts() {
+    @DisplayName("Mounts Have Same Agility")
+    void validateAgilityMounts() {
         // Arrange
         List<Round> expectedResult = new ArrayList<>();
         Round expectedRound = Round.builder().primaryWoundsDealt(2).secondaryWoundsDealt(1)
@@ -95,7 +95,7 @@ public class CombatCalculationServiceTest {
                 .name("Swordmaster")
                 .offensiveWeaponSkill(6)
                 .strength(5)
-                .initiative(4)
+                .agility(4)
                 .attacks(1)
                 .selection(1)
                 .build();
@@ -104,7 +104,7 @@ public class CombatCalculationServiceTest {
                 .name("Swordmaster Mount")
                 .offensiveWeaponSkill(5)
                 .strength(5)
-                .initiative(6)
+                .agility(6)
                 .attacks(1)
                 .isMount(true)
                 .selection(1)
@@ -127,7 +127,7 @@ public class CombatCalculationServiceTest {
                 .name("Black Orc")
                 .offensiveWeaponSkill(6)
                 .strength(5)
-                .initiative(3)
+                .agility(3)
                 .attacks(1)
                 .selection(2)
                 .build();
@@ -136,7 +136,7 @@ public class CombatCalculationServiceTest {
                 .name("Black Orc Mount")
                 .offensiveWeaponSkill(4)
                 .strength(5)
-                .initiative(6)
+                .agility(6)
                 .attacks(1)
                 .isMount(true)
                 .selection(2)
@@ -196,7 +196,7 @@ public class CombatCalculationServiceTest {
         OffensiveProfile swordmasterOffensiveProfile = OffensiveProfile.builder()
                 .offensiveWeaponSkill(6)
                 .strength(5)
-                .initiative(6)
+                .agility(6)
                 .attacks(1)
                 .selection(1)
                 .build();
@@ -207,7 +207,7 @@ public class CombatCalculationServiceTest {
         OffensiveProfile blackorcOffensiveProfile = OffensiveProfile.builder()
                 .offensiveWeaponSkill(6)
                 .strength(5)
-                .initiative(6)
+                .agility(6)
                 .attacks(1)
                 .selection(2)
                 .build();
@@ -270,17 +270,17 @@ public class CombatCalculationServiceTest {
                 .value(1)
                 .build();
 
-        SpecialRuleProperty specialRulePropertyLightningReflexesGreatWeapon = SpecialRuleProperty.builder()
-                .limitation(LimitationEnum.LIGHTNING_REFLEXES)
-                .modification(ModificationEnum.INITIATIVE)
+        SpecialRuleProperty specialRulePropertyLightningReflexes = SpecialRuleProperty.builder()
+                .limitation(LimitationEnum.NOT_GREAT_WEAPON)
+                .modification(ModificationEnum.TO_HIT)
                 .timing(TimingEnum.ALL)
-                .name(SpecialRulePropertyEnum.LIGHTNING_REFLEXES_GREAT_WEAPON)
-                .value(0)
+                .name(SpecialRulePropertyEnum.LIGHTNING_REFLEXES)
+                .value(1)
                 .build();
 
         SpecialRuleProperty specialRulePropertyGreatWeaponStrikeLast = SpecialRuleProperty.builder()
-                .limitation(LimitationEnum.LIGHTNING_REFLEXES)
-                .modification(ModificationEnum.INITIATIVE)
+                .limitation(LimitationEnum.NOT_LIGHTNING_REFLEXES)
+                .modification(ModificationEnum.AGILITY)
                 .timing(TimingEnum.ALL)
                 .name(SpecialRulePropertyEnum.STRIKES_LAST)
                 .value(-10)
@@ -290,7 +290,7 @@ public class CombatCalculationServiceTest {
                 .limitation(LimitationEnum.NONE)
                 .modification(ModificationEnum.STRENGTH)
                 .timing(TimingEnum.ALL)
-                .name(SpecialRulePropertyEnum.GREAT_WEAPON_STRENGTH)
+                .name(SpecialRulePropertyEnum.STRENGTH_2)
                 .value(2)
                 .build();
 
@@ -334,6 +334,8 @@ public class CombatCalculationServiceTest {
 
         Equipment blackOrcGreatWeapon = Equipment.builder()
                 .name("Great Weapon")
+                .type(EquipmentTypeEnum.CLOSE_COMBAT_WEAPON)
+                .category(EquipmentCategoryEnum.GREAT_WEAPON)
                 .specialRuleProperties(greatWeaponSpecialRulesBlackOrcProperty)
                 .build();
 
@@ -344,6 +346,8 @@ public class CombatCalculationServiceTest {
 
         Equipment swordMasterGreatWeapon = Equipment.builder()
                 .name("Great Weapon")
+                .type(EquipmentTypeEnum.CLOSE_COMBAT_WEAPON)
+                .category(EquipmentCategoryEnum.GREAT_WEAPON)
                 .specialRuleProperties(greatWeaponSpecialRulesSwordMasterProperty)
                 .build();
 
@@ -375,13 +379,13 @@ public class CombatCalculationServiceTest {
         offensiveSpecialRulesBlackOrcProperty.add(specialRulePropertyHatred);
 
         List<SpecialRuleProperty> offensiveSpecialRulesSwordMasterProperty = new ArrayList<>();
-        offensiveSpecialRulesSwordMasterProperty.add(specialRulePropertyLightningReflexesGreatWeapon);
+        offensiveSpecialRulesSwordMasterProperty.add(specialRulePropertyLightningReflexes);
         offensiveSpecialRulesSwordMasterProperty.add(specialRulePropertySwordSworn);
 
         OffensiveProfile swordmasterOffensiveProfile = OffensiveProfile.builder()
                 .offensiveWeaponSkill(6)
                 .strength(5)
-                .initiative(6)
+                .agility(6)
                 .attacks(2)
                 .specialRulePropertyList(offensiveSpecialRulesSwordMasterProperty)
                 .equipmentList(offensiveEquipmentSwordMaster)
@@ -391,7 +395,7 @@ public class CombatCalculationServiceTest {
         OffensiveProfile blackorcOffensiveProfile = OffensiveProfile.builder()
                 .offensiveWeaponSkill(5)
                 .strength(4)
-                .initiative(3)
+                .agility(3)
                 .attacks(1)
                 .specialRulePropertyList(offensiveSpecialRulesBlackOrcProperty)
                 .equipmentList(offensiveEquipmentBlackOrc)
@@ -417,27 +421,27 @@ public class CombatCalculationServiceTest {
                 .equipmentList(equipmentBlackOrc)
                 .offensiveProfileList(blackorcOffensiveProfileList).selection(2).build();
 
-        Integer expectedResultLightningReflexesApplied = 1;
+        Integer expectedResultSwordSwornApplied = 1;
         Integer expectedResultSwordMasterHordeApplied = 1;
         Integer expectedResultBlackOrcHordeApplied = 0;
-        Integer expectedResultBornToFightApplied = 5;
+        Integer expectedResultBornToFightAndGWApplied = 7;
         Integer expectedResultHatredApplied = 6;
 
-        getCombatCalculationService().applyPermanentSpecialRules(unit1);
-        getCombatCalculationService().applyPermanentSpecialRules(unit2);
-        getCombatCalculationService().applyTemporarySpecialRules(unit1, true);
-        getCombatCalculationService().applyTemporarySpecialRules(unit2, true);
+        getCombatCalculationService().applySpecialRules(unit1, true, TimingEnum.ALL, LimitationEnum.NONE, true);
+        getCombatCalculationService().applySpecialRules(unit1, true, TimingEnum.ALL, null, false);
+        getCombatCalculationService().applySpecialRules(unit2, true, TimingEnum.ALL, LimitationEnum.NONE, true);
+        getCombatCalculationService().applySpecialRules(unit2, true, TimingEnum.ALL, null, false);
 
-        assertThat(unit1.getOffensiveProfileList().get(0).getActualToHitBonus()).isEqualTo(expectedResultLightningReflexesApplied);
+        assertThat(unit1.getOffensiveProfileList().get(0).getActualToHitBonus()).isEqualTo(expectedResultSwordSwornApplied);
         assertThat(unit1.getExtraRanks()).isEqualTo(expectedResultSwordMasterHordeApplied);
 
         assertThat(unit2.getExtraRanks()).isEqualTo(expectedResultBlackOrcHordeApplied);
-        assertThat(unit2.getOffensiveProfileList().get(0).getActualStrength()).isEqualTo(expectedResultBornToFightApplied);
+        assertThat(unit2.getOffensiveProfileList().get(0).getActualStrength()).isEqualTo(expectedResultBornToFightAndGWApplied);
         assertThat(unit2.getOffensiveProfileList().get(0).getReRollToHitLessThan()).isEqualTo(expectedResultHatredApplied);
     }
 
     private CombatCalculationService getCombatCalculationService() {
         return new CombatCalculationService(new AttackQuantityService(), mockToHitService, mockToWoundService,
-                mockArmorSaveService, mockWardSaveService, new CombatResolutionService(mockDiceRollingService), new SpecialRuleRoutingService());
+                mockArmorSaveService, mockWardSaveService, new CombatResolutionService(mockDiceRollingService), new SpecialRuleRoutingService(mockDiceRollingService));
     }
 }

@@ -33,14 +33,14 @@ class AttackQuantityServiceTest {
         OffensiveProfile swordmasterOffensiveProfile = OffensiveProfile.builder()
                 .offensiveWeaponSkill(6)
                 .strength(5)
-                .initiative(6)
+                .agility(6)
                 .attacks(2)
                 .build();
 
         OffensiveProfile blackorcOffensiveProfile = OffensiveProfile.builder()
                 .offensiveWeaponSkill(5)
                 .strength(4)
-                .initiative(2)
+                .agility(2)
                 .attacks(1)
                 .build();
 
@@ -96,7 +96,7 @@ class AttackQuantityServiceTest {
         OffensiveProfile blackorcOffensiveProfile = OffensiveProfile.builder()
                 .offensiveWeaponSkill(5)
                 .strength(4)
-                .initiative(2)
+                .agility(2)
                 .attacks(1)
                 .build();
 
@@ -160,7 +160,7 @@ class AttackQuantityServiceTest {
         OffensiveProfile blackorcOffensiveProfile2Atk = OffensiveProfile.builder()
                 .offensiveWeaponSkill(5)
                 .strength(4)
-                .initiative(2)
+                .agility(2)
                 .attacks(2)
                 .build();
 
@@ -170,7 +170,7 @@ class AttackQuantityServiceTest {
         OffensiveProfile blackorcOffensiveProfile1Atk = OffensiveProfile.builder()
                 .offensiveWeaponSkill(5)
                 .strength(4)
-                .initiative(2)
+                .agility(2)
                 .attacks(1)
                 .build();
 
@@ -180,7 +180,7 @@ class AttackQuantityServiceTest {
         OffensiveProfile blackorcOffensiveProfile7Atk = OffensiveProfile.builder()
                 .offensiveWeaponSkill(5)
                 .strength(4)
-                .initiative(2)
+                .agility(2)
                 .attacks(7)
                 .build();
 

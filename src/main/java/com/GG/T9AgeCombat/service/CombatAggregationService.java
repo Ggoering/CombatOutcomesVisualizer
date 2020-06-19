@@ -24,19 +24,20 @@ public class CombatAggregationService {
         this.unitService = unitService;
     }
 
-    List<Result> getCombatResults(Integer primaryId, Integer primaryCount, Integer primaryWidth, Integer secondaryId, Integer secondaryCount, Integer secondaryWidth) {
+    List<Result> getCombatResults(Integer primaryId, Integer primaryCount, Integer primaryWidth, Integer primaryEquipmentSet,
+                                  Integer secondaryId, Integer secondaryCount, Integer secondaryWidth, Integer secondaryEquipmentSet) {
         List<Result> resultList = new ArrayList<>();
 
         for (int i = 0; i < MAXIMUM_ROUND_COUNT; i++) {
-            Unit attacker = unitService.retrieveUnit(1);
-            Unit defender = unitService.retrieveUnit(3);
-            Unit third = unitService.retrieveUnit(2);
-            Unit fourth = unitService.retrieveUnit(4);
+            Unit attacker = unitService.retrieveUnit(1, 1);
+            Unit defender = unitService.retrieveUnit(3, 1);
+//            Unit third = unitService.retrieveUnit(2, 1);
+//            Unit fourth = unitService.retrieveUnit(4, 1);
 
             attacker.addEquipmentSpecialRules();
             defender.addEquipmentSpecialRules();
-            third.addEquipmentSpecialRules();
-            fourth.addEquipmentSpecialRules();
+//            third.addEquipmentSpecialRules();
+//            fourth.addEquipmentSpecialRules();
 
             attacker.setSelection(1);
             defender.setSelection(2);
@@ -50,7 +51,7 @@ public class CombatAggregationService {
     }
 
     public void getDataAggregation() {
-        List<Result> resultList = getCombatResults(1, 1, 1, 1, 1, 1);
+        List<Result> resultList = getCombatResults(1, 1, 1, 1, 1, 1, 1, 1);
 
         long swordmasterCount = resultList.stream().filter(a -> a.getWinner().equals("Swordmaster")).count();
         long blackOrcCount = resultList.stream().filter(a -> a.getWinner().equals("Black Orc")).count();

@@ -35,7 +35,7 @@ public class UnitService {
         this.equipmentService = equipmentService;
     }
 
-    public Unit retrieveUnit(int unitId) {
+    public Unit retrieveUnit(int unitId, int equipmentSetId) {
         // Get the unit
         UnitEntity unitAttributes = getUnitByUnitId(unitId);
 
@@ -52,7 +52,7 @@ public class UnitService {
         List<SpecialRuleProperty> specialRulePropertyList = Stream.of(unitSpecialRulePropertyList, unitHeightSpecialRulePropertyList,
                 unitTypeSpecialRulePropertyList).flatMap(Collection::stream).collect(Collectors.toList());
 
-        List<Equipment> equipmentList = retrieveEquipment(unitId, true);
+        List<Equipment> equipmentList = retrieveEquipment(unitId, equipmentSetId,true);
 
         // Build the unit and get a list of the unit's offensive profiles
         return Unit.builder()
@@ -73,7 +73,7 @@ public class UnitService {
                 .canHaveStandard(unitAttributes.isCanHaveStandard())
                 .specialRulePropertyList(specialRulePropertyList)
                 .equipmentList(equipmentList)
-                .offensiveProfileList(retrieveOffensiveProfiles(unitId))
+                .offensiveProfileList(retrieveOffensiveProfiles(unitId, equipmentSetId))
                 .pointCost(unitAttributes.getPointCost())
                 .extraModelPointCost(unitAttributes.getExtraModelPointCost())
                 .defaultModelCount(unitAttributes.getDefaultModelCount())
@@ -82,13 +82,13 @@ public class UnitService {
                 .build();
     }
 
-    private List<OffensiveProfile> retrieveOffensiveProfiles(int unitId) {
+    private List<OffensiveProfile> retrieveOffensiveProfiles(int unitId, int equipmentSetId) {
         // Get a list of the offensive profiles for the unit
         List<OffensiveProfile> offensiveProfileList = new ArrayList<>();
         List<UnitOffensiveProfileEntity> unitOffensiveProfileEntityList = getUnitOffensiveProfileByUnitId(unitId);
 
         for (UnitOffensiveProfileEntity unitOffensiveProfileEntity : unitOffensiveProfileEntityList) {
-            List<Equipment> equipmentList = retrieveEquipment(unitId, false);
+            List<Equipment> equipmentList = retrieveEquipment((int) unitOffensiveProfileEntity.getId(), equipmentSetId, false);
 
             // Get a list of the special rules for the offensive profile
             List<PropertyEntity> unitSpecialRuleProperties = getUnitProfileSpecialRules((int) unitOffensiveProfileEntity.getId(), false);
@@ -101,7 +101,7 @@ public class UnitService {
                     .offensiveWeaponSkill(unitOffensiveProfileEntity.getOffensiveWeaponSkill())
                     .strength(unitOffensiveProfileEntity.getStrength())
                     .armorPenetration(unitOffensiveProfileEntity.getArmorPenetration())
-                    .initiative(unitOffensiveProfileEntity.getInitiative())
+                    .agility(unitOffensiveProfileEntity.getAgility())
                     .specialRulePropertyList(specialRulePropertyList)
                     .equipmentList(equipmentList)
                     .build());
@@ -110,9 +110,9 @@ public class UnitService {
         return offensiveProfileList;
     }
 
-    private List<Equipment> retrieveEquipment(int profileId, boolean isUnitProfile) {
+    private List<Equipment> retrieveEquipment(int profileId, int equipmentSetId, boolean isUnitProfile) {
         // Get the unit's defensive equipment
-        List<UnitEquipmentSpecialRuleDTO> unitEquipmentSpecialRuleDTOList = getEquipmentByUnitProfileId(profileId, isUnitProfile);
+        List<UnitEquipmentSpecialRuleDTO> unitEquipmentSpecialRuleDTOList = getEquipmentByUnitProfileId(profileId, equipmentSetId, isUnitProfile);
         List<Equipment> equipmentList = equipmentService.buildEquipmentFromDTO(unitEquipmentSpecialRuleDTOList);
 
         for (Equipment equipment : equipmentList) {
@@ -172,7 +172,7 @@ public class UnitService {
                         ",offensive_weapon_skill \n" +
                         ",strength \n" +
                         ",armor_penetration \n" +
-                        ",initiative \n" +
+                        ",agility \n" +
                         "FROM unit_offensive_profile \n" +
                         "WHERE unit_id = " + unitId
                 , UnitOffensiveProfileEntity.class);
@@ -253,36 +253,43 @@ public class UnitService {
         return q.getResultList();
     }
 
-    private List<UnitEquipmentSpecialRuleDTO> getEquipmentByUnitProfileId(int unitProfileId, boolean isUnitProfile) {
+    private List<UnitEquipmentSpecialRuleDTO> getEquipmentByUnitProfileId(int unitProfileId, int equipmentSetId, boolean isUnitProfile) {
         StringBuilder query = new StringBuilder();
-        query.append("SELECT eq.id \n" +
-                ",eq.name \n" +
-                ",eqcl.classification AS equipment_classification \n" +
-                ",eqt.type AS equipment_type \n" +
-                ",eqct.category AS equipment_category \n" +
-                ",upe.is_default \n" +
-                ",p.name AS special_rule_name \n" +
-                ",m.value AS modification_value \n" +
-                ",l.value AS limitation_value \n" +
-                ",t.value AS timing_value \n" +
-                ",p.value AS special_rule_value \n" +
-                "FROM equipment eq \n" +
-                "INNER JOIN unit_profile_equipment upe ON upe.equipment_id = eq.id \n" +
-                "INNER JOIN equipment_classification eqcl ON eqcl.id = eq.equipment_classification_id \n" +
-                "INNER JOIN equipment_type eqt ON eqt.id = eq.equipment_type_id \n" +
-                "INNER JOIN equipment_category eqct ON eqct.id = eq.equipment_category_id \n" +
-                "LEFT JOIN equipment_special_rule eqsr ON eqsr.equipment_id = eq.id \n" +
-                "LEFT JOIN special_rule sr ON sr.id = eqsr.special_rule_id \n" +
-                "LEFT JOIN special_rule_property srp ON srp.special_rule_id = sr.id \n" +
-                "LEFT JOIN property p ON p.id = srp.property_id \n" +
-                "LEFT JOIN modification m ON m.id = p.modification_id \n" +
-                "LEFT JOIN limitation l ON l.id = p.limitation_id \n" +
-                "LEFT JOIN timing t ON t.id = p.timing_id \n");
+        query.append("SELECT eq.id\n" +
+                "                ,eq.name\n" +
+                "                ,eqcl.classification AS equipment_classification\n" +
+                "                ,eqt.type AS equipment_type\n" +
+                "                ,eqct.category AS equipment_category\n" +
+                "                ,upe.is_default\n" +
+                "                ,p.name AS special_rule_name\n" +
+                "                ,m.value AS modification_value\n" +
+                "                ,l.value AS limitation_value\n" +
+                "                ,t.value AS timing_value\n" +
+                "                ,p.value AS special_rule_value\n" +
+                "                FROM equipment_set es\n" +
+                "                INNER JOIN equipment eq ON eq.id = es.equipment_id_1 \n" +
+                "                        OR (eq.id IS NULL AND es.equipment_id_1 IS NULL)\n" +
+                "                                OR (eq.id = es.equipment_id_2 OR (eq.id IS NULL AND es.equipment_id_2 IS NULL)) \n" +
+                "                                        OR (eq.id = es.equipment_id_3 OR (eq.id IS NULL AND es.equipment_id_3 IS NULL)) \n" +
+                "                                                OR (eq.id = es.equipment_id_4 OR (eq.id IS NULL AND es.equipment_id_4 IS NULL)) \n" +
+                "                                                        OR (eq.id = es.equipment_id_5 OR (eq.id IS NULL AND es.equipment_id_5 IS NULL)) \n" +
+                "                INNER JOIN unit_profile_equipment upe ON upe.equipment_set_id = es.id\n" +
+                "                INNER JOIN equipment_classification eqcl ON eqcl.id = eq.equipment_classification_id\n" +
+                "                INNER JOIN equipment_type eqt ON eqt.id = eq.equipment_type_id\n" +
+                "                INNER JOIN equipment_category eqct ON eqct.id = eq.equipment_category_id\n" +
+                "                LEFT JOIN equipment_special_rule eqsr ON eqsr.equipment_id = eq.id\n" +
+                "                LEFT JOIN special_rule sr ON sr.id = eqsr.special_rule_id\n" +
+                "                LEFT JOIN special_rule_property srp ON srp.special_rule_id = sr.id\n" +
+                "                LEFT JOIN property p ON p.id = srp.property_id\n" +
+                "                LEFT JOIN modification m ON m.id = p.modification_id\n" +
+                "                LEFT JOIN limitation l ON l.id = p.limitation_id\n" +
+                "                LEFT JOIN timing t ON t.id = p.timing_id\n" +
+                "                WHERE es.id = " + equipmentSetId);
 
         if (isUnitProfile) {
-            query.append("WHERE upe.unit_id = ");
+            query.append(" AND upe.unit_id = ");
         } else {
-            query.append("WHERE upe.unit_offensive_profile_id = ");
+            query.append(" AND upe.unit_offensive_profile_id = ");
         }
 
         query.append(unitProfileId);

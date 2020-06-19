@@ -17,7 +17,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 public class OffensiveProfile {
     String name;
     @NonFinal
-    int initiative;
+    int agility;
     @NonFinal
     int offensiveWeaponSkill;
     @NonFinal
@@ -33,7 +33,7 @@ public class OffensiveProfile {
     List<Equipment> equipmentList = new ArrayList<>();
 
     @NonFinal
-    int initiativeModifier;
+    int agilityModifier;
     @NonFinal
     int offensiveWeaponSkillModifier;
     @NonFinal
@@ -67,9 +67,11 @@ public class OffensiveProfile {
     int selection;
     @NonFinal
     boolean hasMagicalAttacks;
+    @NonFinal
+    boolean hasIgnoreParry;
 
-    public void setInitiative(int initiative) {
-        this.initiative = initiative;
+    public void setAgility(int agility) {
+        this.agility = agility;
     }
 
     public void setAttacks(int attacks) {
@@ -104,6 +106,8 @@ public class OffensiveProfile {
         this.strength += strength;
     }
 
+    public void updateIgnoreParry(boolean ignoreParry) {this.hasIgnoreParry = ignoreParry; }
+
     public void updateArmorPenetration(int armorPenetration) {
         this.armorPenetration += armorPenetration;
     }
@@ -116,8 +120,8 @@ public class OffensiveProfile {
         this.toHitBonus += toHitBonus;
     }
 
-    public void updateInitiativeModifier(int initiativeModifier) {
-        this.initiativeModifier += initiativeModifier;
+    public void updateAgilityModifier(int agilityModifier) {
+        this.agilityModifier += agilityModifier;
     }
 
     public void updateOffensiveWeaponSkillModifier(int offensiveWeaponSkillModifier) {
@@ -141,7 +145,7 @@ public class OffensiveProfile {
     }
 
     public void resetStatModifiers() {
-        initiativeModifier = 0;
+        agilityModifier = 0;
         offensiveWeaponSkillModifier = 0;
         attacksModifier = 0;
         strengthModifier = 0;
@@ -149,8 +153,8 @@ public class OffensiveProfile {
         toHitBonusModifier = 0;
     }
 
-    public int getActualInitiative() {
-        return initiative + initiativeModifier;
+    public int getActualAgility() {
+        return agility + agilityModifier > 0 ? agility + agilityModifier : 0;
     }
 
     public int getActualOffensiveWeaponSkill() {

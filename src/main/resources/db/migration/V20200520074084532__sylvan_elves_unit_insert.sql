@@ -6,7 +6,7 @@
 --(unit_id, wounds, defensive_weapon_skill, toughness, armor)
 --VALUES((SELECT id FROM public.unit WHERE name = ''), 0, 0, 0, 0);
 --INSERT INTO public.unit_offensive_profile
---(unit_id, "name", attacks, offensive_weapon_skill, strength, armor_penetration, initiative)
+--(unit_id, "name", attacks, offensive_weapon_skill, strength, armor_penetration, agility)
 --VALUES((SELECT id FROM public.unit WHERE name = ''), '', 0, 0, 0, 0, 0);
 
 -- Core
@@ -17,7 +17,7 @@ INSERT INTO public.unit_defensive_profile
 (unit_id, wounds, defensive_weapon_skill, toughness, armor)
 VALUES((SELECT id FROM public.unit WHERE name = 'Forest Guard'), 1, 5, 3, 0);
 INSERT INTO public.unit_offensive_profile
-(unit_id, "name", attacks, offensive_weapon_skill, strength, armor_penetration, initiative)
+(unit_id, "name", attacks, offensive_weapon_skill, strength, armor_penetration, agility)
 VALUES((SELECT id FROM public.unit WHERE name = 'Forest Guard'), 'Forest Guard', 1, 5, 3, 0, 5);
 
 INSERT INTO public.unit
@@ -27,7 +27,7 @@ INSERT INTO public.unit_defensive_profile
 (unit_id, wounds, defensive_weapon_skill, toughness, armor)
 VALUES((SELECT id FROM public.unit WHERE name = 'Sylvan Archers'), 1, 4, 3, 0);
 INSERT INTO public.unit_offensive_profile
-(unit_id, "name", attacks, offensive_weapon_skill, strength, armor_penetration, initiative)
+(unit_id, "name", attacks, offensive_weapon_skill, strength, armor_penetration, agility)
 VALUES((SELECT id FROM public.unit WHERE name = 'Sylvan Archers'), 'Sylvan Archers', 1, 4, 3, 0, 5);
 
 INSERT INTO public.unit
@@ -37,7 +37,7 @@ INSERT INTO public.unit_defensive_profile
 (unit_id, wounds, defensive_weapon_skill, toughness, armor)
 VALUES((SELECT id FROM public.unit WHERE name = 'Heath Riders'), 1, 4, 3, 1);
 INSERT INTO public.unit_offensive_profile
-(unit_id, "name", attacks, offensive_weapon_skill, strength, armor_penetration, initiative)
+(unit_id, "name", attacks, offensive_weapon_skill, strength, armor_penetration, agility)
 VALUES((SELECT id FROM public.unit WHERE name = 'Heath Riders'), 'Heath Rider', 1, 4, 3, 0, 5),
 ((SELECT id FROM public.unit WHERE name = 'Heath Riders'), 'Elven Horse', 1, 3, 3, 0, 4);
 
@@ -48,5 +48,5 @@ INSERT INTO public.unit_defensive_profile
 (unit_id, wounds, defensive_weapon_skill, toughness, armor)
 VALUES((SELECT id FROM public.unit WHERE name = 'Dryads'), 1, 4, 4, 0);
 INSERT INTO public.unit_offensive_profile
-(unit_id, "name", attacks, offensive_weapon_skill, strength, armor_penetration, initiative)
+(unit_id, "name", attacks, offensive_weapon_skill, strength, armor_penetration, agility)
 VALUES((SELECT id FROM public.unit WHERE name = 'Dryads'), 'Dryads', 2, 4, 4, 1, 5);

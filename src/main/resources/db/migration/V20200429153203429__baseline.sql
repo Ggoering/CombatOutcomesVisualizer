@@ -141,29 +141,46 @@ CREATE INDEX "fki_fk_unit_defensive_profile$unit" ON public.unit_defensive_profi
 CREATE TABLE public.unit_offensive_profile (
     id bigserial NOT NULL,
     unit_id int4 NOT NULL,
-    "name" varchar(32) NOT NULL,
+    name varchar(32) NOT NULL,
     attacks int4 NULL,
     offensive_weapon_skill int4 NULL,
     strength int4 NULL,
     armor_penetration int4 NULL,
-    initiative int4 NULL,
+    agility int4 NULL,
     CONSTRAINT unit_offensive_profile_pk PRIMARY KEY (id),
     CONSTRAINT "fk_unit_offensive_profile$unit" FOREIGN KEY (unit_id) REFERENCES unit(id)
 );
 CREATE INDEX "fki_fk_unit_offensive_profile$unit" ON public.unit_offensive_profile USING btree (unit_id);
 
+
+CREATE TABLE public.equipment_set (
+	id bigserial NOT NULL,
+	equipment_id_1 int4 NULL,
+	equipment_id_2 int4 NULL,
+	equipment_id_3 int4 NULL,
+	equipment_id_4 int4 NULL,
+	equipment_id_5 int4 NULL,
+    CONSTRAINT equipment_set_pk PRIMARY KEY (id),
+	CONSTRAINT "fk_equipment_set$equipment_1" FOREIGN KEY (equipment_id_1) REFERENCES equipment(id),
+	CONSTRAINT "fk_equipment_set$equipment_2" FOREIGN KEY (equipment_id_2) REFERENCES equipment(id),
+	CONSTRAINT "fk_equipment_set$equipment_3" FOREIGN KEY (equipment_id_3) REFERENCES equipment(id),
+	CONSTRAINT "fk_equipment_set$equipment_4" FOREIGN KEY (equipment_id_4) REFERENCES equipment(id),
+	CONSTRAINT "fk_equipment_set$equipment_5" FOREIGN KEY (equipment_id_5) REFERENCES equipment(id)
+	);
+
+
 CREATE TABLE public.unit_profile_equipment (
 	id bigserial NOT NULL,
 	unit_id int4 NULL,
 	unit_offensive_profile_id int4 NULL,
-	equipment_id int4 NOT NULL,
+	equipment_set_id int4 NOT NULL,
 	is_default bool NOT NULL DEFAULT true,
 	CONSTRAINT unit_profile_equipment_pk PRIMARY KEY (id),
-	CONSTRAINT "fk_unit_profile_equipment$equipment" FOREIGN KEY (equipment_id) REFERENCES equipment(id),
+	CONSTRAINT "fk_unit_profile_equipment$equipment" FOREIGN KEY (equipment_set_id) REFERENCES equipment_set(id),
 	CONSTRAINT "fk_unit_profile_equipment$unit" FOREIGN KEY (unit_id) REFERENCES unit(id),
     CONSTRAINT "fk_unit_profile_equipment$unit_offensive_profile" FOREIGN KEY (unit_offensive_profile_id) REFERENCES unit_offensive_profile(id)
 );
-CREATE INDEX "fki_fk_unit_profile_equipment$equipment" ON public.unit_profile_equipment USING btree (equipment_id);
+CREATE INDEX "fki_fk_unit_profile_equipment$equipment_set" ON public.unit_profile_equipment USING btree (equipment_set_id);
 CREATE INDEX "fki_fk_unit_profile_equipment$unit" ON public.unit_profile_equipment USING btree (unit_id);
 CREATE INDEX "fki_fk_unit_profile_equipment$unit_offensive_profile" ON public.unit_profile_equipment USING btree (unit_offensive_profile_id);
 

@@ -10,7 +10,7 @@ public enum EquipmentCategoryEnum {
     HAND_WEAPON,
     LANCE,
     LIGHT_LANCE,
-    PAIRED_WEAPON,
+    PAIRED_WEAPONS,
     SPEAR,
     BOW,
     CROSSBOW,

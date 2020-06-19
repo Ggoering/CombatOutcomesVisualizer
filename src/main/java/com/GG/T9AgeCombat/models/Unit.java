@@ -73,7 +73,15 @@ public class Unit {
     List<Equipment> equipmentList = new ArrayList<>();
     @Builder.Default
     List<OffensiveProfile> offensiveProfileList = new ArrayList<>();
-
+    @Builder.Default
+    @NonFinal
+    boolean isCharging = false;
+    @Builder.Default
+    @NonFinal
+    boolean hasTwoHanded = false;
+    @Builder.Default
+    @NonFinal
+    boolean parry = false;
     // Stat modifiers
     @NonFinal
     int advanceModifier;
@@ -150,6 +158,10 @@ public class Unit {
     public void updateArmor(int armor) {
         this.armor += armor;
     }
+
+    public void updateParry (boolean parry) {this.parry = parry; }
+
+    public void updateTwoHanded (boolean twoHanded) {this.hasTwoHanded = twoHanded; }
 
     public void updateAdvanceModifier(int advanceModifier) {
         this.advanceModifier = advanceModifier;

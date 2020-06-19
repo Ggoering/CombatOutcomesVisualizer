@@ -1,10 +1,9 @@
 package com.GG.T9AgeCombat.service;
 
 import com.GG.T9AgeCombat.enums.LimitationEnum;
+import com.GG.T9AgeCombat.enums.TimingEnum;
 import com.GG.T9AgeCombat.models.*;
 import com.GG.T9AgeCombat.predicates.DetermineModificationPredicate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -36,8 +35,8 @@ public class CombatCalculationService {
     }
 
     Result combat(Unit primary, Unit secondary) {
-        applyPermanentSpecialRules(primary);
-        applyPermanentSpecialRules(secondary);
+        applySpecialRules(primary, false, TimingEnum.ALL, LimitationEnum.NONE, true);
+        applySpecialRules(secondary, false, TimingEnum.ALL, LimitationEnum.NONE, true);
 
         List<Round> rounds = fight(primary, secondary, false, new ArrayList<>());
         int endingRound = rounds.size() - 1;
@@ -58,11 +57,11 @@ public class CombatCalculationService {
         primary.resetStatModifiers();
         secondary.resetStatModifiers();
 
-        applyTemporarySpecialRules(primary, isFirstRound);
-        applyTemporarySpecialRules(secondary, isFirstRound);
-        List<OffensiveProfile> offensiveProfilesByInitiative = orderUnitsByInitiative(primary, secondary);
+        applySpecialRules(primary, isFirstRound, TimingEnum.ALL, LimitationEnum.NONE, false);
+        applySpecialRules(secondary, isFirstRound, TimingEnum.ALL, LimitationEnum.NONE, false);
+        List<OffensiveProfile> offensiveProfilesByAgility = orderUnitsByAgility(primary, secondary);
 
-        for (OffensiveProfile offensiveProfile : offensiveProfilesByInitiative) {
+        for (OffensiveProfile offensiveProfile : offensiveProfilesByAgility) {
             Unit attackingUnit = (offensiveProfile.getSelection() == primary.getSelection() ? primary : secondary);
             Unit defendingUnit = (offensiveProfile.getSelection() == primary.getSelection() ? secondary : primary);
 
@@ -89,9 +88,9 @@ public class CombatCalculationService {
             }
 
             // If the attacker is the last in the list then apply wounds
-            // If the next unit has the same initiative as the attacker then do not apply wounds yet
-            if (offensiveProfilesByInitiative.indexOf(offensiveProfile) + 1 == offensiveProfilesByInitiative.size()
-                    || offensiveProfile.getActualInitiative() != offensiveProfilesByInitiative.get(offensiveProfilesByInitiative.indexOf(offensiveProfile) + 1).getActualInitiative()) {
+            // If the next unit has the same agility as the attacker then do not apply wounds yet
+            if (offensiveProfilesByAgility.indexOf(offensiveProfile) + 1 == offensiveProfilesByAgility.size()
+                    || offensiveProfile.getActualAgility() != offensiveProfilesByAgility.get(offensiveProfilesByAgility.indexOf(offensiveProfile) + 1).getActualAgility()) {
                 primary.applyPendingWounds();
                 secondary.applyPendingWounds();
             }
@@ -104,47 +103,50 @@ public class CombatCalculationService {
         return fight(primary, secondary, brokenOrWipedOut, rounds);
     }
 
-    List<OffensiveProfile> orderUnitsByInitiative(Unit primary, Unit secondary) {
+    List<OffensiveProfile> orderUnitsByAgility(Unit primary, Unit secondary) {
         List<OffensiveProfile> offensiveProfileList = new ArrayList<>();
         offensiveProfileList.addAll(primary.getOffensiveProfileList());
         offensiveProfileList.addAll(secondary.getOffensiveProfileList());
 
-        return offensiveProfileList.stream().sorted(Comparator.comparing(OffensiveProfile::getActualInitiative).reversed()).collect(toList());
+        return offensiveProfileList.stream().sorted(Comparator.comparing(OffensiveProfile::getActualAgility).reversed()).collect(toList());
     }
 
-    void applyPermanentSpecialRules(Unit unit) {
+    public void applySpecialRules(Unit unit, boolean isFirstRound, TimingEnum timing, LimitationEnum limitation, boolean isPermanent) {
         if (unit.getSpecialRulePropertyList() != null && !unit.getSpecialRulePropertyList().isEmpty()) {
             for (SpecialRuleProperty specialRuleProperty : unit.getSpecialRulePropertyList()) {
-                if (specialRuleProperty.getLimitation() == LimitationEnum.NONE) {
-                    DetermineModificationPredicate.applyPermanentBonus(unit, specialRuleProperty.getModification(), specialRuleProperty.getValue());
+                if (specialRuleRoutingService.checkLimitation(limitation, timing, specialRuleProperty, unit, isFirstRound)) {
+                        DetermineModificationPredicate.applyBonus(unit, specialRuleProperty.getModification(), specialRuleProperty.getValue(), isPermanent);
                 }
             }
+        }
 
-            for (OffensiveProfile offensiveProfile : unit.getOffensiveProfileList()) {
-                for (SpecialRuleProperty specialRuleProperty : offensiveProfile.getSpecialRulePropertyList()) {
-                    if (specialRuleProperty.getLimitation() == LimitationEnum.NONE) {
-                        DetermineModificationPredicate.applyPermanentBonus(offensiveProfile, specialRuleProperty.getModification(), specialRuleProperty.getValue());
+        if (unit.getEquipmentList() != null && !unit.getEquipmentList().isEmpty()) {
+            for (Equipment equipment : unit.getEquipmentList()) {
+                for (SpecialRuleProperty specialRuleProperty : equipment.getSpecialRuleProperties()) {
+                    if (specialRuleRoutingService.checkLimitation(limitation, timing, specialRuleProperty, unit, isFirstRound)) {
+                            DetermineModificationPredicate.applyBonus(unit, specialRuleProperty.getModification(), specialRuleProperty.getValue(), isPermanent);
                     }
                 }
             }
         }
-    }
-
-    void applyTemporarySpecialRules(Unit unit, boolean isFirstRound) {
-        if (unit.getSpecialRulePropertyList() != null && !unit.getSpecialRulePropertyList().isEmpty()) {
-            for (SpecialRuleProperty specialRuleProperty : unit.getSpecialRulePropertyList()) {
-                if (specialRuleRoutingService.routeTemporaryLimitationToPredicate(specialRuleProperty.getLimitation(), unit, isFirstRound)) {
-                    DetermineModificationPredicate.applyTemporaryBonus(unit, specialRuleProperty.getModification(), specialRuleProperty.getValue());
-                }
-            }
 
             for (OffensiveProfile offensiveProfile : unit.getOffensiveProfileList()) {
-                for (SpecialRuleProperty specialRuleProperty : offensiveProfile.getSpecialRulePropertyList()) {
-                    if (specialRuleRoutingService.routeTemporaryLimitationToPredicate(specialRuleProperty.getLimitation(), unit, isFirstRound)) {
-                        DetermineModificationPredicate.applyTemporaryBonus(offensiveProfile, specialRuleProperty.getModification(), specialRuleProperty.getValue());
+                if (unit.getSpecialRulePropertyList() != null && !unit.getSpecialRulePropertyList().isEmpty()) {
+                    for (SpecialRuleProperty specialRuleProperty : offensiveProfile.getSpecialRulePropertyList()) {
+                        if (specialRuleRoutingService.checkLimitation(limitation, timing, specialRuleProperty, offensiveProfile, isFirstRound)) {
+                            DetermineModificationPredicate.applyBonus(offensiveProfile, specialRuleProperty.getModification(), specialRuleProperty.getValue(), unit, isPermanent);
+                        }
                     }
                 }
-            }
+                if (offensiveProfile.getEquipmentList() != null && !offensiveProfile.getEquipmentList().isEmpty()) {
+                    for (Equipment equipment : offensiveProfile.getEquipmentList()) {
+                        for (SpecialRuleProperty specialRuleProperty : equipment.getSpecialRuleProperties()) {
+                            if (specialRuleRoutingService.checkLimitation(limitation, timing, specialRuleProperty, offensiveProfile, isFirstRound)) {
+                                DetermineModificationPredicate.applyBonus(offensiveProfile, specialRuleProperty.getModification(), specialRuleProperty.getValue(), unit, isPermanent);
+                            }
+                        }
+                    }
+                }
         }
     }
 }
