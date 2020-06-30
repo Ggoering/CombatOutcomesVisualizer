@@ -27,6 +27,10 @@ public class CheckLimitationPredicate {
         return isFirstRound && !isCharging;
     }
 
+    public static boolean checkFirstRoundAndCharging(Boolean isFirstRound, boolean isCharging) {
+        return isFirstRound && isCharging;
+    }
+
     public static boolean passDisciplineTest(int leadership, Integer roll) {
         return roll <= leadership;
     }

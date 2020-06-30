@@ -65,7 +65,8 @@ public class Unit {
     @Builder.Default
     int reRollArmorSaveGreaterThan = Constants.DEFAULT_REROLL_GREATER_THAN;
     @NonFinal
-    int extraRanks;
+    @Builder.Default
+    int extraRanks = 0;
     @NonFinal
     @Builder.Default
     List<SpecialRuleProperty> specialRulePropertyList = new ArrayList<>();
@@ -96,7 +97,13 @@ public class Unit {
     @NonFinal
     int armorModifier;
     @NonFinal
-    int wardSave;
+    @Builder.Default
+    int extraRankModifier = 0;
+    @NonFinal
+    int aegisSave;
+    @NonFinal
+    @Builder.Default
+    int aegisSaveModifier = 0;
 
     public int getRankBonus() {
         return modelCount / modelsPerRank;
@@ -147,6 +154,10 @@ public class Unit {
         this.extraRanks = this.extraRanks + extraRank;
     }
 
+    public void updateExtraRankModifier(Integer extraRank) {
+        this.extraRankModifier += extraRank;
+    }
+
     public void setSelection(int selection) {
         this.selection = selection;
 
@@ -187,8 +198,12 @@ public class Unit {
         this.armorModifier += armorModifier;
     }
 
-    public void setWardSave(int wardSave) {
-        this.wardSave = wardSave;
+    public void updateAegisSave(int aegisSave) {
+        this.aegisSave += aegisSave;
+    }
+
+    public void updateAegisSaveModifier(int aegisSave) {
+        this.aegisSaveModifier += aegisSave;
     }
 
     public void resetStatModifiers() {
@@ -198,6 +213,8 @@ public class Unit {
         defensiveWeaponSkillModifier = 0;
         toughnessModifier = 0;
         armorModifier = 0;
+        extraRankModifier = 0;
+        aegisSaveModifier = 0;
 
         for (OffensiveProfile offensiveProfile : offensiveProfileList) {
             offensiveProfile.resetStatModifiers();

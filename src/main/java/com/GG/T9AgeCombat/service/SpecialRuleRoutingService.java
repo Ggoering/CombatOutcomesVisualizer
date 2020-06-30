@@ -29,6 +29,8 @@ public class SpecialRuleRoutingService {
                 return CheckLimitationPredicate.checkHandWeaponAndInfantry(unit.getEquipmentList(), unit.getType());
             case FIRST_ROUND_NOT_CHARGING:
                 return CheckLimitationPredicate.checkFirstRoundNotCharging(isFirstRound, unit.isCharging());
+            case FIRST_ROUND_AND_CHARGING:
+                return CheckLimitationPredicate.checkFirstRoundAndCharging(isFirstRound, unit.isCharging());
             case TWO_HANDED:
                 return CheckLimitationPredicate.checkTwoHanded(unit.isHasTwoHanded());
             case PASS_DISCIPLINE_TEST:
@@ -39,14 +41,25 @@ public class SpecialRuleRoutingService {
         }
     }
 
-    boolean routeTemporaryLimitationToPredicate(LimitationEnum limitation, OffensiveProfile unit, boolean isFirstRound) {
+    boolean routeTemporaryLimitationToPredicate(LimitationEnum limitation, OffensiveProfile offensiveProfile, boolean isFirstRound, Unit unitProfile) {
         switch (limitation) {
             case FIRST_ROUND:
                 return CheckLimitationPredicate.checkFirstRound(isFirstRound);
+            case FIRST_ROUND_AND_CHARGING:
+                return CheckLimitationPredicate.checkFirstRoundAndCharging(isFirstRound, unitProfile.isCharging());
             case NOT_LIGHTNING_REFLEXES:
-                return !CheckLimitationPredicate.checkLightningReflexes(unit.getSpecialRulePropertyList());
+                return !CheckLimitationPredicate.checkLightningReflexes(offensiveProfile.getSpecialRulePropertyList());
             case NOT_GREAT_WEAPON:
-                return !CheckLimitationPredicate.checkGreatWeapon(unit.getEquipmentList());
+                return !CheckLimitationPredicate.checkGreatWeapon(offensiveProfile.getEquipmentList());
+            case FIRST_ROUND_NOT_CHARGING:
+                return CheckLimitationPredicate.checkFirstRoundNotCharging(isFirstRound, unitProfile.isCharging());
+            case TWO_HANDED:
+                return CheckLimitationPredicate.checkTwoHanded(unitProfile.isHasTwoHanded());
+            case HAND_WEAPON_AND_INFANTRY:
+                return CheckLimitationPredicate.checkHandWeaponAndInfantry(unitProfile.getEquipmentList(), unitProfile.getType());
+            case PASS_DISCIPLINE_TEST:
+                Integer roll = diceRollingService.rollWithSum(2);
+                return CheckLimitationPredicate.passDisciplineTest(unitProfile.getActualLeadership(), roll);
             default:
                 return false;
         }
@@ -61,11 +74,11 @@ public class SpecialRuleRoutingService {
         }
     }
 
-    boolean checkLimitation(LimitationEnum limitation, TimingEnum timing, SpecialRuleProperty specialRuleProperty, OffensiveProfile unit, boolean isFirstRound) {
+    boolean checkLimitation(LimitationEnum limitation, TimingEnum timing, SpecialRuleProperty specialRuleProperty, OffensiveProfile offensiveProfile, boolean isFirstRound, Unit unitProfile) {
         if(limitation == LimitationEnum.NONE) {
             return specialRuleProperty.getLimitation() == LimitationEnum.NONE && timing == specialRuleProperty.getTiming();
         } else {
-            return this.routeTemporaryLimitationToPredicate(specialRuleProperty.getLimitation(), unit, isFirstRound)
+            return this.routeTemporaryLimitationToPredicate(specialRuleProperty.getLimitation(), offensiveProfile, isFirstRound, unitProfile)
                     && timing == specialRuleProperty.getTiming();
         }
     }

@@ -29,20 +29,20 @@ public class CombatAggregationService {
         List<Result> resultList = new ArrayList<>();
 
         for (int i = 0; i < MAXIMUM_ROUND_COUNT; i++) {
-            Unit attacker = unitService.retrieveUnit(1, 1);
-            Unit defender = unitService.retrieveUnit(3, 1);
+            Unit primary = unitService.retrieveUnit(1, 1);
+            Unit secondary = unitService.retrieveUnit(3, 1);
 //            Unit third = unitService.retrieveUnit(2, 1);
 //            Unit fourth = unitService.retrieveUnit(4, 1);
 
-            attacker.addEquipmentSpecialRules();
-            defender.addEquipmentSpecialRules();
+            primary.addEquipmentSpecialRules();
+            secondary.addEquipmentSpecialRules();
 //            third.addEquipmentSpecialRules();
 //            fourth.addEquipmentSpecialRules();
 
-            attacker.setSelection(1);
-            defender.setSelection(2);
+            primary.setSelection(1);
+            secondary.setSelection(2);
 
-            Result result = combatCalculationService.combat(attacker, defender);
+            Result result = combatCalculationService.combat(primary, secondary);
 
             resultList.add(result);
         }

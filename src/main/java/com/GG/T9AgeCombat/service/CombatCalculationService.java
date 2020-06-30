@@ -75,7 +75,7 @@ public class CombatCalculationService {
 
             int failedSaves = armorSaveService.rollArmorSaves(offensiveProfile, defendingUnit, numberOfWounds);
 
-            if (defendingUnit.getWardSave() != 0) {
+            if (defendingUnit.getAegisSave() != 0) {
                 failedSaves = wardSaveService.rollWardSaves(defendingUnit, failedSaves);
             }
 
@@ -133,7 +133,7 @@ public class CombatCalculationService {
             for (OffensiveProfile offensiveProfile : unit.getOffensiveProfileList()) {
                 if (unit.getSpecialRulePropertyList() != null && !unit.getSpecialRulePropertyList().isEmpty()) {
                     for (SpecialRuleProperty specialRuleProperty : offensiveProfile.getSpecialRulePropertyList()) {
-                        if (specialRuleRoutingService.checkLimitation(limitation, timing, specialRuleProperty, offensiveProfile, isFirstRound)) {
+                        if (specialRuleRoutingService.checkLimitation(limitation, timing, specialRuleProperty, offensiveProfile, isFirstRound, unit)) {
                             DetermineModificationPredicate.applyBonus(offensiveProfile, specialRuleProperty.getModification(), specialRuleProperty.getValue(), unit, isPermanent);
                         }
                     }
@@ -141,7 +141,7 @@ public class CombatCalculationService {
                 if (offensiveProfile.getEquipmentList() != null && !offensiveProfile.getEquipmentList().isEmpty()) {
                     for (Equipment equipment : offensiveProfile.getEquipmentList()) {
                         for (SpecialRuleProperty specialRuleProperty : equipment.getSpecialRuleProperties()) {
-                            if (specialRuleRoutingService.checkLimitation(limitation, timing, specialRuleProperty, offensiveProfile, isFirstRound)) {
+                            if (specialRuleRoutingService.checkLimitation(limitation, timing, specialRuleProperty, offensiveProfile, isFirstRound, unit)) {
                                 DetermineModificationPredicate.applyBonus(offensiveProfile, specialRuleProperty.getModification(), specialRuleProperty.getValue(), unit, isPermanent);
                             }
                         }

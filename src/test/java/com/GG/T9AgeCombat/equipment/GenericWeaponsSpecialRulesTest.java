@@ -544,6 +544,138 @@ public class GenericWeaponsSpecialRulesTest {
         assertThat(unit.getActualArmor()).isEqualTo(expectedResultMeleeShieldApplied);
     }
 
+ @Test
+    @DisplayName("Applies offensive profile light lance special rules")
+    void applyLightLanceSpecialRules() {
+//values match weapon special rule seeds
+        SpecialRuleProperty specialRulePropertyDevastatingChargeStrength = SpecialRuleProperty.builder()
+                .limitation(LimitationEnum.FIRST_ROUND_AND_CHARGING)
+                .modification(ModificationEnum.STRENGTH)
+                .timing(TimingEnum.ALL)
+                .name(SpecialRulePropertyEnum.DEVASTATING_CHARGE_STRENGTH_1)
+                .value(1)
+                .build();
+
+        SpecialRuleProperty specialRulePropertyDevastatingChargeAP = SpecialRuleProperty.builder()
+                .limitation(LimitationEnum.FIRST_ROUND_AND_CHARGING)
+                .modification(ModificationEnum.ARMOR_PENETRATION)
+                .timing(TimingEnum.ALL)
+                .name(SpecialRulePropertyEnum.DEVASTATING_CHARGE_ARMOR_PENETRATION_1)
+                .value(1)
+                .build();
+
+        SpecialRuleProperty specialRulePropertyShieldParry = SpecialRuleProperty.builder()
+                .limitation(LimitationEnum.HAND_WEAPON_AND_INFANTRY)
+                .modification(ModificationEnum.PARRY)
+                .timing(TimingEnum.ALL)
+                .name(SpecialRulePropertyEnum.PARRY)
+                .value(1)
+                .build();
+
+        SpecialRuleProperty specialRulePropertyShieldArmorSave = SpecialRuleProperty.builder()
+                .limitation(LimitationEnum.NONE)
+                .modification(ModificationEnum.ARMOR)
+                .timing(TimingEnum.ALL)
+                .name(SpecialRulePropertyEnum.LIGHT_ARMOR)
+                .value(1)
+                .build();
+
+        SpecialRuleProperty specialRulePropertyShieldMeleeArmorSave = SpecialRuleProperty.builder()
+                .limitation(LimitationEnum.TWO_HANDED)
+                .modification(ModificationEnum.ARMOR)
+                .timing(TimingEnum.ROLL_ARMOR_SAVE)
+                .name(SpecialRulePropertyEnum.MELEE_SHIELD)
+                .value(-1)
+                .build();
+
+        List<SpecialRuleProperty> offensiveProfileSpecialRulesProperty = new ArrayList<>();
+        offensiveProfileSpecialRulesProperty.add(specialRulePropertyDevastatingChargeAP);
+        offensiveProfileSpecialRulesProperty.add(specialRulePropertyDevastatingChargeStrength);
+
+        List<SpecialRuleProperty> shieldSpecialRulesProperty = new ArrayList<>();
+        shieldSpecialRulesProperty.add(specialRulePropertyShieldParry);
+        shieldSpecialRulesProperty.add(specialRulePropertyShieldArmorSave);
+        shieldSpecialRulesProperty.add(specialRulePropertyShieldMeleeArmorSave);
+
+
+        Equipment WildRiderLightLance = Equipment.builder()
+                .name("Light Lance")
+                .classification(EquipmentClassificationEnum.MUNDANE)
+                .type(EquipmentTypeEnum.CLOSE_COMBAT_WEAPON)
+                .specialRuleProperties(offensiveProfileSpecialRulesProperty)
+                .build();
+
+        Equipment WildRiderShield = Equipment.builder()
+                .name("Shield")
+                .specialRuleProperties(shieldSpecialRulesProperty)
+                .build();
+
+
+        List<Equipment> equipmentWildRider = new ArrayList<>();
+
+        List<Equipment> offensiveEquipmentWildRider = new ArrayList<>();
+        offensiveEquipmentWildRider.add(WildRiderLightLance);
+        offensiveEquipmentWildRider.add(WildRiderShield);
+
+        Integer expectedResultStrengthNotApplied = 3;
+        Integer expectedResultAPNotApplied = 0;
+        Integer expectedResultShieldApplied = 2;
+        Integer expectedResultMeleeShieldApplied = 2;
+        Integer expectedResultStrengthApplied = 4;
+        Integer expectedResultAPApplied = 1;
+
+        OffensiveProfile wildRiderOffensiveProfile = OffensiveProfile.builder()
+                .name("Wild Rider")
+                .offensiveWeaponSkill(4)
+                .armorPenetration(0)
+                .strength(3)
+                .agility(5)
+                .attacks(1)
+                .selection(2)
+                .isMount(false)
+                .hasIgnoreParry(false)
+                .equipmentList(offensiveEquipmentWildRider)
+                .build();
+
+        OffensiveProfile stagOffensiveProfile = OffensiveProfile.builder()
+                .name("Wild Rider mount")
+                .offensiveWeaponSkill(4)
+                .armorPenetration(0)
+                .strength(3)
+                .agility(5)
+                .attacks(1)
+                .selection(2)
+                .isMount(true)
+                .hasIgnoreParry(false)
+                .build();
+
+        List<OffensiveProfile> wildRiderOffensiveProfileList = new ArrayList<>();
+        wildRiderOffensiveProfileList.add(wildRiderOffensiveProfile);
+        wildRiderOffensiveProfileList.add(stagOffensiveProfile);
+
+        Unit unit = Unit.builder().name("Wild Rider").advance(4).defensiveWeaponSkill(3)
+                .toughness(3).wounds(1).leadership(7).basesize(25).modelCount(5).armor(1)
+                .modelsPerRank(5).selection(1).standardBearer(1).hasMusician(true).selection(1)
+                .isCharging(true).type(UnitTypeEnum.CAVALRY)
+                .equipmentList(equipmentWildRider)
+                .offensiveProfileList(wildRiderOffensiveProfileList).build();
+
+        getCombatCalculationService().applySpecialRules(unit, false, TimingEnum.ALL, LimitationEnum.NONE, true);
+        getCombatCalculationService().applySpecialRules(unit, false, TimingEnum.ALL, null, false);
+
+        assertThat(unit.isParry()).isFalse();
+        assertThat(unit.getActualArmor()).isEqualTo(expectedResultShieldApplied);
+        assertThat(unit.getActualArmor()).isEqualTo(expectedResultMeleeShieldApplied);
+        assertThat(unit.getOffensiveProfileList().get(0).getActualStrength()).isEqualTo(expectedResultStrengthNotApplied);
+        assertThat(unit.getOffensiveProfileList().get(0).getActualArmorPenetration()).isEqualTo(expectedResultAPNotApplied);
+
+        getCombatCalculationService().applySpecialRules(unit, true, TimingEnum.ALL, null, false);
+
+        assertThat(unit.getActualArmor()).isEqualTo(expectedResultMeleeShieldApplied);
+        assertThat(unit.getOffensiveProfileList().get(0).getActualStrength()).isEqualTo(expectedResultStrengthApplied);
+        assertThat(unit.getOffensiveProfileList().get(0).getActualArmorPenetration()).isEqualTo(expectedResultAPApplied);
+ }
+
     private CombatCalculationService getCombatCalculationService() {
         return new CombatCalculationService(new AttackQuantityService(), mockToHitService, mockToWoundService,
                 mockArmorSaveService, mockWardSaveService, new CombatResolutionService(mockDiceRollingService), new SpecialRuleRoutingService(mockDiceRollingService));
