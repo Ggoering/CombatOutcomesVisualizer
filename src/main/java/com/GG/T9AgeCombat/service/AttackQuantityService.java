@@ -40,7 +40,7 @@ public class AttackQuantityService {
             return 0;
         }
 
-        int supportingRanks = DEFAULT_SUPPORTING_RANKS;
+        int supportingRanks = DEFAULT_SUPPORTING_RANKS + attacker.getExtraRanks() + attacker.getExtraRankModifier();
 
         if (unitWidth >= HORDE_MODELS_PER_RANK) {
             supportingRanks++;

@@ -70,6 +70,20 @@ public class OffensiveProfile {
     @NonFinal
     boolean hasIgnoreParry;
 
+    @NonFinal
+    @Builder.Default
+    int reRollToHitLessThanModifier = Constants.DEFAULT_REROLL_LESS_THAN;
+    @NonFinal
+    @Builder.Default
+    int reRollToHitGreaterThanModifier = Constants.DEFAULT_REROLL_GREATER_THAN;
+    @NonFinal
+    @Builder.Default
+    int reRollToWoundLessThanModifier = Constants.DEFAULT_REROLL_LESS_THAN;
+    @NonFinal
+    @Builder.Default
+    int reRollToWoundGreaterThanModifier = Constants.DEFAULT_REROLL_GREATER_THAN;
+
+
     public void setAgility(int agility) {
         this.agility = agility;
     }
@@ -112,12 +126,20 @@ public class OffensiveProfile {
         this.armorPenetration += armorPenetration;
     }
 
-    public void updateReRollToHit(int reRollToHit) {
-        this.reRollToHitLessThan += reRollToHit;
+    public void setReRollToHit(int reRollToHit) {
+        this.reRollToHitLessThan = reRollToHit;
+    }
+
+    public void setReRollToWound(int reRollToWound) {
+        this.reRollToWoundLessThan = reRollToWound;
     }
 
     public void updateToHitBonus(int toHitBonus) {
         this.toHitBonus += toHitBonus;
+    }
+
+    public void updateAgility(int agility) {
+        this.agility += agility;
     }
 
     public void updateAgilityModifier(int agilityModifier) {
@@ -144,6 +166,22 @@ public class OffensiveProfile {
         this.toHitBonusModifier += toHitBonusModifier;
     }
 
+    public void setToHitReRollLessThanModifier(int reRollToHitLessThanModifier) {
+        this.reRollToHitLessThanModifier = reRollToHitLessThanModifier;
+    }
+
+    public void setToHitReRollGreaterThanModifier(int reRollToHitGreaterThanModifier) {
+        this.reRollToHitGreaterThanModifier = reRollToHitGreaterThanModifier;
+    }
+
+    public void setToWoundReRollLessThanModifier(int reRollToWoundLessThanModifier) {
+        this.reRollToWoundLessThanModifier = reRollToWoundLessThanModifier;
+    }
+
+    public void setToWoundReRollGreaterThanModifier(int reRollToWoundGreaterThanModifier) {
+        this.reRollToHitGreaterThanModifier = reRollToWoundGreaterThanModifier;
+    }
+
     public void resetStatModifiers() {
         agilityModifier = 0;
         offensiveWeaponSkillModifier = 0;
@@ -151,6 +189,10 @@ public class OffensiveProfile {
         strengthModifier = 0;
         armorPenetrationModifier = 0;
         toHitBonusModifier = 0;
+        reRollToHitLessThanModifier = Constants.DEFAULT_REROLL_LESS_THAN;
+        reRollToWoundLessThanModifier = Constants.DEFAULT_REROLL_LESS_THAN;
+        reRollToHitGreaterThanModifier = Constants.DEFAULT_REROLL_GREATER_THAN;
+        reRollToWoundGreaterThanModifier = Constants.DEFAULT_REROLL_GREATER_THAN;
     }
 
     public int getActualAgility() {
@@ -175,6 +217,36 @@ public class OffensiveProfile {
 
     public int getActualToHitBonus() {
         return toHitBonus + toHitBonusModifier;
+    }
+
+    public int getActualReRollToWoundLessThan() {
+        if(this.reRollToWoundLessThan < this.reRollToWoundLessThanModifier) {
+            return this.reRollToWoundLessThanModifier;
+        } else {
+            return reRollToWoundLessThan;
+        }
+    }
+    public int getActualReRollToWoundGreaterThan() {
+        if(this.reRollToWoundGreaterThan > this.reRollToWoundGreaterThanModifier) {
+            return this.reRollToWoundGreaterThanModifier;
+        } else {
+            return reRollToWoundGreaterThan;
+        }
+    }
+
+    public int getActualReRollToHitLessThan() {
+        if(this.reRollToHitLessThan < this.reRollToHitLessThanModifier) {
+            return this.reRollToHitLessThanModifier;
+        } else {
+            return reRollToHitLessThan;
+        }
+    }
+    public int getActualReRollToHitGreaterThan() {
+        if(this.reRollToHitGreaterThan > this.reRollToHitGreaterThanModifier) {
+            return this.reRollToHitGreaterThanModifier;
+        } else {
+            return reRollToHitGreaterThan;
+        }
     }
 
     public void addEquipmentSpecialRules() {

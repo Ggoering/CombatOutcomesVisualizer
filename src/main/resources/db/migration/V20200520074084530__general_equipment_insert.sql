@@ -75,7 +75,8 @@ VALUES
 ((SELECT id FROM public.equipment_category WHERE category = 'SPEAR'), (SELECT id FROM public.equipment_category WHERE category = 'SPEAR'), (SELECT id FROM public.special_rule WHERE name = 'SPEAR')),
 ((SELECT id FROM public.equipment_category WHERE category = 'PAIRED_WEAPONS'), (SELECT id FROM public.equipment_category WHERE category = 'PAIRED_WEAPONS'), (SELECT id FROM public.special_rule WHERE name = 'PAIRED_WEAPONS')),
 ((SELECT id FROM public.equipment_category WHERE category = 'HALBERD'), (SELECT id FROM public.equipment_category WHERE category = 'HALBERD'), (SELECT id FROM public.special_rule WHERE name = 'HALBERD')),
-((SELECT id FROM public.equipment_category WHERE category = 'LIGHT_LANCE'), (SELECT id FROM public.equipment_category WHERE category = 'LIGHT_LANCE'), (SELECT id FROM public.special_rule WHERE name = 'DEVASTATING_CHARGE_LIGHT_LANCE'));
+((SELECT id FROM public.equipment_category WHERE category = 'LIGHT_LANCE'), (SELECT id FROM public.equipment_category WHERE category = 'LIGHT_LANCE'), (SELECT id FROM public.special_rule WHERE name = 'LIGHT_LANCE')),
+((SELECT id FROM public.equipment_category WHERE category = 'LANCE'), (SELECT id FROM public.equipment_category WHERE category = 'LANCE'), (SELECT id FROM public.special_rule WHERE name = 'LANCE'));
 
 
 -- General Mundane Equipment Sets

@@ -6,6 +6,7 @@ public enum ModificationEnum {
     EXTRA_RANKS,
     AGILITY,
     RE_ROLL_TO_HIT,
+    RE_ROLL_TO_WOUND,
     ARMOR_PENETRATION,
     ARMOR,
     ATTACKS,

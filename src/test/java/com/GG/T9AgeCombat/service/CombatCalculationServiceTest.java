@@ -217,10 +217,10 @@ public class CombatCalculationServiceTest {
 
         Unit unit1 = Unit.builder().name("Swordmaster").advance(5).defensiveWeaponSkill(6)
                 .toughness(3).wounds(1).leadership(8).basesize(25).modelCount(5).armor(5).modelsPerRank(5).selection(1)
-                .standardBearer(1).wardSave(4).offensiveProfileList(swordmasterOffensiveProfileList).selection(1).build();
+                .standardBearer(1).aegisSave(4).offensiveProfileList(swordmasterOffensiveProfileList).selection(1).build();
         Unit unit2 = Unit.builder().name("Black Orc").advance(5).defensiveWeaponSkill(6)
                 .toughness(3).wounds(1).leadership(8).basesize(25).modelCount(2).armor(5).modelsPerRank(5).selection(2)
-                .standardBearer(1).hasMusician(true).wardSave(6).offensiveProfileList(blackorcOffensiveProfileList).selection(2).build();
+                .standardBearer(1).hasMusician(true).aegisSave(6).offensiveProfileList(blackorcOffensiveProfileList).selection(2).build();
 
         // Attacker is unit1
         when(mockToHitService.rollToHit(swordmasterOffensiveProfile, unit2, 4)).thenReturn(4);

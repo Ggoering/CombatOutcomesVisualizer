@@ -16,7 +16,7 @@ public class WardSaveService {
     }
 
     Integer rollWardSaves(Unit unit, Integer quantity) {
-        return quantity - removeFailedWardSaveRolls(diceRollingService.roll(quantity), unit.getWardSave());
+        return quantity - removeFailedWardSaveRolls(diceRollingService.roll(quantity), unit.getAegisSave());
     }
 
     int removeFailedWardSaveRolls(List<Integer> wardSaveRolls, Integer wardSaveThreshold) {
